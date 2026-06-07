@@ -1,0 +1,47 @@
+<!-- דף הבית - מותאם מיקום - נקסוס -->
+<!DOCTYPE html>
+<html class="dark" dir="rtl" lang="he"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NEXUS - מותאם מיקום</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Varela+Round&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = { darkMode: "class", theme: { extend: { "colors": {
+        "secondary-fixed-dim": "#00dbe9","on-surface": "#e5e2e1","on-primary-fixed": "#151f00","secondary": "#d3fbff","surface-container-high": "#2a2a2a","surface-container-low": "#1c1b1b",
+        "background": "#131313","primary-container": "#bff520","on-background": "#e5e2e1","on-primary-container": "#536d00","on-primary": "#273500","outline": "#8d937a","primary": "#ffffff",
+        "surface": "#131313","surface-container-lowest": "#0e0e0e","secondary-container": "#00eefc","surface-container": "#201f1f","on-surface-variant": "#c3c9ad","error": "#ffb4ab",
+        "secondary-fixed": "#7df4ff","primary-fixed": "#bff520","primary-fixed-dim": "#a5d700"
+      },
+      "spacing": { "base": "8px","md": "24px","sm": "12px","xs": "4px","margin-mobile": "20px","gutter": "16px","lg": "48px" },
+      "fontFamily": { "label-md": ["Varela Round"],"headline-md": ["Varela Round"],"body-md": ["Varela Round"],"label-sm": ["Varela Round"],"headline-lg-mobile": ["Varela Round"] },
+      "fontSize": { "label-md": ["14px"],"headline-md": ["24px"],"body-md": ["16px"],"label-sm": ["12px"],"headline-lg-mobile": ["28px"] } } } }
+    </script>
+<style>
+        body { background-color: #0a0a0a; color: #e5e2e1; font-family: 'Varela Round', sans-serif; min-height: max(884px, 100dvh); }
+        .glass { background: rgba(26, 26, 26, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-mobile h-16 bg-background/80 backdrop-blur-xl border-b border-white/10">
+<a href="../index.html" class="flex items-center justify-center w-10 h-10 text-primary-fixed"><span class="material-symbols-outlined">menu</span></a>
+<div class="text-headline-md font-extrabold tracking-tighter text-primary-fixed drop-shadow-[0_0_10px_rgba(191,245,32,0.4)]">NEXUS</div>
+<a href="profile.html" class="w-10 h-10 rounded-full overflow-hidden border border-primary-fixed/30"><img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDCsm1aAO_urDc-jXRS8c0WVRHSbicgoVzGJJYMHJI0T_NySw-u-JILhRpFPawiex4Yiy0PoH9x3Qn3FAywMdQgCZ1s6mSEMEo-fKpOnzJBer-gOgpW1rUZjRoS7IChASa3pWjrpKNuBLTLMO3LHTfFkawTnFTFJfR1V1THMMnz_6z1_s--ASMj_NnQNF5CPtHluJ3UF8X0gcqWj_i6pxOluMk33zmbfrJSKvemj2tvV27UfiUUC4xPUuZ171DPnAuE9IlrIjb0Q"/></a>
+</header>
+<main class="pt-20 pb-28 px-margin-mobile max-w-2xl mx-auto">
+<section class="mb-lg"><div class="relative mb-sm"><input class="w-full bg-surface-container-low border border-white/10 rounded-xl py-4 pr-12 pl-4 text-on-surface focus:outline-none focus:border-primary-fixed transition-all" placeholder="חיפוש מסיבות ואירועים..." type="text"/><span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span></div>
+<div class="flex gap-sm overflow-x-auto hide-scrollbar py-2"><button class="flex items-center gap-1 px-4 py-2 rounded-full glass border-primary-fixed text-primary-fixed whitespace-nowrap"><span class="material-symbols-outlined text-[18px]">location_on</span><span class="text-label-md">תל אביב - מיקום נוכחי</span></button><button class="flex items-center gap-1 px-4 py-2 rounded-full glass border-white/10 text-on-surface-variant whitespace-nowrap"><span class="material-symbols-outlined text-[18px]">calendar_today</span><span class="text-label-md">תאריך</span></button></div></section>
+<section><div class="flex justify-between items-center mb-md"><h2 class="text-headline-lg-mobile text-primary">אירועים קרובים אליך</h2><a href="map.html" class="text-primary-fixed text-label-md hover:underline">מפה</a></div><div class="space-y-gutter">
+<a href="event.html" class="flex gap-md glass p-sm rounded-xl hover:bg-white/5 transition-all group border-white/5"><div class="w-24 h-24 rounded-lg overflow-hidden shrink-0"><img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5Hjff4EH-F3Sdbz5y4o-3DyDv6jG0pN4rOEg9Xg7ctZdGYb44Zz7XnyRoUT3Sk9Btq2TH8MWl7_93NK_7ufmI6cabBXkvglwP9sV14SIylNZDhtUBNSp5QXZ44LKG_mpFRHuuedcag0MbXMKov5zZ72SwQzIiq6RDo8D5NS9A6yrNz0F7Bu1mD-QhaYT4YHUeEWWi6-DNL_MNALsJST5jPD80G94s_ZTq_EKHe6dvmIUZPdWC_IiWOu4ZfIXFHQiQH1r1kBZ9Gg"/></div><div class="flex flex-col justify-between flex-1 py-1"><div><h3 class="text-[18px] text-white group-hover:text-primary-fixed transition-colors">SECRET FOREST RAVE</h3><p class="text-on-surface-variant text-label-sm mt-1">יער בן שמן • יום חמישי, 01.09</p><div class="flex items-center gap-1 text-primary-fixed text-[10px] mt-1"><span class="material-symbols-outlined text-[12px]">near_me</span><span>2.5 ק״מ ממך</span></div></div><div class="flex items-center justify-between mt-2"><span class="text-secondary-fixed text-label-md">החל מ-₪90</span><span class="material-symbols-outlined text-primary-fixed">arrow_back_ios</span></div></div></a>
+<a href="event.html" class="flex gap-md glass p-sm rounded-xl hover:bg-white/5 transition-all group border-white/5"><div class="w-24 h-24 rounded-lg overflow-hidden shrink-0"><img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3QYWUZ9Wkli9oW7XrIte6wVWldOFyGnnrPwefTnGKayQNRA6sgcxnRTw6lBxKqDbzDcH0BK2Rp8KoA3uNmNkmm_e11Efa6bJkHKwUXKvWqu5eRUUKUbf9M_r7qY5LTnJyYpFlK2HQQ8hD6dDysDpvWszcpE_JkRvQHkFCNLeGT2BkxY1ERrErBUIEMTMa7x868pymI-bfbqpeVutQIegIUTSf9hTawyZFVX0uVAnL9G7jTdzx9nOjDpKqaQWsr0LnmUoru9akBQ"/></div><div class="flex flex-col justify-between flex-1 py-1"><div><h3 class="text-[18px] text-white group-hover:text-primary-fixed transition-colors">INDUSTRIAL TECHNO NIGHT</h3><p class="text-on-surface-variant text-label-sm mt-1">מועדון הבלוק, תל אביב • שישי, 02.09</p><div class="flex items-center gap-1 text-primary-fixed text-[10px] mt-1"><span class="material-symbols-outlined text-[12px]">near_me</span><span>1.2 ק״מ ממך</span></div></div><div class="flex items-center justify-between mt-2"><span class="text-secondary-fixed text-label-md">החל מ-₪150</span><span class="material-symbols-outlined text-primary-fixed">arrow_back_ios</span></div></div></a>
+</div></section>
+</main>
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-safe h-20 bg-surface-container-lowest/90 backdrop-blur-2xl border-t border-white/5 shadow-[0_-8px_24px_rgba(0,0,0,0.5)] rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-primary-fixed drop-shadow-[0_0_8px_rgba(191,245,32,0.6)] scale-110" href="discover-location.html"><span class="material-symbols-outlined">explore</span><span class="text-label-sm mt-1">מרקטפלייס</span></a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant/60 hover:text-primary-fixed transition-colors" href="my-tickets.html"><span class="material-symbols-outlined">confirmation_number</span><span class="text-label-sm mt-1">הכרטיסים שלי</span></a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant/60 hover:text-primary-fixed transition-colors" href="notifications.html"><span class="material-symbols-outlined">notifications</span><span class="text-label-sm mt-1">התראות</span></a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant/60 hover:text-primary-fixed transition-colors" href="profile.html"><span class="material-symbols-outlined">person</span><span class="text-label-sm mt-1">פרופיל</span></a>
+</nav>
+</body></html>
