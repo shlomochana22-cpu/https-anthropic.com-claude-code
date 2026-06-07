@@ -57,6 +57,16 @@ export function EventDetail({ event }: { event: NexusEvent }) {
           ))}
         </section>
 
+        {/* Age (only when the producer chose to show it) */}
+        {event.ageVisible && event.age && (
+          <section className="px-margin-mobile mt-md">
+            <div className="glass-card rounded-xl p-sm flex items-center justify-center gap-2">
+              <Icon name="badge" className="text-primary-fixed-dim" />
+              <span className="text-label-md text-on-surface">כניסה מגיל <span className="text-primary-fixed font-bold">{event.age}</span> · חובה ת"ז</span>
+            </div>
+          </section>
+        )}
+
         {/* Live + map shortcuts */}
         <section className="px-margin-mobile mt-md grid grid-cols-2 gap-sm">
           <Link href={`/events/${event.id}/live`} className="glass-card rounded-xl p-sm flex items-center justify-center gap-2 hover:bg-white/5 transition-colors">
@@ -91,11 +101,10 @@ export function EventDetail({ event }: { event: NexusEvent }) {
         {/* Description */}
         <section className="px-margin-mobile mt-lg">
           <h3 className="text-headline-md text-primary mb-sm">על האירוע</h3>
-          <p className={`text-on-surface-variant text-body-md leading-relaxed ${descOpen ? "" : "line-clamp-3"}`}>
-            הצטרפו אלינו ל{event.title} — לילה בלתי נשכח עם {event.subtitle}. חווית סאונד טוטאלית עם
-            המערכת הטובה בעולם, תאורה שתשאב אתכם למימד אחר וליינאפ שישאיר אתכם על הרגליים עד אור הבוקר.
-            שימו לב: הכניסה מותנית בבדיקת גיל והצגת תעודת זהות פיזית בלבד. מומלץ להצטייד בכרטיסים מראש
-            עקב ביקוש שיא.
+          <p className={`text-on-surface-variant text-body-md leading-relaxed whitespace-pre-line ${descOpen ? "" : "line-clamp-3"}`}>
+            {event.description?.trim()
+              ? event.description
+              : `הצטרפו אלינו ל${event.title} — לילה בלתי נשכח עם ${event.subtitle}. חווית סאונד טוטאלית עם המערכת הטובה בעולם, תאורה שתשאב אתכם למימד אחר וליינאפ שישאיר אתכם על הרגליים עד אור הבוקר. שימו לב: הכניסה מותנית בבדיקת גיל והצגת תעודת זהות פיזית בלבד. מומלץ להצטייד בכרטיסים מראש עקב ביקוש שיא.`}
           </p>
           <button onClick={() => setDescOpen((v) => !v)} className="text-primary-fixed-dim font-bold text-label-md mt-2 flex items-center gap-1">
             {descOpen ? "סגור" : "קרא עוד"}
@@ -116,13 +125,25 @@ export function EventDetail({ event }: { event: NexusEvent }) {
               >
                 <div className="flex justify-between items-start">
                   <div>
-                    <h4 className={`text-[20px] ${t.exclusive ? "text-primary-container" : "text-white"}`}>
+                    <h4 className={`text-[20px] ${t.exclusive ? "text-primary-container" : "text-white"} flex items-center gap-2`}>
                       {t.name}
+                      {t.exclusive && <Icon name="stars" className="text-primary-container text-[18px]" fill />}
                     </h4>
-                    <p className="text-label-sm text-white/60">{t.description}</p>
+                    {t.description && <p className="text-label-sm text-white/60">{t.description}</p>}
                   </div>
                   <span className="text-[20px]">₪{t.price}</span>
                 </div>
+
+                {/* VIP benefits */}
+                {t.benefits && t.benefits.length > 0 && (
+                  <ul className="mt-3 flex flex-wrap gap-2">
+                    {t.benefits.map((b, bi) => (
+                      <li key={bi} className="flex items-center gap-1.5 bg-primary-container/10 border border-primary-container/30 text-primary-container text-[12px] px-2.5 py-1 rounded-full">
+                        <Icon name="check_circle" className="text-[14px]" fill /> {b}
+                      </li>
+                    ))}
+                  </ul>
+                )}
                 <div className="mt-4 flex justify-between items-center">
                   {t.soldOut ? (
                     <span className="text-error font-bold uppercase text-[10px] tracking-widest border border-error px-2 py-0.5 rounded">

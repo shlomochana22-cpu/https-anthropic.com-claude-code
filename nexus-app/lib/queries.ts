@@ -19,6 +19,9 @@ type EventRow = {
   genre: string | null;
   occupancy: number;
   from_price: number;
+  description?: string | null;
+  age?: string | null;
+  age_visible?: boolean | null;
   ticket_tiers: {
     slug: string;
     name: string;
@@ -27,6 +30,7 @@ type EventRow = {
     sold_out: boolean;
     exclusive: boolean;
     sort_order: number;
+    benefits?: string[] | null;
   }[];
 };
 
@@ -40,6 +44,7 @@ function rowToEvent(row: EventRow): NexusEvent {
       price: t.price,
       soldOut: t.sold_out,
       exclusive: t.exclusive,
+      benefits: t.benefits ?? [],
     }));
   return {
     id: row.id,
@@ -54,11 +59,14 @@ function rowToEvent(row: EventRow): NexusEvent {
     genre: row.genre ?? "",
     occupancy: row.occupancy,
     fromPrice: row.from_price,
+    description: row.description ?? "",
+    age: row.age ?? undefined,
+    ageVisible: row.age_visible ?? true,
     tiers,
   };
 }
 
-const SELECT = "*, ticket_tiers(slug,name,description,price,sold_out,exclusive,sort_order)";
+const SELECT = "*, ticket_tiers(slug,name,description,price,sold_out,exclusive,sort_order,benefits)";
 
 export async function getEvents(): Promise<NexusEvent[]> {
   const sb = getSupabase();

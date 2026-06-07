@@ -2,7 +2,7 @@
 
 import { browserSupabase } from "./supabaseBrowser";
 
-export type NewTier = { name: string; price: number; qty: number; exclusive?: boolean };
+export type NewTier = { name: string; price: number; qty: number; exclusive?: boolean; benefits?: string[] };
 
 export type NewEventInput = {
   title: string;
@@ -12,6 +12,9 @@ export type NewEventInput = {
   date: string;
   time: string;
   image?: string;
+  description?: string;
+  age?: string;
+  ageVisible?: boolean;
   tiers: NewTier[];
 };
 
@@ -57,6 +60,9 @@ export async function createEvent(input: NewEventInput): Promise<CreateResult> {
     genre: input.genre,
     occupancy: 0,
     from_price: fromPrice,
+    description: input.description ?? "",
+    age: input.age ?? null,
+    age_visible: input.ageVisible ?? true,
   });
   if (error) return { id, demo: true };
 
@@ -71,6 +77,7 @@ export async function createEvent(input: NewEventInput): Promise<CreateResult> {
       sold_out: false,
       exclusive: !!t.exclusive,
       sort_order: i,
+      benefits: t.benefits ?? [],
     }));
   if (tierRows.length) await sb.from("ticket_tiers").insert(tierRows);
 

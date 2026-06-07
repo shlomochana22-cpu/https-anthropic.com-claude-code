@@ -5,6 +5,7 @@ export type TicketTier = {
   price: number;
   soldOut?: boolean;
   exclusive?: boolean;
+  benefits?: string[];
 };
 
 export type NexusEvent = {
@@ -20,6 +21,9 @@ export type NexusEvent = {
   genre: string;
   occupancy: number; // 0-100
   fromPrice: number;
+  description?: string;
+  age?: string;
+  ageVisible?: boolean;
   tiers: TicketTier[];
 };
 
@@ -50,10 +54,12 @@ export const events: NexusEvent[] = [
     genre: "טכנו",
     occupancy: 85,
     fromPrice: 120,
+    age: "18+",
+    ageVisible: true,
     tiers: [
       { id: "early", name: "Early Bird", description: "מכירה מוקדמת - סבב א'", price: 80, soldOut: true },
       { id: "regular", name: "Regular Ticket", description: "כניסה רגילה לכל המתחמים", price: 120 },
-      { id: "vip", name: "VIP Experience", description: "כניסה מהירה + מתחם VIP + דרינק ראשון", price: 250, exclusive: true },
+      { id: "vip", name: "VIP Experience", description: "החבילה המלאה", price: 250, exclusive: true, benefits: ["גישה לבקסטייג׳", "כניסה מהירה", "דרינק ראשון על הבית"] },
     ],
   },
   {

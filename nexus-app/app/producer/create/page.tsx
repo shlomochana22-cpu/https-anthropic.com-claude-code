@@ -291,7 +291,18 @@ export default function CreateEventPage() {
       venue: location || "",
       date: date || "בקרוב",
       time,
-      tiers: tiers.map((t) => ({ name: t.name, price: Number(t.price) || 0, qty: Number(t.qty) || 0, exclusive: !!t.isVip })),
+      description,
+      age,
+      ageVisible,
+      tiers: tiers.map((t) => ({
+        name: t.name,
+        price: Number(t.price) || 0,
+        qty: Number(t.qty) || 0,
+        exclusive: !!t.isVip,
+        benefits: t.isVip
+          ? [...VIP_BENEFITS.filter((b) => t.benefits?.[b.key]).map((b) => b.label), ...(t.customBenefits || [])]
+          : [],
+      })),
     });
     router.push(`/producer?created=${id}`);
   };
