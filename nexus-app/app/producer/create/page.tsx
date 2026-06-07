@@ -7,7 +7,7 @@ import { createEvent } from "@/lib/createEvent";
 
 const steps = ["פרטים כלליים", "כרטיסים", "מדיה ויח״צ"];
 const categories = ["מועדון", "פסטיבל", "הופעה", "פרטי"];
-const genres = ["טכנו", "מיינסטרים", "היפ הופ", "פסייטראנס", "פופ"];
+const genrePresets = ["טכנו", "מיינסטרים", "היפ הופ", "פסייטראנס", "פופ", "האוס", "טראפ", "אפרו", "דיסקו", " R&B"];
 const MAP_IMG =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuAYP-WgF_VDGgbiBAo-MV_BtEUdRrYXINf2EhUxPw3k4YppbY9zUtqgKXEC_LIFTd22NzxCfaNQ4oRFW3DtfEy4zK43eFebqF8E_ueAG9UDtVQ9xEn2OXmFGxnTKng6Rf9ax6QuMBmHSn4B9Rs2IK1CH3RNrbKdFAbelohDzd3_V0h0towExi7jofbqu1KimAoDCadVxTIuU_Hyh4yi0nAeklbJZcHxxHB5D5XNZQM7b9uIP7sGJ0--d2IHL2cYYSUFrYGi6mii7g";
 
@@ -21,13 +21,43 @@ export default function CreateEventPage() {
   // step 1
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("מועדון");
-  const [genre, setGenre] = useState("טכנו");
+  const [genreList, setGenreList] = useState<string[]>(["טכנו"]);
+  const [customGenre, setCustomGenre] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("23:00");
   const [age, setAge] = useState("18+");
+  const [ageVisible, setAgeVisible] = useState(true);
   const [city, setCity] = useState("");
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
+  const [aiLoading, setAiLoading] = useState(false);
+
+  const genre = genreList.join(" · ") || "טכנו";
+  const toggleGenre = (g: string) =>
+    setGenreList((l) => (l.includes(g) ? l.filter((x) => x !== g) : [...l, g]));
+  const addCustomGenre = () => {
+    const v = customGenre.trim();
+    if (!v || genreList.includes(v)) return setCustomGenre("");
+    setGenreList((l) => [...l, v]);
+    setCustomGenre("");
+  };
+
+  const writeWithAI = () => {
+    setAiLoading(true);
+    const g = genreList[0] || "מוזיקה אלקטרונית";
+    const place = location || city || "המקום החם בעיר";
+    const cat = category;
+    const name = title || "האירוע";
+    setTimeout(() => {
+      setDescription(
+        `${name} מגיע ל${place} לערב אחד בלתי נשכח. ` +
+          `${cat} שכולו ${genreList.join(", ") || g} — סאונד עוצמתי, הפקה ויזואלית מטורפת ולהקת DJ's שתחזיק אתכם על רחבת הריקודים עד הזריחה. ` +
+          `דלתות נפתחות ב-${time}${age && ageVisible ? `, כניסה מגיל ${age}` : ""}. ` +
+          `כמות הכרטיסים מוגבלת — אל תישארו בחוץ. מבטיחים לכם לילה שתזכרו הרבה אחרי שהמוזיקה נגמרת. 🔥`
+      );
+      setAiLoading(false);
+    }, 900);
+  };
 
   // step 2
   const [venueCapacity, setVenueCapacity] = useState("1500");
@@ -116,11 +146,39 @@ export default function CreateEventPage() {
               </div>
             </div>
             <div className="flex flex-col gap-3">
-              <label className="text-primary-fixed text-label-md uppercase tracking-wider">ז'אנר מוזיקלי</label>
+              <label className="text-primary-fixed text-label-md uppercase tracking-wider">ז'אנר מוזיקלי <span className="text-on-surface-variant/50 normal-case tracking-normal">(אפשר לבחור כמה)</span></label>
               <div className="flex flex-wrap gap-3">
-                {genres.map((g) => (
-                  <button key={g} onClick={() => setGenre(g)} className={`px-5 py-2 rounded-full border transition-all ${genre === g ? "border-secondary-fixed bg-secondary-fixed/20 text-secondary-fixed font-bold" : "border-white/10 bg-white/5 text-on-surface-variant hover:border-secondary-fixed/50"}`}>{g}</button>
-                ))}
+                {genrePresets.map((g) => {
+                  const on = genreList.includes(g);
+                  return (
+                    <button key={g} onClick={() => toggleGenre(g)} className={`px-5 py-2 rounded-full border transition-all flex items-center gap-1.5 ${on ? "border-secondary-fixed bg-secondary-fixed/20 text-secondary-fixed font-bold" : "border-white/10 bg-white/5 text-on-surface-variant hover:border-secondary-fixed/50"}`}>
+                      {on && <Icon name="check" className="text-[16px]" />}{g.trim()}
+                    </button>
+                  );
+                })}
+              </div>
+              {/* custom free-text genres */}
+              {genreList.some((g) => !genrePresets.includes(g)) && (
+                <div className="flex flex-wrap gap-2">
+                  {genreList.filter((g) => !genrePresets.includes(g)).map((g) => (
+                    <span key={g} className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-primary-fixed/15 border border-primary-fixed/40 text-primary-fixed text-label-sm">
+                      {g}
+                      <button onClick={() => toggleGenre(g)} className="hover:text-error"><Icon name="close" className="text-[15px] block" /></button>
+                    </span>
+                  ))}
+                </div>
+              )}
+              <div className="flex gap-2">
+                <input
+                  value={customGenre}
+                  onChange={(e) => setCustomGenre(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addCustomGenre())}
+                  placeholder="הוסף ז'אנר משלך (מלל חופשי)…"
+                  className="flex-1 bg-surface-container-low border border-white/10 rounded-lg px-4 py-3 text-body-md text-primary focus:border-secondary-fixed outline-none"
+                />
+                <button onClick={addCustomGenre} className="px-5 py-3 rounded-lg bg-surface-container-high border border-white/10 text-secondary-fixed hover:border-secondary-fixed/50 transition-colors flex items-center gap-1 shrink-0">
+                  <Icon name="add" /> הוסף
+                </button>
               </div>
             </div>
           </div>
@@ -134,14 +192,21 @@ export default function CreateEventPage() {
                 <input value={date} onChange={(e) => setDate(e.target.value)} placeholder="24.08" className="bg-surface-container-low border border-white/10 rounded-lg px-4 py-4 text-body-md text-primary focus:border-primary-fixed outline-none" />
               </div>
               <div className="flex flex-col gap-2">
-                <label className="text-primary-fixed text-label-md uppercase tracking-wider">שעה</label>
-                <input value={time} onChange={(e) => setTime(e.target.value)} className="bg-surface-container-low border border-white/10 rounded-lg px-4 py-4 text-body-md text-primary focus:border-primary-fixed outline-none" />
+                <label className="text-primary-fixed text-label-md uppercase tracking-wider flex items-center gap-1.5"><Icon name="door_front" className="text-[16px]" /> שעה · פתיחת דלתות</label>
+                <input value={time} onChange={(e) => setTime(e.target.value)} placeholder="23:00" className="bg-surface-container-low border border-white/10 rounded-lg px-4 py-4 text-body-md text-primary focus:border-primary-fixed outline-none" />
               </div>
               <div className="flex flex-col gap-2">
                 <label className="text-primary-fixed text-label-md uppercase tracking-wider">גיל מינימלי</label>
                 <select value={age} onChange={(e) => setAge(e.target.value)} className="bg-surface-container-low border border-white/10 rounded-lg px-4 py-4 text-body-md text-primary focus:border-primary-fixed outline-none appearance-none">
                   <option>18+</option><option>21+</option><option>23+</option><option>לכל הגילאים</option>
                 </select>
+                <label className="flex items-center gap-2 cursor-pointer mt-1 group">
+                  <input type="checkbox" checked={ageVisible} onChange={(e) => setAgeVisible(e.target.checked)} className="w-4 h-4 rounded border-white/20 bg-transparent text-primary-fixed focus:ring-0" />
+                  <span className="text-label-sm text-on-surface-variant group-hover:text-on-surface transition-colors flex items-center gap-1">
+                    <Icon name={ageVisible ? "visibility" : "visibility_off"} className="text-[16px]" />
+                    {ageVisible ? "הצג גיל בעמוד האירוע" : "הגיל מוסתר מהלקוחות"}
+                  </span>
+                </label>
               </div>
               <div className="flex flex-col gap-2">
                 <label className="text-primary-fixed text-label-md uppercase tracking-wider">עיר</label>
@@ -161,10 +226,23 @@ export default function CreateEventPage() {
 
           {/* Narrative */}
           <div className="glass-card p-md rounded-xl">
-            <h3 className="text-headline-md text-primary mb-6 flex items-center gap-2"><Icon name="description" className="text-primary-fixed" /> סיפור האירוע</h3>
+            <div className="flex items-center justify-between gap-3 mb-6 flex-wrap">
+              <h3 className="text-headline-md text-primary flex items-center gap-2"><Icon name="description" className="text-primary-fixed" /> סיפור האירוע</h3>
+              <button
+                onClick={writeWithAI}
+                disabled={aiLoading}
+                className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-primary-fixed/20 to-secondary-fixed/20 border border-primary-fixed/40 text-primary-fixed text-label-md hover:from-primary-fixed/30 hover:to-secondary-fixed/30 transition-all active:scale-95 disabled:opacity-60"
+              >
+                <Icon name="auto_awesome" className={aiLoading ? "animate-spin" : "animate-pulse"} fill />
+                {aiLoading ? "כותב…" : "כתוב עם AI"}
+              </button>
+            </div>
             <div className="flex flex-col gap-2">
               <label className="text-primary-fixed text-label-md uppercase tracking-wider">תיאור</label>
-              <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={6} placeholder="תאר את האווירה, הליינאפ, ולמה לצפות..." className="bg-surface-container-low border border-white/10 rounded-lg px-4 py-4 text-body-md text-primary placeholder:text-on-surface-variant/30 resize-none focus:border-primary-fixed outline-none" />
+              <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={6} placeholder="תאר את האווירה, הליינאפ, ולמה לצפות... או תן ל-AI לכתוב עבורך ✨" className="bg-surface-container-low border border-white/10 rounded-lg px-4 py-4 text-body-md text-primary placeholder:text-on-surface-variant/30 resize-none focus:border-primary-fixed outline-none" />
+              <p className="text-[11px] text-on-surface-variant/60 flex items-center gap-1">
+                <Icon name="tips_and_updates" className="text-[14px]" /> ה-AI מנסח טקסט שיווקי על בסיס שם האירוע, הז'אנרים והמיקום שמילאת. אפשר לערוך אחר כך.
+              </p>
             </div>
           </div>
         </div>
