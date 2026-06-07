@@ -10,8 +10,17 @@ const varela = Varela_Round({
 });
 
 export const metadata: Metadata = {
-  title: "NEXUS | Israeli Nightlife Portal",
-  description: "פורטל חיי הלילה — אירועים, כרטיסים וניהול הפקות",
+  metadataBase: new URL("https://nexusevents.co.il"),
+  title: "NEXUS | פורטל חיי הלילה",
+  description: "אירועים, כרטיסים וניהול הפקות — NEXUS Events",
+  openGraph: {
+    title: "NEXUS | פורטל חיי הלילה",
+    description: "אירועים, כרטיסים וניהול הפקות",
+    url: "https://nexusevents.co.il",
+    siteName: "NEXUS Events",
+    locale: "he_IL",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
