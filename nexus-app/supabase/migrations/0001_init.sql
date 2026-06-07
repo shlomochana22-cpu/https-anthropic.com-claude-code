@@ -1,6 +1,9 @@
 -- NEXUS — initial schema (Phase 3)
 -- Run in the Supabase SQL editor, or via `supabase db push`.
 
+-- Extensions (pgcrypto provides gen_random_bytes / gen_random_uuid for QR codes)
+create extension if not exists pgcrypto;
+
 -- ─────────────────────────────────────────────────────────────
 -- Tables
 -- ─────────────────────────────────────────────────────────────
