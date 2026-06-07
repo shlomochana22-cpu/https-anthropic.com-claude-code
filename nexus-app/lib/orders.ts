@@ -4,6 +4,45 @@ import { browserSupabase } from "./supabaseBrowser";
 
 export type CartItem = { tierSlug: string; qty: number };
 
+export type MyTicket = {
+  id: string;
+  qrCode: string;
+  status: string;
+  eventId: string;
+  eventTitle: string;
+  date: string;
+  time: string;
+};
+
+/** Fetches the signed-in user's tickets (with event details). Empty when not authed. */
+export async function getMyTickets(): Promise<MyTicket[]> {
+  const sb = browserSupabase();
+  if (!sb) return [];
+  const {
+    data: { user },
+  } = await sb.auth.getUser();
+  if (!user) return [];
+
+  const { data } = await sb
+    .from("tickets")
+    .select("id, qr_code, status, event_id, events(title, date, time)")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false });
+
+  return (data ?? []).map((t) => {
+    const ev = t.events as unknown as { title: string; date: string; time: string } | null;
+    return {
+      id: t.id as string,
+      qrCode: t.qr_code as string,
+      status: t.status as string,
+      eventId: t.event_id as string,
+      eventTitle: ev?.title ?? "NEXUS EVENT",
+      date: ev?.date ?? "",
+      time: ev?.time ?? "",
+    };
+  });
+}
+
 export type CreatedOrder = { orderId: string; demo: boolean };
 
 /**
