@@ -56,7 +56,20 @@ supabase/migrations/0001_init.sql  # סכמה + RLS + טריגר משתמש + se
 **סכמה:** `events`, `ticket_tiers`, `profiles`, `orders`, `tickets`
 (עם RLS owner-only, QR ייחודי לכל כרטיס, וטריגר ליצירת profile בהרשמה).
 
-## הבא בתור
-- המרת שאר המסכים מ-`screens/` לקומפוננטות React (profile/favorites/notifications הם stubs; צד מפיק/אדמין טרם הומר).
-- Supabase Auth (login/signup) + יצירת `orders`/`tickets` אמיתיים ב-checkout.
-- אימות QR אמיתי במסך הסורק.
+## מה הושלם ✅
+- **כל המסכים הומרו ל-React** — משתמש (גילוי, אירוע, checkout, אישור, כרטיסים,
+  מועדפים, התראות, פרופיל, ארנק, עזרה, דירוג, מכירה חוזרת), מפיק (דשבורד, אשף
+  יצירת אירוע, סטטיסטיקות, לידרבורד, מוזמנים, קופונים, קמפיינים, לקוחות, יחצן),
+  ואדמין.
+- **Supabase Auth** — login/signup ב-`/login` (עם demo fallback).
+- **הזמנות/כרטיסים אמיתיים** — `lib/orders.ts` יוצר `order` + `ticket` לכל מושב
+  למשתמש המחובר; ה-cart זורם דרך המשפך.
+- **לולאת QR אמיתית** — כרטיס מקבל `qr_code` ב-DB → `/tickets` מציג אותו כ-QR
+  סָריק → `/producer/scanner` שולח ל-`/api/scan` שמאמת ומעדכן את ה-DB.
+
+הכל רץ גם **בלי** Supabase (mock fallback). עם מפתחות ב-`.env.local` — הכל אמיתי.
+
+## רעיונות להמשך
+- `@supabase/ssr` לקריאת session גם ב-server components (כרגע auth בצד לקוח).
+- ספריית QR מקומית במקום שירות חיצוני, וסליקה אמיתית (Stripe/bit).
+- מסכים משניים שנותרו סטטיים: מפה אינטראקטיבית, Live Story.
