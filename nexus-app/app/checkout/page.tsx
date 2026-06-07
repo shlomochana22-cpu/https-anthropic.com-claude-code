@@ -5,10 +5,11 @@ import { getEventById } from "@/lib/queries";
 export default async function CheckoutPage({
   searchParams,
 }: {
-  searchParams: { event?: string; total?: string };
+  searchParams: { event?: string; total?: string; items?: string };
 }) {
   const event = searchParams.event ? await getEventById(searchParams.event) : undefined;
   const subtotal = Number(searchParams.total ?? 0);
+  const items = searchParams.items ?? "";
   const fee = 15;
   const total = subtotal + fee;
 
@@ -50,7 +51,7 @@ export default async function CheckoutPage({
 
       <div className="fixed bottom-0 left-0 w-full p-margin-mobile bg-gradient-to-t from-background via-background/95 to-transparent pt-8">
         <div className="max-w-md mx-auto">
-          <PayButton eventId={event?.id ?? ""} />
+          <PayButton eventId={event?.id ?? ""} items={items} subtotal={subtotal} />
         </div>
       </div>
     </>

@@ -136,7 +136,13 @@ export function EventDetail({ event }: { event: NexusEvent }) {
             </div>
             <button
               disabled={count === 0}
-              onClick={() => router.push(`/checkout?event=${event.id}&total=${total}`)}
+              onClick={() => {
+                const items = event.tiers
+                  .filter((t) => (qty[t.id] || 0) > 0)
+                  .map((t) => `${t.id}:${qty[t.id]}`)
+                  .join(",");
+                router.push(`/checkout?event=${event.id}&total=${total}&items=${items}`);
+              }}
               className="flex-1 bg-primary-container text-on-primary-container h-14 rounded-xl text-[18px] flex items-center justify-center gap-2 shadow-neon-primary active:scale-95 transition-all disabled:opacity-40"
             >
               רכישה מהירה <Icon name="bolt" />

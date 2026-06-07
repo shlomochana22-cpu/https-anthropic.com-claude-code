@@ -6,9 +6,10 @@ import { getEventById } from "@/lib/queries";
 export default async function ConfirmationPage({
   searchParams,
 }: {
-  searchParams: { event?: string };
+  searchParams: { event?: string; order?: string };
 }) {
   const event = searchParams.event ? await getEventById(searchParams.event) : undefined;
+  const orderId = searchParams.order;
 
   return (
     <>
@@ -52,6 +53,11 @@ export default async function ConfirmationPage({
             <p className="text-label-sm text-center text-on-surface-variant opacity-60">
               נא להציג את קוד ה-QR בכניסה לאירוע. הכרטיס אישי ואינו ניתן להעברה.
             </p>
+            {orderId && (
+              <p className="text-label-sm text-center text-primary-fixed/60 mt-2 font-mono">
+                הזמנה #{orderId}
+              </p>
+            )}
           </div>
         </div>
 

@@ -3,14 +3,31 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Icon } from "./Icon";
+import { createOrder, type CartItem } from "@/lib/orders";
 
-export function PayButton({ eventId }: { eventId: string }) {
+export function PayButton({
+  eventId,
+  items,
+  subtotal,
+}: {
+  eventId: string;
+  items: string;
+  subtotal: number;
+}) {
   const router = useRouter();
   const [state, setState] = useState<"idle" | "processing">("idle");
 
-  const pay = () => {
+  const pay = async () => {
     setState("processing");
-    setTimeout(() => router.push(`/confirmation?event=${eventId}`), 1500);
+    const cart: CartItem[] = items
+      .split(",")
+      .filter(Boolean)
+      .map((p) => {
+        const [tierSlug, qty] = p.split(":");
+        return { tierSlug, qty: Number(qty) || 0 };
+      });
+    const { orderId } = await createOrder(eventId, cart, subtotal);
+    router.push(`/confirmation?event=${eventId}&order=${orderId}`);
   };
 
   return (
