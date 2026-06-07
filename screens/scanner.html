@@ -1,0 +1,72 @@
+<!-- סורק כרטיסים - אישור כניסה (Varela Round) -->
+<!DOCTYPE html>
+<html class="dark" dir="rtl" lang="he"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NEXUS Scanner</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Varela+Round&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = { darkMode: "class", theme: { extend: {
+          "colors": {
+            "surface-container-highest": "#353534","surface-dim": "#131313","secondary-container": "#00eefc","secondary": "#d3fbff","primary-fixed": "#bff520",
+            "surface-bright": "#3a3939","error-container": "#93000a","secondary-fixed": "#7df4ff","tertiary": "#ffffff","surface-container-high": "#2a2a2a","error": "#ffb4ab",
+            "on-error-container": "#ffdad6","primary": "#ffffff","on-primary": "#273500","on-surface-variant": "#c3c9ad","surface-container-lowest": "#0e0e0e",
+            "primary-container": "#bff520","on-primary-container": "#536d00","on-primary-fixed": "#151f00","on-error": "#690005","secondary-fixed-dim": "#00dbe9",
+            "surface-container-low": "#1c1b1b","on-surface": "#e5e2e1","primary-fixed-dim": "#a5d700","surface-container": "#201f1f","background": "#131313","surface": "#131313",
+            "outline": "#8d937a","on-background": "#e5e2e1","on-secondary": "#00363a"
+          },
+          "spacing": { "gutter": "16px","xs": "4px","xl": "80px","margin-desktop": "64px","base": "8px","md": "24px","margin-mobile": "20px","lg": "48px","sm": "12px" },
+          "fontFamily": { "body-lg": ["Varela Round"],"label-sm": ["Varela Round"],"label-md": ["Varela Round"],"headline-xl": ["Varela Round"],"headline-lg": ["Varela Round"],"headline-md": ["Varela Round"],"headline-lg-mobile": ["Varela Round"],"body-md": ["Varela Round"] },
+          "fontSize": { "body-lg": ["18px"],"label-sm": ["12px"],"label-md": ["14px"],"headline-xl": ["48px"],"headline-lg": ["32px"],"headline-md": ["24px"],"headline-lg-mobile": ["28px"],"body-md": ["16px"] }
+        } } }
+    </script>
+<style>
+        :root { --primary-lime: #bff520; }
+        body { background-color: #0a0a0a; color: #e5e2e1; font-family: 'Varela Round', sans-serif; overflow: hidden; min-height: max(884px, 100dvh); }
+        .scanner-frame { box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.7); }
+        .scan-line { height: 2px; background: linear-gradient(90deg, transparent, var(--primary-lime), transparent); box-shadow: 0 0 15px var(--primary-lime); animation: scan 2s ease-in-out infinite; }
+        @keyframes scan { 0% { top: 10%; } 50% { top: 90%; } 100% { top: 10%; } }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .success-pulse { animation: pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite; }
+        @keyframes pulse-ring { 0% { transform: scale(.8); opacity: 0.5; } 80%, 100% { transform: scale(1.5); opacity: 0; } }
+    </style>
+</head>
+<body class="bg-background text-on-surface selection:bg-primary-fixed selection:text-on-primary-fixed">
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-mobile h-16 bg-background/80 backdrop-blur-xl border-b border-white/10">
+<div class="flex items-center gap-3"><a href="../index.html" class="text-primary-fixed hover:opacity-80 transition-opacity active:scale-95 duration-150"><span class="material-symbols-outlined">menu</span></a><div class="flex flex-col"><span class="text-headline-md font-extrabold tracking-tighter text-primary-fixed drop-shadow-[0_0_10px_rgba(191,245,32,0.4)]">NEXUS Scanner</span><span class="text-[10px] text-on-surface-variant/80 uppercase tracking-widest leading-none">Main Event 2024</span></div></div>
+<div class="w-10 h-10 rounded-full border border-primary-fixed/30 p-0.5 overflow-hidden"><img alt="Staff" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJ3sZ_f9OIBgQ7cPp3vZ2crwTU0-p1MTEpLjzvfYLi7ZGkwZwob6kNc3iZNtFIizlMgHaVHs5gSl4GEAz9ttzO6GyT-ANfmWVwxkkD9MOK7v2PeocGzFYcrGd8cX_XzVIgCFUoV459fdbTSq3ejA89z3_SDslxvN7KI8GaCVyYKOYSECUd6HUfkWl6LwRQIUIRJgdPJ2WAF_w8vhSoLjB2qq0sjrHnXLn6AICA3h_un9B5oVzE2slUJ3n9dzHj22_rtRxGehU85w"/></div>
+</header>
+<main class="relative h-screen flex flex-col pt-16 pb-20 overflow-hidden">
+<div class="absolute inset-0 z-0"><img class="w-full h-full object-cover grayscale opacity-40" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD23ibCkcgYRU3UHy-oUPocHEUQTuLL7rmS_P1n8vl7JiUr-BNN9tAHtIV_Datfm5InmsTLIJw3E9qpJIbgbnhd-l-2aduOBanW5rg9Jtkvz8lMYlDoJEMg8JjUyVH-jvz6HcmiNKWXER61iYmXz3ymyN_v0XyDnqvTRE8j_NFzzchCT3hchsQFoHttWYcGQiJDDzeTrDkQV7LlozQsG0RE-d1yjEB6KgkOvQ5rhEY00pYUmoMGJ94up3-eM9oNznyaDJXUUx1P0w"/></div>
+<div class="relative flex-1 flex flex-col items-center justify-center z-10 p-gutter">
+<div class="relative w-64 h-64 md:w-80 md:h-80 flex items-center justify-center">
+<div class="absolute inset-0 border-2 border-primary-fixed/20 rounded-xl scanner-frame"></div>
+<div class="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-primary-fixed rounded-tl-lg"></div>
+<div class="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-primary-fixed rounded-tr-lg"></div>
+<div class="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-primary-fixed rounded-bl-lg"></div>
+<div class="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-primary-fixed rounded-br-lg"></div>
+<div class="absolute left-4 right-4 scan-line z-20"></div>
+<div class="text-center"><span class="material-symbols-outlined text-primary-fixed/40 text-6xl animate-pulse">qr_code_scanner</span><p class="text-label-md text-primary-fixed/60 mt-4 tracking-widest">Scanning...</p></div>
+</div>
+<div class="w-full max-w-xs mt-12 px-4"><div class="relative"><label class="text-[10px] font-bold text-primary-fixed uppercase tracking-tighter mb-1 block">Manual Ticket ID</label><input class="w-full bg-surface-container-high border-b-2 border-outline/30 text-white px-4 py-3 rounded-t-lg focus:outline-none focus:border-primary-fixed transition-all placeholder:text-on-surface-variant/30 text-center font-mono tracking-widest" placeholder="NX-XXXX-XXXX" type="text"/><button onclick="simulateScan(true)" class="absolute left-2 bottom-2 text-primary-fixed hover:bg-primary-fixed/10 p-1 rounded-full transition-colors"><span class="material-symbols-outlined">send</span></button></div></div>
+</div>
+<div class="bg-surface-container-lowest/90 backdrop-blur-2xl border-t border-white/5 px-margin-mobile py-4 z-20"><div class="flex items-center justify-between gap-6 max-w-md mx-auto"><div class="flex items-center gap-4"><div class="relative w-12 h-12"><svg class="w-full h-full transform -rotate-90"><circle class="text-white/10" cx="24" cy="24" fill="transparent" r="20" stroke="currentColor" stroke-width="4"></circle><circle class="text-primary-fixed drop-shadow-[0_0_4px_rgba(191,245,32,0.8)]" cx="24" cy="24" fill="transparent" r="20" stroke="currentColor" stroke-dasharray="125.6" stroke-dashoffset="31.4" stroke-width="4"></circle></svg><span class="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-white">75%</span></div><div><div class="text-label-sm text-on-surface-variant/60">Tickets Scanned</div><div class="text-headline-md text-white">1,540 / 2,000</div></div></div><button onclick="simulateScan(true)" class="p-3 bg-white/5 hover:bg-white/10 rounded-xl transition-all border border-white/10"><span class="material-symbols-outlined text-white">refresh</span></button></div></div>
+</main>
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-safe h-20 bg-surface-container-lowest/90 backdrop-blur-2xl border-t border-white/5 shadow-[0_-8px_24px_rgba(0,0,0,0.5)]">
+<a class="flex flex-col items-center justify-center text-primary-fixed drop-shadow-[0_0_8px_rgba(191,245,32,0.6)] scale-110 duration-200" href="scanner.html"><span class="material-symbols-outlined">qr_code_scanner</span><span class="text-label-sm mt-1">Scanner</span></a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant/60 hover:text-primary-fixed transition-colors" href="stats-cyber-rave.html"><span class="material-symbols-outlined">analytics</span><span class="text-label-sm mt-1">Stats</span></a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant/60 hover:text-primary-fixed transition-colors" href="profile.html"><span class="material-symbols-outlined">person</span><span class="text-label-sm mt-1">Profile</span></a>
+</nav>
+<div class="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-md transition-all duration-300 opacity-0 pointer-events-none" id="status-overlay"><div class="text-center transition-transform duration-300 p-8 rounded-3xl scale-90" id="status-content"></div></div>
+<script>
+    function simulateScan(success) {
+        const overlay = document.getElementById('status-overlay'); const content = document.getElementById('status-content');
+        overlay.classList.remove('opacity-0', 'pointer-events-none'); overlay.classList.add('opacity-100'); content.classList.remove('scale-90'); content.classList.add('scale-100');
+        content.innerHTML = `<div class="relative mx-auto w-24 h-24 mb-6"><div class="absolute inset-0 bg-primary-fixed/20 rounded-full success-pulse"></div><div class="relative flex items-center justify-center w-full h-full bg-primary-fixed rounded-full shadow-[0_0_30px_rgba(191,245,32,0.6)]"><span class="material-symbols-outlined text-black text-6xl font-bold">check</span></div></div><h2 class="text-headline-lg text-primary-fixed mb-2">כניסה אושרה</h2><p class="text-headline-md text-white font-extrabold mb-1">עידן אטיאס</p><div class="flex items-center justify-center gap-1 text-label-md text-on-surface-variant"><span class="material-symbols-outlined text-[16px] text-primary-fixed">star</span><span>VIP Experience • דלת אחורית</span></div><button onclick="closeOverlay()" class="mt-8 px-10 py-3 bg-primary-fixed text-black font-bold rounded-full hover:scale-105 active:scale-95 transition-all">סריקה הבאה</button>`;
+        setTimeout(closeOverlay, 2500);
+    }
+    function closeOverlay() { const overlay = document.getElementById('status-overlay'); const content = document.getElementById('status-content'); overlay.classList.add('opacity-0', 'pointer-events-none'); overlay.classList.remove('opacity-100'); content.classList.add('scale-90'); content.classList.remove('scale-100'); }
+</script>
+</body></html>

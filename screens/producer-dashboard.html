@@ -1,0 +1,84 @@
+<!-- דשבורד מפיק - נקסוס (Varela Round) -->
+<!DOCTYPE html>
+<html class="dark" dir="rtl" lang="he"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NEXUS | דשבורד מפיק</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Varela+Round&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = { darkMode: "class", theme: { extend: {
+          "colors": {
+            "error": "#ffb4ab","surface-container-lowest": "#0e0e0e","on-primary-fixed-variant": "#3a4d00","surface": "#131313","surface-container-highest": "#353534",
+            "primary": "#ffffff","on-tertiary": "#5b005b","outline": "#8d937a","on-tertiary-container": "#b300b3","on-background": "#e5e2e1","surface-dim": "#131313",
+            "inverse-primary": "#4e6700","on-surface-variant": "#c3c9ad","outline-variant": "#434934","surface-bright": "#3a3939","on-error": "#690005","tertiary-container": "#ffd7f5",
+            "inverse-surface": "#e5e2e1","surface-tint": "#a5d700","secondary-fixed-dim": "#00dbe9","surface-container": "#201f1f","secondary": "#d3fbff","on-surface": "#e5e2e1",
+            "secondary-container": "#00eefc","tertiary-fixed": "#ffd7f5","on-primary-container": "#536d00","on-primary-fixed": "#151f00","surface-container-high": "#2a2a2a",
+            "on-secondary-container": "#00686f","inverse-on-surface": "#313030","background": "#131313","on-tertiary-fixed": "#380038","on-secondary-fixed-variant": "#004f54",
+            "on-secondary-fixed": "#002022","on-tertiary-fixed-variant": "#810081","tertiary": "#ffffff","primary-fixed-dim": "#a5d700","primary-fixed": "#bff520","primary-container": "#bff520",
+            "tertiary-fixed-dim": "#ffabf3","surface-variant": "#353534","error-container": "#93000a","on-secondary": "#00363a","on-primary": "#273500","secondary-fixed": "#7df4ff",
+            "on-error-container": "#ffdad6","surface-container-low": "#1c1b1b"
+          },
+          "borderRadius": { "DEFAULT": "0.25rem","lg": "0.5rem","xl": "0.75rem","full": "9999px" },
+          "spacing": { "xs": "4px","margin-desktop": "64px","margin-mobile": "20px","xl": "80px","sm": "12px","md": "24px","gutter": "16px","lg": "48px","base": "8px" },
+          "fontFamily": { "headline-md": ["Varela Round"],"body-md": ["Varela Round"],"body-lg": ["Varela Round"],"headline-xl": ["Varela Round"],"label-md": ["Varela Round"],"headline-lg-mobile": ["Varela Round"],"headline-lg": ["Varela Round"],"label-sm": ["Varela Round"] },
+          "fontSize": {
+            "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],"body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],"body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+            "headline-xl": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],"label-md": ["14px", {"lineHeight": "1", "fontWeight": "600"}],
+            "headline-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "700"}],"headline-lg": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],"label-sm": ["12px", {"lineHeight": "1", "fontWeight": "500"}]
+          }
+        } } }
+    </script>
+<style>
+        body { background-color: #0a0a0a; color: #e5e2e1; overflow-x: hidden; font-family: 'Varela Round', sans-serif; }
+        .glass-card { background: rgba(26, 26, 26, 0.4); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .neon-glow-primary { box-shadow: 0 0 15px rgba(191, 245, 32, 0.2); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .cyber-gradient-border { position: relative; border-radius: 0.75rem; }
+        .cyber-gradient-border::before { content: ""; position: absolute; inset: -1px; background: linear-gradient(90deg, #bff520, #00eefc, #bff520); background-size: 200% 100%; animation: move-gradient 4s linear infinite; z-index: -1; border-radius: inherit; opacity: 0.3; }
+        @keyframes move-gradient { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
+    </style>
+</head>
+<body class="font-body-md">
+<nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-mobile h-16 bg-background/80 backdrop-blur-xl border-b border-white/10">
+<div class="flex items-center gap-4"><a href="../index.html" class="material-symbols-outlined text-primary-fixed cursor-pointer">menu</a><span class="text-headline-md font-extrabold tracking-tighter text-primary-fixed drop-shadow-[0_0_10px_rgba(191,245,32,0.4)]">NEXUS</span></div>
+<div class="flex items-center gap-sm"><div class="hidden md:flex gap-md ml-lg"><span class="text-primary font-label-md cursor-pointer">דאשבורד</span><a href="guest-list.html" class="text-on-surface-variant/60 font-label-md cursor-pointer hover:opacity-80">אירועים</a><a href="stats-detailed.html" class="text-on-surface-variant/60 font-label-md cursor-pointer hover:opacity-80">דוחות</a></div><img alt="Avatar" class="w-10 h-10 rounded-full border border-primary-fixed/30" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAY_c4B7Lwf-rFy0O0EVHOeDN4gpzpaLh9T_eEkX6FP5TPs_ayDWYhwY9lk22veq6cIA1yIotZTdNUeRcP4QC8sZrsP-QlPQfn04woKxmgREuDw_ptYccCoTzkBJ2gmGrdP1SeyvGK2NeLiyZw3Rf3c1QWND7ctxp1IB-JYiKN90joGNFgX2NqjL6cIL-hXb3qJAtQDHT7KYdY9nDTZS5ysMmmug0Jf7a_zww1depV13NJfhN1HMKNmGAfmeZqnnx4y9I-Lj8vWHw"/></div>
+</nav>
+<aside class="hidden md:flex fixed right-0 top-16 bottom-0 w-80 bg-surface-dim border-l border-white/5 flex-col py-lg z-40">
+<div class="px-md mb-lg"><div class="flex items-center gap-sm mb-xs"><img class="w-12 h-12 rounded-xl bg-primary-container/20 border border-primary-fixed/20" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAASvC5Dq2WkfQn3jsfDEmHroDkv1DcXdLU2X97z8eV6V9Oiopbq_NJZK5H6Dn-udCnQx5BKbLYSs-VDcT1ShLojpmHJFf9cmvx80EUT53Sgwpxs7etsVDHsOh2zbf6cobFFaFCKqrm3I16VtG2G_owT3xTw0HRnbJ0LNST1mg_1_nDqLdrh0kIelFZxhKacW8f53Eq-BpnyautUAcSuUABNS7GPZtDhtltlers7SogALq_QzDV23l2pzTwBraZILYI42N8aNB51w"/><div><h3 class="font-headline-md text-primary-fixed">אלי כהן</h3><p class="text-label-sm text-on-surface-variant/60">מפיק פרימיום • #8829</p></div></div></div>
+<nav class="flex-1 px-sm space-y-2">
+<div class="flex items-center gap-sm px-md py-sm bg-primary-container/20 text-primary-fixed font-bold border-r-4 border-primary-fixed cursor-pointer"><span class="material-symbols-outlined">dashboard</span><span class="text-body-md">דאשבורד מפיק</span></div>
+<a href="customers.html" class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:bg-white/5 cursor-pointer"><span class="material-symbols-outlined">group</span><span class="text-body-md">ניהול יח"צ</span></a>
+<a href="campaigns.html" class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:bg-white/5 cursor-pointer"><span class="material-symbols-outlined">campaign</span><span class="text-body-md">קמפיינים</span></a>
+<a href="coupons.html" class="flex items-center gap-sm px-md py-sm text-on-surface-variant hover:bg-white/5 cursor-pointer"><span class="material-symbols-outlined">local_offer</span><span class="text-body-md">קופונים</span></a>
+</nav>
+<div class="px-md pt-lg"><a href="login.html" class="w-full flex items-center justify-center gap-xs py-sm text-error hover:bg-error/10 transition-colors rounded-lg"><span class="material-symbols-outlined">logout</span><span class="font-label-md">יציאה</span></a></div>
+</aside>
+<main class="pt-24 pb-32 px-margin-mobile md:mr-80 md:px-margin-desktop min-h-screen">
+<header class="mb-lg"><h1 class="font-headline-xl text-primary-fixed mb-xs">שלום אלי</h1><p class="text-body-lg text-on-surface-variant">הנה סקירה של הביצועים שלך להיום.</p></header>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter mb-lg">
+<a href="stats-detailed.html" class="glass-card p-md rounded-xl neon-glow-primary"><div class="flex justify-between items-start mb-sm"><span class="material-symbols-outlined text-primary-fixed-dim bg-primary-fixed-dim/10 p-2 rounded-lg">trending_up</span><span class="text-label-sm text-primary-fixed-dim bg-primary-fixed-dim/20 px-2 py-0.5 rounded-full">+12%</span></div><p class="text-label-md font-label-md text-on-surface-variant mb-xs">מכירות היום</p><p class="text-headline-lg text-primary">₪14,250</p></a>
+<div class="glass-card p-md rounded-xl"><div class="flex justify-between items-start mb-sm"><span class="material-symbols-outlined text-secondary-fixed-dim bg-secondary-fixed-dim/10 p-2 rounded-lg">confirmation_number</span></div><p class="text-label-md font-label-md text-on-surface-variant mb-xs">סה"כ כרטיסים</p><p class="text-headline-lg text-primary">1,240</p></div>
+<a href="wallet.html" class="glass-card p-md rounded-xl"><div class="flex justify-between items-start mb-sm"><span class="material-symbols-outlined text-tertiary-fixed-dim bg-tertiary-fixed-dim/10 p-2 rounded-lg">payments</span></div><p class="text-label-md font-label-md text-on-surface-variant mb-xs">הכנסות החודש</p><p class="text-headline-lg text-primary">₪84,300</p></a>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter mb-lg">
+<div class="lg:col-span-2 cyber-gradient-border glass-card p-md overflow-hidden"><div class="flex items-center gap-xs mb-md"><span class="material-symbols-outlined text-primary-fixed animate-pulse">auto_awesome</span><h3 class="font-headline-md text-primary">תובנות בינה מלאכותית</h3></div>
+<div class="space-y-md"><p class="text-body-lg font-medium leading-relaxed">הקהל שלך מגיע בעיקר מ<span class="text-primary-fixed">תל אביב (70%)</span> בגילי <span class="text-secondary-fixed">22-28</span>.</p>
+<div class="flex flex-wrap gap-sm"><div class="flex-1 bg-white/5 p-sm rounded-lg border border-white/5"><p class="text-label-sm text-on-surface-variant mb-xs">יעילות שיווק</p><div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden"><div class="h-full bg-primary-fixed w-[85%]"></div></div><p class="text-right text-label-sm text-primary-fixed mt-1">85% גבוהה</p></div><div class="flex-1 bg-white/5 p-sm rounded-lg border border-white/5"><p class="text-label-sm text-on-surface-variant mb-xs">שימור לקוחות</p><div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden"><div class="h-full bg-secondary-fixed w-[42%]"></div></div><p class="text-right text-label-sm text-secondary-fixed mt-1">42% יציב</p></div></div></div></div>
+<div class="glass-card p-md rounded-xl flex flex-col justify-between"><div><h3 class="font-headline-md text-primary mb-md">ארנק</h3><div class="bg-surface-container-high p-md rounded-lg mb-md text-center"><p class="text-label-md font-label-md text-on-surface-variant mb-xs">יתרה להעברה</p><p class="text-headline-lg text-primary-fixed mb-sm">₪32,405.00</p></div></div><a href="wallet.html" class="w-full py-md bg-primary-container text-on-primary-container font-headline-md rounded-xl transition-all active:scale-95 hover:brightness-110 neon-glow-primary animate-pulse text-center">בקשת משיכה</a></div>
+</div>
+<div class="mb-lg"><div class="flex justify-between items-center mb-md"><h3 class="font-headline-md text-primary">אירועים פעילים</h3><a href="guest-list.html" class="text-label-md font-label-md text-primary-fixed hover:underline">הצג הכל</a></div>
+<div class="space-y-sm">
+<a href="stats-detailed.html" class="glass-card rounded-xl p-sm flex items-center gap-md transition-all hover:bg-white/5 cursor-pointer border border-white/5"><img class="w-16 h-16 rounded-lg object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNmfxpFk7UBFo-lKGuYz3vdA3n1JIqSVN2OKJFvgCHukGIrvdIWOo-5zzfnIjKZj9gWMpfrPkvAm42M1pW8uussSy5U_zym0Dc-Gwl4XP24uJcpGWUmZnX7reE-pHQqxAp7lkAK1PgCXNO_YOBBAASUoO_By-Eq-80--1wyNSz5rX1Q8ktvbNLLSxv4lSllKbbODSQLv_SvdSrzQYzMBeeyyUq2gCr_9cYM6Fik2EnUq11UB9oLjr4UrJIXMRAyq2NmbsOSEt5qw"/><div class="flex-1"><h4 class="font-label-md text-primary">NEON RITUAL: פתיחת הקיץ</h4><p class="text-label-sm text-on-surface-variant">האומן 17 • 24.08.23</p><div class="flex items-center gap-xs mt-1"><div class="h-1.5 w-32 bg-surface-container-high rounded-full overflow-hidden"><div class="h-full bg-primary-fixed w-[92%]"></div></div><span class="text-[10px] text-primary-fixed font-bold">92% נמכר</span></div></div><div class="text-left ml-sm"><p class="text-label-md font-bold text-primary">₪64,200</p><p class="text-[10px] text-on-surface-variant">סך הכנסה</p></div></a>
+<a href="stats-cyber-rave.html" class="glass-card rounded-xl p-sm flex items-center gap-md transition-all hover:bg-white/5 cursor-pointer border border-white/5"><img class="w-16 h-16 rounded-lg object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuClRoUpubFuuOzWCWFu2pA6e3Sz2h8bZPB7su5N0LTlmEjVzYj_TPjFKxBnkCddjdDsP42bv9ZWASu5zVz8tXDyqs5UzNdUZrxn5Ga97vvtae3MU2lAMwJZoY5TPQCo8MjqNShjv_C1P-VRiWTR2p-VbRIQP5cazq_zbtpF4zffZDkKqv0Y-whqLfzgvrFLcNX9FhCpb12JI2hIWfopmeFR22KJ9grsOnJJ-oprfiZeCv2LWG-OZC_o9QopZHzGC4gYDUyIqlmlWg"/><div class="flex-1"><h4 class="font-label-md text-primary">SKYLINE SESSIONS</h4><p class="text-label-sm text-on-surface-variant">גג המלון החדש • 28.08.23</p><div class="flex items-center gap-xs mt-1"><div class="h-1.5 w-32 bg-surface-container-high rounded-full overflow-hidden"><div class="h-full bg-secondary-fixed w-[45%]"></div></div><span class="text-[10px] text-secondary-fixed font-bold">45% נמכר</span></div></div><div class="text-left ml-sm"><p class="text-label-md font-bold text-primary">₪12,150</p><p class="text-[10px] text-on-surface-variant">סך הכנסה</p></div></a>
+</div>
+</div>
+</main>
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-safe h-20 bg-surface-container-lowest/90 backdrop-blur-2xl border-t border-white/5 shadow-[0_-8px_24px_rgba(0,0,0,0.5)] rounded-t-xl">
+<a href="stats-detailed.html" class="flex flex-col items-center justify-center text-primary-fixed drop-shadow-[0_0_8px_rgba(191,245,32,0.6)] scale-110"><span class="material-symbols-outlined">dashboard</span><span class="text-label-sm">דאשבורד</span></a>
+<a href="guest-list.html" class="flex flex-col items-center justify-center text-on-surface-variant/60"><span class="material-symbols-outlined">confirmation_number</span><span class="text-label-sm">אירועים</span></a>
+<a href="leaderboard.html" class="flex flex-col items-center justify-center text-on-surface-variant/60"><span class="material-symbols-outlined">leaderboard</span><span class="text-label-sm">דירוג</span></a>
+<a href="profile.html" class="flex flex-col items-center justify-center text-on-surface-variant/60"><span class="material-symbols-outlined">person</span><span class="text-label-sm">פרופיל</span></a>
+</nav>
+</body></html>
