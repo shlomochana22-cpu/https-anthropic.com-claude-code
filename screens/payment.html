@@ -1,0 +1,104 @@
+<!-- תשלום - נקסוס (Varela Round) -->
+<!DOCTYPE html>
+<html class="dark" dir="rtl" lang="he"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NEXUS - תשלום</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Varela+Round&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = { darkMode: "class", theme: { extend: {
+          "colors": {
+            "tertiary-container": "#ffd7f5","primary-fixed": "#bff520","secondary": "#d3fbff","primary-fixed-dim": "#a5d700",
+            "on-secondary-container": "#00686f","on-primary-container": "#536d00","outline": "#8d937a","on-secondary": "#00363a",
+            "tertiary-fixed": "#ffd7f5","inverse-surface": "#e5e2e1","primary-container": "#bff520","on-secondary-fixed-variant": "#004f54",
+            "surface-dim": "#131313","tertiary-fixed-dim": "#ffabf3","surface-variant": "#353534","on-tertiary-fixed": "#380038",
+            "inverse-primary": "#4e6700","secondary-fixed-dim": "#00dbe9","outline-variant": "#434934","surface-container-lowest": "#0e0e0e",
+            "inverse-on-surface": "#313030","surface-container-low": "#1c1b1b","on-primary": "#273500","error": "#ffb4ab",
+            "on-surface-variant": "#c3c9ad","on-tertiary-fixed-variant": "#810081","surface-container-highest": "#353534","error-container": "#93000a",
+            "background": "#131313","secondary-fixed": "#7df4ff","on-error": "#690005","surface-tint": "#a5d700","surface": "#131313",
+            "surface-bright": "#3a3939","on-error-container": "#ffdad6","on-surface": "#e5e2e1","on-secondary-fixed": "#002022",
+            "primary": "#ffffff","on-background": "#e5e2e1","tertiary": "#ffffff","on-primary-fixed": "#151f00","on-tertiary-container": "#b300b3",
+            "on-tertiary": "#5b005b","on-primary-fixed-variant": "#3a4d00","surface-container-high": "#2a2a2a","surface-container": "#201f1f","secondary-container": "#00eefc"
+          },
+          "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+          "spacing": { "xl": "80px","base": "8px","margin-mobile": "20px","md": "24px","gutter": "16px","xs": "4px","margin-desktop": "64px","sm": "12px","lg": "48px" },
+          "fontFamily": { "sans": ["Varela Round","sans-serif"],"headline-md": ["Varela Round"],"body-md": ["Varela Round"],"headline-lg-mobile": ["Varela Round"],"label-md": ["Varela Round"],"headline-xl": ["Varela Round"],"body-lg": ["Varela Round"],"headline-lg": ["Varela Round"],"label-sm": ["Varela Round"],"varela": ["Varela Round"] },
+          "fontSize": {
+            "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],"body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+            "headline-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "700"}],"label-md": ["14px", {"lineHeight": "1", "fontWeight": "600"}],
+            "headline-xl": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],"body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+            "headline-lg": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],"label-sm": ["12px", {"lineHeight": "1", "fontWeight": "500"}]
+          }
+        } } }
+    </script>
+<style>
+        body { background-color: #0a0a0a; color: #e5e2e1; -webkit-tap-highlight-color: transparent; font-family: 'Varela Round', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .glass-card { background: rgba(26, 26, 26, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .neon-border-glow:focus-within { border-color: #bff520; box-shadow: 0 0 15px rgba(191, 245, 32, 0.3); }
+        .shimmer-btn { position: relative; overflow: hidden; }
+        .shimmer-btn::after { content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent); transform: rotate(45deg); animation: shimmer 3s infinite; }
+        @keyframes shimmer { 0% { transform: translateX(-100%) rotate(45deg); } 100% { transform: translateX(100%) rotate(45deg); } }
+        body { min-height: max(884px, 100dvh); }
+    </style>
+</head>
+<body class="bg-background min-h-screen pb-32 font-varela">
+<header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-white/10 shadow-[0_0_15px_rgba(191,245,32,0.2)] h-16 flex flex-row-reverse justify-between items-center px-margin-mobile">
+<span class="font-varela text-headline-md text-primary-fixed tracking-tighter font-bold">NEXUS</span>
+<a href="order-summary.html" class="active:scale-95 duration-150 text-primary-fixed"><span class="material-symbols-outlined text-[28px]">arrow_forward</span></a>
+<div class="flex items-center gap-4"><span class="material-symbols-outlined text-on-surface-variant">timer</span></div>
+</header>
+<main class="pt-24 px-margin-mobile max-w-lg mx-auto">
+<div class="glass-card rounded-xl p-md mb-gutter">
+<div class="flex justify-between items-center mb-4"><h2 class="font-varela text-headline-md text-primary-fixed">סיכום הזמנה</h2><span class="font-varela text-label-md text-on-surface-variant">#NX-8821</span></div>
+<div class="space-y-2">
+<div class="flex justify-between font-varela text-body-md"><span class="text-on-surface-variant">כרטיס VIP - Nexus Rave</span><span class="text-on-surface">₪350.00</span></div>
+<div class="flex justify-between font-varela text-body-md"><span class="text-on-surface-variant">דמי טיפול</span><span class="text-on-surface">₪15.00</span></div>
+<div class="h-[1px] bg-white/10 my-2"></div>
+<div class="flex justify-between font-varela text-headline-md"><span class="text-primary-fixed">סה"כ לתשלום</span><span class="text-primary-fixed">₪365.00</span></div>
+</div>
+</div>
+<div class="space-y-3 mb-8">
+<button class="w-full h-14 bg-white rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-transform"><span class="font-varela text-headline-md text-black">Pay</span><span class="material-symbols-outlined text-black font-varela">apps</span></button>
+<button class="w-full h-14 bg-black border border-white/20 rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-transform"><img alt="Google Pay" class="h-6" src="https://lh3.googleusercontent.com/aida-public/AB6AXuACLw_wrEGQYw8DyBj9xWqtp8VHIWzYByo4Ps9o0IIp89tPz6SnzzBaYM_SNooFP-gCRgR5Llgln-KyhWUthGEZpTwLOKPf-uB_cHMhUzmosl8cNipeAZ2KEwDy86rI8FfEjMnqD_DC0fqjpybuVSGm7Pz41lT3K0vKu1ljgH9u1mZFIKmkB0PTnFbeTZcHgP7xNm1TAD1W5R-APd-S-eFu3x_6URJJ09pH-WsvEooBTAFnD5XNAgszXLK38IaJ0bXSfXl6HMZTGA"/></button>
+<button class="w-full h-14 bg-[#00d0ff] rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-transform shadow-[0_0_15px_rgba(0,208,255,0.3)]"><span class="font-varela text-white font-bold italic text-[22px]">bit</span><span class="font-varela text-white text-body-md">תשלום מהיר</span></button>
+</div>
+<div class="flex items-center gap-4 mb-8"><div class="flex-1 h-[1px] bg-white/10"></div><span class="font-varela text-label-sm text-outline uppercase tracking-widest">או בכרטיס אשראי</span><div class="flex-1 h-[1px] bg-white/10"></div></div>
+<form class="space-y-gutter">
+<div class="space-y-2"><label class="font-varela text-label-md text-primary-fixed block uppercase">מספר כרטיס</label>
+<div class="relative neon-border-glow bg-surface-container-low rounded-lg border border-white/10 transition-all"><input class="w-full bg-transparent border-none focus:ring-0 px-4 py-3 text-on-surface placeholder:text-outline/50 font-varela tracking-widest" placeholder="0000 0000 0000 0000" type="text"/><div class="absolute left-4 top-1/2 -translate-y-1/2 flex gap-1 opacity-60"><span class="material-symbols-outlined">credit_card</span></div></div></div>
+<div class="grid grid-cols-2 gap-gutter">
+<div class="space-y-2"><label class="font-varela text-label-md text-primary-fixed block uppercase">תוקף</label><div class="neon-border-glow bg-surface-container-low rounded-lg border border-white/10 transition-all"><input class="w-full bg-transparent border-none focus:ring-0 px-4 py-3 text-on-surface placeholder:text-outline/50 font-varela" placeholder="MM/YY" type="text"/></div></div>
+<div class="space-y-2"><label class="font-varela text-label-md text-primary-fixed block uppercase">CVV</label><div class="neon-border-glow bg-surface-container-low rounded-lg border border-white/10 transition-all"><input class="w-full bg-transparent border-none focus:ring-0 px-4 py-3 text-on-surface placeholder:text-outline/50 font-varela" placeholder="123" type="text"/></div></div>
+</div>
+<div class="space-y-2"><label class="font-varela text-label-md text-primary-fixed block uppercase">שם בעל הכרטיס</label><div class="neon-border-glow bg-surface-container-low rounded-lg border border-white/10 transition-all"><input class="w-full bg-transparent border-none focus:ring-0 px-4 py-3 text-on-surface placeholder:text-outline/50 font-varela" placeholder="ישראל ישראלי" type="text"/></div></div>
+<div class="flex items-center justify-center gap-2 py-4 bg-surface-container-lowest/50 rounded-lg border border-dashed border-white/5"><span class="material-symbols-outlined text-primary-fixed-dim text-sm" style="font-variation-settings: 'FILL' 1;">verified_user</span><span class="font-varela text-label-sm text-outline">תשלום מאובטח בתקן PCI-DSS Level 1</span></div>
+</form>
+<div class="fixed bottom-0 left-0 w-full p-margin-mobile bg-gradient-to-t from-background via-background/95 to-transparent pt-10">
+<div class="flex items-center gap-3 mb-4 px-2">
+<div class="relative flex items-center"><input class="w-5 h-5 rounded border-white/20 bg-surface-container-low text-primary-fixed focus:ring-primary-fixed focus:ring-offset-0 transition-all cursor-pointer" id="terms-checkbox" type="checkbox"/></div>
+<label class="font-varela text-label-sm text-on-surface-variant cursor-pointer" for="terms-checkbox">אני מסכים ל<span class="text-primary-fixed underline">תנאי השימוש</span> ול<span class="text-primary-fixed underline">מדיניות הפרטיות</span> של NEXUS</label>
+</div>
+<button id="pay-btn" class="w-full h-16 bg-primary-fixed rounded-xl flex items-center justify-center gap-3 active:scale-95 transition-all shadow-[0_0_30px_rgba(191,245,32,0.4)] shimmer-btn group">
+<span class="font-varela text-headline-md text-on-primary-fixed font-bold">בצע תשלום</span><span class="material-symbols-outlined text-on-primary-fixed group-hover:translate-x-[-4px] transition-transform">lock</span>
+</button>
+<p class="text-center mt-3 font-varela text-label-sm text-outline/60">לחיצה על הכפתור מהווה אישור לתקנון האתר</p>
+</div>
+</main>
+<a href="../index.html" class="fixed top-20 left-4 z-50 bg-surface-container-high/80 backdrop-blur border border-white/10 text-primary-fixed rounded-full px-3 py-1.5 text-xs flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">grid_view</span> Hub</a>
+<script>
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', () => input.parentElement.classList.add('border-primary-fixed'));
+            input.addEventListener('blur', () => input.parentElement.classList.remove('border-primary-fixed'));
+        });
+        document.getElementById('pay-btn').addEventListener('click', function() {
+            const btnText = this.querySelector('span:first-child');
+            const icon = this.querySelector('.material-symbols-outlined');
+            btnText.innerText = 'מעבד תשלום...'; icon.innerText = 'sync'; icon.classList.add('animate-spin');
+            setTimeout(() => { window.location.href = 'purchase-confirmation.html'; }, 1500);
+        });
+    </script>
+</body></html>
