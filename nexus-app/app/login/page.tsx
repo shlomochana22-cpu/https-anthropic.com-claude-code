@@ -12,10 +12,12 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [info, setInfo] = useState<string | null>(null);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    setInfo(null);
     setBusy(true);
     const sb = browserSupabase();
     try {
@@ -24,15 +26,27 @@ export default function LoginPage() {
         router.push("/producer");
         return;
       }
-      const { error } =
-        mode === "login"
-          ? await sb.auth.signInWithPassword({ email, password })
-          : await sb.auth.signUp({ email, password });
-      if (error) {
-        setError(error.message);
-        return;
+      if (mode === "login") {
+        const { error } = await sb.auth.signInWithPassword({ email, password });
+        if (error) {
+          setError(error.message);
+          return;
+        }
+        router.push("/producer");
+      } else {
+        const { data, error } = await sb.auth.signUp({ email, password });
+        if (error) {
+          setError(error.message);
+          return;
+        }
+        // If email confirmation is on, there is no session yet.
+        if (data.session) {
+          router.push("/producer");
+        } else {
+          setInfo("נרשמת! שלחנו מייל אימות — אשר אותו ואז התחבר.");
+          setMode("login");
+        }
       }
-      router.push("/producer");
     } finally {
       setBusy(false);
     }
@@ -91,6 +105,7 @@ export default function LoginPage() {
         </div>
 
         {error && <p className="text-error text-label-md text-center">{error}</p>}
+        {info && <p className="text-primary-fixed text-label-md text-center">{info}</p>}
 
         <button
           type="submit"
