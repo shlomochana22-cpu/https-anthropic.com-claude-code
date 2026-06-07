@@ -1,0 +1,64 @@
+<!-- דירוג ומשוב - נקסוס -->
+<!DOCTYPE html>
+<html class="dark" dir="rtl" lang="he"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NEXUS | דירוג אירועים ומשוב</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600&amp;family=Varela+Round&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = { darkMode: "class", theme: { extend: { "colors": {
+        "secondary": "#d3fbff","tertiary": "#ffffff","background": "#131313","surface-bright": "#3a3939","primary-container": "#bff520","surface-container": "#201f1f","on-background": "#e5e2e1",
+        "secondary-container": "#00eefc","surface-container-highest": "#353534","surface": "#131313","primary-fixed": "#bff520","error": "#ffb4ab","surface-container-low": "#1c1b1b",
+        "primary-fixed-dim": "#a5d700","primary": "#ffffff","surface-container-high": "#2a2a2a","secondary-fixed": "#7df4ff","on-surface-variant": "#c3c9ad","outline": "#8d937a",
+        "on-surface": "#e5e2e1","on-primary": "#273500","on-primary-container": "#536d00","surface-container-lowest": "#0e0e0e","on-primary-fixed": "#151f00"
+      },
+      "spacing": { "xs": "4px","margin-mobile": "20px","md": "24px","sm": "12px","lg": "48px","gutter": "16px","base": "8px" } } } }
+    </script>
+<style>
+        body { font-family: 'Varela Round', sans-serif; background-color: #0a0a0a; color: #e5e2e1; overflow-x: hidden; min-height: max(884px, 100dvh); }
+        .varela { font-family: 'Varela Round', sans-serif; }
+        .neon-glow-lime { filter: drop-shadow(0 0 8px rgba(191, 245, 32, 0.6)); }
+        .glass-card { background: rgba(26, 26, 26, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .star-rating input:checked ~ label, .star-rating label:hover, .star-rating label:hover ~ label { color: #bff520; text-shadow: 0 0 10px rgba(191, 245, 32, 0.8); }
+        .rtl-mirror { transform: scaleX(-1); }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-white/10 flex justify-between items-center px-margin-mobile h-16">
+<a href="my-tickets.html" class="active:scale-95 transition-transform text-on-surface-variant flex items-center justify-center"><span class="material-symbols-outlined rtl-mirror">arrow_back_ios</span></a>
+<h1 class="font-headline-md text-2xl font-extrabold tracking-tighter text-primary-fixed drop-shadow-[0_0_8px_rgba(191,245,32,0.6)]">NEXUS</h1>
+<a href="../index.html" class="w-10 h-10 rounded-full overflow-hidden border border-primary-fixed/30"><img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxbYyDf1Un2AxfznglLtmrlVaYERSmxyAWXUKnr8dxEzVmrp3G4ITeksXJlhSID3rDDN5POXN7j9NwHp_I6x5Ispb28c4srNVQayXdyo738z7lSn_ObSeVgqmHJf2K9GbRGGIkxBdWl3AyF0Nh9JksliYBysUddh7XvCIzOQ7mMkcK5YhvyrCOBOeLXyPHJzEF70-r7YMlyxzm0OyQTKiqLMeykV5CmobVXymSAeWztfWTOyhqMxRSbWN-wCYG6xjEHBSAeDPAwg"/></a>
+</header>
+<main class="pt-24 pb-32 px-margin-mobile max-w-2xl mx-auto space-y-gutter">
+<section class="text-center space-y-sm mb-lg"><h2 class="varela text-3xl text-primary-fixed neon-glow-lime">איך הייתה המסיבה?</h2><p class="font-body-md text-on-surface-variant/80">שתפו את האנרגיה שלכם עם קהילת נקסוס.</p></section>
+<section class="glass-card rounded-xl p-md space-y-md">
+<div class="flex flex-col items-center space-y-sm"><span class="text-sm text-primary-fixed uppercase tracking-widest">אווירה כללית</span><div class="star-rating flex flex-row-reverse justify-center gap-2 text-on-surface-variant/30">
+<input class="hidden" id="star5" name="rating" type="radio" value="5"/><label class="cursor-pointer transition-all duration-200 active:scale-125" for="star5"><span class="material-symbols-outlined text-[40px]" style="font-variation-settings: 'FILL' 1;">star</span></label>
+<input class="hidden" id="star4" name="rating" type="radio" value="4"/><label class="cursor-pointer transition-all duration-200 active:scale-125" for="star4"><span class="material-symbols-outlined text-[40px]" style="font-variation-settings: 'FILL' 1;">star</span></label>
+<input class="hidden" id="star3" name="rating" type="radio" value="3"/><label class="cursor-pointer transition-all duration-200 active:scale-125" for="star3"><span class="material-symbols-outlined text-[40px]" style="font-variation-settings: 'FILL' 1;">star</span></label>
+<input class="hidden" id="star2" name="rating" type="radio" value="2"/><label class="cursor-pointer transition-all duration-200 active:scale-125" for="star2"><span class="material-symbols-outlined text-[40px]" style="font-variation-settings: 'FILL' 1;">star</span></label>
+<input class="hidden" id="star1" name="rating" type="radio" value="1"/><label class="cursor-pointer transition-all duration-200 active:scale-125" for="star1"><span class="material-symbols-outlined text-[40px]" style="font-variation-settings: 'FILL' 1;">star</span></label>
+</div></div>
+<div class="pt-sm"><label class="block text-xs text-primary-fixed uppercase tracking-widest mb-2 px-1 text-right">כתבו ביקורת</label><div class="relative bg-surface-container-low rounded-lg border border-white/10 transition-all focus-within:border-primary-fixed"><textarea class="w-full bg-transparent border-none focus:ring-0 text-on-surface p-md placeholder:text-on-surface-variant/30 text-right" placeholder="מה הפך את הלילה למיוחד?" rows="4"></textarea></div></div>
+<button id="submit-btn" class="w-full h-14 bg-primary-container text-on-primary-fixed font-headline-md rounded-xl active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2 drop-shadow-[0_0_15px_rgba(191,245,32,0.4)]"><span>שליחת ביקורת</span><span class="material-symbols-outlined rtl-mirror">send</span></button>
+</section>
+<section class="space-y-md pt-lg"><div class="flex items-center justify-between"><h3 class="text-2xl font-bold text-on-surface">ביקורות אחרונות</h3><span class="text-sm text-primary-fixed bg-primary-fixed/10 px-sm py-1 rounded-full">128 ביקורות</span></div>
+<div class="space-y-gutter">
+<div class="glass-card rounded-xl p-md space-y-sm"><div class="flex justify-between items-start"><div class="flex items-center gap-sm"><div class="w-10 h-10 rounded-full border border-white/10 overflow-hidden"><img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAimMzyKE2QJICItFf0aCIs6zGdcFcpyuZkCfaMqbHUe0nFUodV3d0HmO63WfIM-oNhohFJhBuNHfL3CQDpG3iRaAOdSMLrWF3xkw5fKBPw8kpXvNNnKhgT05mNP-_mqjg5o3UcHMtoNccDi6TIGbl9ngaa0_NJbCFO8aaa0aOaSav9PVZ7enbJylNWI2AvpH2ldCq5IyPnxXdHEgZZPOnrTKVGT4-v8rKCkU_0EBMzx6nZYm0NCsA_GnZXEnglJSyFVoX_0tQUsw"/></div><div><p class="text-sm text-on-surface">שרה לוי</p><p class="text-[10px] text-on-surface-variant/50 uppercase">אתמול בבלוק</p></div></div><div class="flex flex-row-reverse text-primary-fixed text-xs"><span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span><span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span><span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span><span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span><span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span></div></div><p class="font-body-md text-on-surface-variant/90 leading-relaxed italic">"הויז'ואל היה מעולם אחר! ללא ספק ההפקה הכי טובה של NEXUS העונה."</p></div>
+<div class="glass-card rounded-xl p-md space-y-sm opacity-90"><div class="flex justify-between items-start"><div class="flex items-center gap-sm"><div class="w-10 h-10 rounded-full border border-white/10 overflow-hidden"><img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwRvFXzH-R6FgNSkD-IU00lj9wPGD4QHwsi7AdQBrf0Cd6yXxJnU9h9xlJ__67BWZ0vcc1lJDNpEDZv6mWJAynWRlH4-nrPNPbTbJ8aIotBSEA66nHUTbl5qiPsi1SUZYT3xsIbV6FRAb89Etaak1PaM6bL8e04b2TVSYmV4xpboxeIdzRjXKsTOBC8NtvmC2EoKMPgmKYIMsBKOX4A6-hOH6mxx2iUKIuDacGoNvCw4jREHeFHIG3tP39vlGOJGK9OkrHD3xN3A"/></div><div><p class="text-sm text-on-surface">דן כהן</p><p class="text-[10px] text-on-surface-variant/50 uppercase">לפני יומיים בהאומן 17</p></div></div><div class="flex flex-row-reverse text-primary-fixed text-xs"><span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span><span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span><span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span><span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span><span class="material-symbols-outlined text-sm text-on-surface-variant/20">star</span></div></div><p class="font-body-md text-on-surface-variant/90 leading-relaxed italic">"אווירה מטורפת אבל התור לבר היה קצת מוגזם. הבחירה של המוזיקה הייתה אש."</p></div>
+</div>
+</section>
+</main>
+<nav class="fixed bottom-0 w-full z-50 rounded-t-xl bg-surface/90 backdrop-blur-xl border-t border-white/10 shadow-[0_-4px_20px_rgba(0,0,0,0.5)] flex justify-around items-center h-20 pb-safe px-4">
+<a class="flex flex-col items-center justify-center text-on-surface-variant/60 hover:text-primary-fixed/80 active:scale-90 transition-all duration-200" href="discover.html"><span class="material-symbols-outlined">explore</span><span class="text-label-sm">גילוי</span></a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant/60 hover:text-primary-fixed/80 active:scale-90 transition-all duration-200" href="my-tickets.html"><span class="material-symbols-outlined">confirmation_number</span><span class="text-label-sm">כרטיסים</span></a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant/60 hover:text-primary-fixed/80 active:scale-90 transition-all duration-200" href="notifications.html"><span class="material-symbols-outlined">notifications</span><span class="text-label-sm">התראות</span></a>
+<a class="flex flex-col items-center justify-center text-primary-fixed drop-shadow-[0_0_10px_rgba(191,245,32,0.4)] active:scale-90 transition-all duration-200" href="profile.html"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">person</span><span class="text-label-sm">פרופיל</span></a>
+</nav>
+<script>
+    const submitBtn = document.getElementById('submit-btn');
+    submitBtn.addEventListener('click', () => { submitBtn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> שולח...'; setTimeout(() => { submitBtn.innerHTML = 'נשלח! <span class="material-symbols-outlined">check_circle</span>'; }, 1500); });
+</script>
+</body></html>
