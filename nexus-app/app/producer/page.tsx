@@ -52,6 +52,7 @@ export default async function ProducerDashboard({
         <h3 className="text-headline-md text-primary mb-md">ניהול מהיר</h3>
         <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-gutter">
           {[
+            { href: "/producer/events", icon: "confirmation_number", label: "ניהול אירועים" },
             { href: "/producer/create", icon: "add_circle", label: "יצירת אירוע" },
             { href: "/producer/wallet", icon: "account_balance_wallet", label: "ארנק והעברות" },
             { href: "/producer/leaderboard", icon: "leaderboard", label: "לידרבורד יחצנים" },
@@ -122,7 +123,7 @@ export default async function ProducerDashboard({
       <div className="mb-lg">
         <div className="flex justify-between items-center mb-md">
           <h3 className="text-headline-md text-primary">אירועים פעילים</h3>
-          <Link href="/producer/guests" className="text-label-md text-primary-fixed hover:underline">הצג הכל</Link>
+          <Link href="/producer/events" className="text-label-md text-primary-fixed hover:underline">הצג הכל</Link>
         </div>
         <div className="space-y-sm">
           {events.map((e) => (

@@ -13,6 +13,7 @@ async function signOut(router: ReturnType<typeof useRouter>) {
 
 const links = [
   { href: "/producer", icon: "dashboard", label: "דאשבורד" },
+  { href: "/producer/events", icon: "confirmation_number", label: "ניהול אירועים" },
   { href: "/producer/create", icon: "add_circle", label: "יצירת אירוע" },
   { href: "/producer/guests", icon: "group", label: "רשימות מוזמנים" },
   { href: "/producer/scanner", icon: "qr_code_scanner", label: "סורק כרטיסים" },
@@ -67,7 +68,7 @@ export function ProducerBottomNav() {
   const pathname = usePathname();
   const items = [
     { href: "/producer", icon: "dashboard", label: "דאשבורד" },
-    { href: "/producer/guests", icon: "confirmation_number", label: "אירועים" },
+    { href: "/producer/events", icon: "confirmation_number", label: "אירועים" },
     { href: "/producer/scanner", icon: "qr_code_scanner", label: "סורק" },
     { href: "/producer/wallet", icon: "account_balance_wallet", label: "ארנק" },
     { href: "/", icon: "exit_to_app", label: "יציאה לאתר" },
