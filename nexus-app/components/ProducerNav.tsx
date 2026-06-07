@@ -78,7 +78,7 @@ export function ProducerBottomNav() {
         const active = pathname === it.href;
         return (
           <Link
-            key={i}
+            key={it.href}
             href={it.href}
             className={`flex flex-col items-center justify-center transition-all ${
               active ? "text-primary-fixed drop-shadow-[0_0_8px_rgba(191,245,32,0.6)] scale-110" : "text-on-surface-variant/60"
