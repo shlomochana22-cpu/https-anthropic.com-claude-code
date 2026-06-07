@@ -11,7 +11,140 @@ const genrePresets = ["טכנו", "מיינסטרים", "היפ הופ", "פסי
 const MAP_IMG =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuAYP-WgF_VDGgbiBAo-MV_BtEUdRrYXINf2EhUxPw3k4YppbY9zUtqgKXEC_LIFTd22NzxCfaNQ4oRFW3DtfEy4zK43eFebqF8E_ueAG9UDtVQ9xEn2OXmFGxnTKng6Rf9ax6QuMBmHSn4B9Rs2IK1CH3RNrbKdFAbelohDzd3_V0h0towExi7jofbqu1KimAoDCadVxTIuU_Hyh4yi0nAeklbJZcHxxHB5D5XNZQM7b9uIP7sGJ0--d2IHL2cYYSUFrYGi6mii7g";
 
-type Tier = { name: string; price: string; qty: string; saleEnd?: string; benefits?: Record<string, boolean> };
+type Tier = {
+  name: string;
+  price: string;
+  qty: string;
+  saleEnd?: string;
+  isVip?: boolean;
+  benefits?: Record<string, boolean>;
+  customBenefits?: string[];
+};
+
+const VIP_BENEFITS = [
+  { key: "backstage", label: "גישה לבקסטייג׳" },
+  { key: "fastEntry", label: "כניסה מהירה" },
+  { key: "table", label: "שולחן פרטי" },
+];
+
+/** A single, uniform ticket card. Name sits above the card; VIP unlocks benefits. */
+function TicketCard({
+  tier,
+  index,
+  total,
+  onChange,
+  onToggleVip,
+  onToggleBenefit,
+  onAddBenefit,
+  onRemoveBenefit,
+  onRemove,
+}: {
+  tier: Tier;
+  index: number;
+  total: number;
+  onChange: (i: number, patch: Partial<Tier>) => void;
+  onToggleVip: (i: number) => void;
+  onToggleBenefit: (i: number, key: string) => void;
+  onAddBenefit: (i: number, text: string) => void;
+  onRemoveBenefit: (i: number, bi: number) => void;
+  onRemove: (i: number) => void;
+}) {
+  const [draft, setDraft] = useState("");
+  const add = () => {
+    onAddBenefit(index, draft);
+    setDraft("");
+  };
+  return (
+    <div className="space-y-2">
+      {/* Ticket name — above the card */}
+      <div className="flex items-center gap-2 px-1">
+        <Icon name={tier.isVip ? "stars" : "confirmation_number"} className="text-primary-fixed" />
+        <input
+          value={tier.name}
+          onChange={(e) => onChange(index, { name: e.target.value })}
+          placeholder="שם הכרטיס"
+          className="flex-1 bg-transparent text-headline-md text-primary outline-none border-b border-white/10 focus:border-primary-fixed py-1"
+        />
+        {total > 1 && (
+          <button onClick={() => onRemove(index)} className="text-on-surface-variant hover:text-error transition-colors p-1" aria-label="מחק כרטיס">
+            <Icon name="delete" />
+          </button>
+        )}
+      </div>
+
+      {/* Card body */}
+      <div className={`glass-card rounded-xl p-md transition-colors ${tier.isVip ? "border-primary-fixed/30" : ""}`}>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-md">
+          <div className="space-y-1">
+            <label className="text-label-sm text-on-surface-variant uppercase">מחיר ₪</label>
+            <input type="number" value={tier.price} onChange={(e) => onChange(index, { price: e.target.value })} className="w-full bg-surface-container-low border border-white/10 rounded-lg p-3 text-primary focus:border-primary-fixed outline-none" />
+          </div>
+          <div className="space-y-1">
+            <label className="text-label-sm text-on-surface-variant uppercase">כמות</label>
+            <input type="number" value={tier.qty} onChange={(e) => onChange(index, { qty: e.target.value })} className="w-full bg-surface-container-low border border-white/10 rounded-lg p-3 text-primary focus:border-primary-fixed outline-none" />
+          </div>
+          <div className="space-y-1 col-span-2 md:col-span-1">
+            <label className="text-label-sm text-on-surface-variant uppercase">סיום מכירה</label>
+            <input type="date" value={tier.saleEnd || ""} onChange={(e) => onChange(index, { saleEnd: e.target.value })} className="w-full bg-surface-container-low border border-white/10 rounded-lg p-3 text-primary focus:border-primary-fixed outline-none [color-scheme:dark]" />
+          </div>
+        </div>
+
+        {/* VIP toggle */}
+        <div className="mt-md flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10">
+          <div className="flex items-center gap-2">
+            <Icon name="stars" className={tier.isVip ? "text-primary-fixed" : "text-on-surface-variant"} fill={tier.isVip} />
+            <div>
+              <p className="text-label-md text-primary">כרטיס VIP</p>
+              <p className="text-[11px] text-on-surface-variant">הפעלה פותחת בחירת הטבות</p>
+            </div>
+          </div>
+          <button onClick={() => onToggleVip(index)} className={`w-12 h-6 rounded-full relative shrink-0 transition-colors ${tier.isVip ? "bg-primary-fixed" : "bg-surface-container-highest"}`} aria-label="כרטיס VIP">
+            <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full transition-all ${tier.isVip ? "right-0.5" : "right-[26px]"}`} />
+          </button>
+        </div>
+
+        {/* Benefits — only for VIP */}
+        {tier.isVip && (
+          <div className="mt-md bg-white/5 p-4 rounded-xl border border-white/5">
+            <p className="text-label-md text-primary-fixed mb-3 uppercase tracking-wider">הטבות VIP</p>
+            <div className="space-y-2">
+              {VIP_BENEFITS.map((b) => (
+                <label key={b.key} className="flex items-center gap-3 cursor-pointer group">
+                  <input type="checkbox" checked={!!tier.benefits?.[b.key]} onChange={() => onToggleBenefit(index, b.key)} className="w-5 h-5 rounded border-white/20 bg-transparent text-primary-fixed focus:ring-0" />
+                  <span className="text-body-md group-hover:text-primary transition-colors">{b.label}</span>
+                </label>
+              ))}
+              {/* Custom free-text benefits */}
+              {tier.customBenefits?.map((b, bi) => (
+                <div key={bi} className="flex items-center gap-3 group">
+                  <Icon name="check_circle" className="text-primary-fixed text-[20px]" fill />
+                  <span className="text-body-md flex-1">{b}</span>
+                  <button onClick={() => onRemoveBenefit(index, bi)} className="text-on-surface-variant hover:text-error transition-colors" aria-label="הסר הטבה">
+                    <Icon name="close" className="text-[18px]" />
+                  </button>
+                </div>
+              ))}
+            </div>
+            {/* Add custom benefit */}
+            <div className="flex gap-2 mt-3">
+              <input
+                value={draft}
+                onChange={(e) => setDraft(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), add())}
+                placeholder="הוסף הטבה משלך (מלל חופשי)…"
+                maxLength={40}
+                className="flex-1 bg-surface-container-low border border-white/10 rounded-lg px-3 py-2 text-body-md text-primary focus:border-primary-fixed outline-none"
+              />
+              <button onClick={add} className="px-4 py-2 rounded-lg bg-surface-container-high border border-white/10 text-primary-fixed hover:border-primary-fixed/50 transition-colors flex items-center gap-1 shrink-0">
+                <Icon name="add" /> הוסף
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default function CreateEventPage() {
   const router = useRouter();
@@ -110,24 +243,35 @@ export default function CreateEventPage() {
     }
   };
 
-  // step 2
+  // step 2 — starts with a single ticket; producer adds more
   const [venueCapacity, setVenueCapacity] = useState("1500");
   const [tiers, setTiers] = useState<Tier[]>([
-    { name: "מכירה מוקדמת", price: "80", qty: "150", saleEnd: "" },
-    { name: "רגיל", price: "120", qty: "800" },
-    { name: "VIP", price: "350", qty: "250", benefits: { backstage: true, fastEntry: true, table: false } },
+    { name: "כרטיס רגיל", price: "120", qty: "200", saleEnd: "", benefits: {}, customBenefits: [] },
   ]);
 
   // step 3
-  const [commission, setCommission] = useState(10);
+  const [commissionEnabled, setCommissionEnabled] = useState(true);
+  const [commissionMode, setCommissionMode] = useState<"percent" | "fixed">("percent");
+  const [commission, setCommission] = useState(10); // percent
+  const [commissionFixed, setCommissionFixed] = useState(20); // ₪ per ticket
   const [visible, setVisible] = useState(true);
   const [terms, setTerms] = useState(false);
 
-  const setTier = (i: number, key: keyof Tier, v: string) =>
-    setTiers((t) => t.map((row, idx) => (idx === i ? { ...row, [key]: v } : row)));
+  const setTier = (i: number, patch: Partial<Tier>) =>
+    setTiers((t) => t.map((row, idx) => (idx === i ? { ...row, ...patch } : row)));
+  const toggleVip = (i: number) =>
+    setTiers((t) => t.map((row, idx) => (idx === i ? { ...row, isVip: !row.isVip } : row)));
   const toggleBenefit = (i: number, key: string) =>
     setTiers((t) => t.map((row, idx) => (idx === i ? { ...row, benefits: { ...row.benefits, [key]: !row.benefits?.[key] } } : row)));
-  const addTier = () => setTiers((t) => [...t, { name: "כרטיס חדש", price: "0", qty: "0" }]);
+  const addBenefit = (i: number, text: string) => {
+    const v = text.trim();
+    if (!v) return;
+    setTiers((t) => t.map((row, idx) => (idx === i ? { ...row, customBenefits: [...(row.customBenefits || []), v] } : row)));
+  };
+  const removeBenefit = (i: number, bi: number) =>
+    setTiers((t) => t.map((row, idx) => (idx === i ? { ...row, customBenefits: (row.customBenefits || []).filter((_, x) => x !== bi) } : row)));
+  const removeTier = (i: number) => setTiers((t) => (t.length > 1 ? t.filter((_, idx) => idx !== i) : t));
+  const addTier = () => setTiers((t) => [...t, { name: "כרטיס חדש", price: "0", qty: "0", benefits: {}, customBenefits: [] }]);
 
   const allocated = useMemo(() => tiers.reduce((s, t) => s + (Number(t.qty) || 0), 0), [tiers]);
   const capacity = Number(venueCapacity) || 1;
@@ -147,7 +291,7 @@ export default function CreateEventPage() {
       venue: location || "",
       date: date || "בקרוב",
       time,
-      tiers: tiers.map((t, i) => ({ name: t.name, price: Number(t.price) || 0, qty: Number(t.qty) || 0, exclusive: i === 2 })),
+      tiers: tiers.map((t) => ({ name: t.name, price: Number(t.price) || 0, qty: Number(t.qty) || 0, exclusive: !!t.isVip })),
     });
     router.push(`/producer?created=${id}`);
   };
@@ -341,103 +485,50 @@ export default function CreateEventPage() {
       {/* ─────────── STEP 2 ─────────── */}
       {step === 1 && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
-          {/* Early bird */}
-          <div className="lg:col-span-2 glass-card rounded-xl p-md relative overflow-hidden flex flex-col justify-between min-h-[220px]">
-            <span className="absolute top-4 left-4 bg-secondary-container/10 text-secondary-fixed px-3 py-1 rounded-full text-xs font-bold border border-secondary-fixed/30 uppercase tracking-widest">מוגבל</span>
-            <div>
-              <div className="flex items-center gap-3 mb-md">
-                <div className="p-2 rounded-lg bg-surface-container-high text-primary-fixed"><Icon name="bolt" /></div>
-                <input value={tiers[0].name} onChange={(e) => setTier(0, "name", e.target.value)} className="bg-transparent text-headline-md text-primary outline-none border-b border-white/10 focus:border-primary-fixed" />
-              </div>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-md">
-                <div className="space-y-1"><label className="text-label-sm text-on-surface-variant uppercase">מחיר ₪</label><input type="number" value={tiers[0].price} onChange={(e) => setTier(0, "price", e.target.value)} className="w-full bg-surface-container-low border border-white/10 rounded-lg p-3 text-primary focus:border-primary-fixed outline-none" /></div>
-                <div className="space-y-1"><label className="text-label-sm text-on-surface-variant uppercase">כמות</label><input type="number" value={tiers[0].qty} onChange={(e) => setTier(0, "qty", e.target.value)} className="w-full bg-surface-container-low border border-white/10 rounded-lg p-3 text-primary focus:border-primary-fixed outline-none" /></div>
-                <div className="space-y-1 col-span-2 md:col-span-1"><label className="text-label-sm text-on-surface-variant uppercase">סיום מכירה</label><input type="date" value={tiers[0].saleEnd} onChange={(e) => setTier(0, "saleEnd", e.target.value)} className="w-full bg-surface-container-low border border-white/10 rounded-lg p-3 text-primary focus:border-primary-fixed outline-none [color-scheme:dark]" /></div>
-              </div>
-            </div>
+          {/* Tickets column */}
+          <div className="lg:col-span-2 space-y-gutter">
+            {tiers.map((t, i) => (
+              <TicketCard
+                key={i}
+                tier={t}
+                index={i}
+                total={tiers.length}
+                onChange={setTier}
+                onToggleVip={toggleVip}
+                onToggleBenefit={toggleBenefit}
+                onAddBenefit={addBenefit}
+                onRemoveBenefit={removeBenefit}
+                onRemove={removeTier}
+              />
+            ))}
+
+            {/* Add ticket */}
+            <button onClick={addTier} className="w-full border-2 border-dashed border-white/10 rounded-xl p-lg flex flex-col items-center justify-center gap-2 hover:border-primary-fixed/50 hover:bg-white/5 transition-all group">
+              <Icon name="add_circle" className="text-4xl text-on-surface-variant group-hover:text-primary-fixed transition-colors" />
+              <span className="text-label-md text-on-surface-variant uppercase group-hover:text-primary tracking-widest">הוסף סוג כרטיס +</span>
+            </button>
           </div>
 
           {/* Capacity meter */}
-          <div className="lg:col-span-1 glass-card rounded-xl p-md flex flex-col justify-center items-center text-center gap-3 bg-gradient-to-br from-surface-container-low to-black">
-            <h3 className="text-label-md text-on-surface-variant uppercase">תפוסה כוללת</h3>
-            <div className="relative w-40 h-40">
-              <svg className="w-full h-full -rotate-90" viewBox="0 0 160 160">
-                <circle className="text-surface-container-highest" cx="80" cy="80" r="70" fill="transparent" stroke="currentColor" strokeWidth="8" />
-                <circle className="text-secondary-container" cx="80" cy="80" r="70" fill="transparent" stroke="currentColor" strokeWidth="12" strokeDasharray={2 * Math.PI * 70} strokeDashoffset={2 * Math.PI * 70 * (1 - capacityPct / 100)} style={{ filter: "drop-shadow(0 0 8px rgba(0,238,252,0.5))", transition: "stroke-dashoffset .4s" }} />
-              </svg>
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-headline-xl text-primary leading-none">{allocated.toLocaleString()}</span>
-                <span className="text-label-sm text-secondary-container">הוקצו ({capacityPct}%)</span>
+          <div className="lg:col-span-1">
+            <div className="glass-card rounded-xl p-md flex flex-col justify-center items-center text-center gap-3 bg-gradient-to-br from-surface-container-low to-black lg:sticky lg:top-24">
+              <h3 className="text-label-md text-on-surface-variant uppercase">תפוסה כוללת</h3>
+              <div className="relative w-40 h-40">
+                <svg className="w-full h-full -rotate-90" viewBox="0 0 160 160">
+                  <circle className="text-surface-container-highest" cx="80" cy="80" r="70" fill="transparent" stroke="currentColor" strokeWidth="8" />
+                  <circle className="text-secondary-container" cx="80" cy="80" r="70" fill="transparent" stroke="currentColor" strokeWidth="12" strokeDasharray={2 * Math.PI * 70} strokeDashoffset={2 * Math.PI * 70 * (1 - capacityPct / 100)} style={{ filter: "drop-shadow(0 0 8px rgba(0,238,252,0.5))", transition: "stroke-dashoffset .4s" }} />
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="text-headline-xl text-primary leading-none">{allocated.toLocaleString()}</span>
+                  <span className="text-label-sm text-secondary-container">הוקצו ({capacityPct}%)</span>
+                </div>
               </div>
-            </div>
-            <div className="flex items-center gap-2 text-body-md text-on-surface-variant">
-              תפוסת מקום:
-              <input type="number" value={venueCapacity} onChange={(e) => setVenueCapacity(e.target.value)} className="w-20 bg-surface-container-low border border-white/10 rounded p-1 text-center text-primary outline-none focus:border-primary-fixed" />
-            </div>
-          </div>
-
-          {/* Regular */}
-          <div className="lg:col-span-1 glass-card rounded-xl p-md flex flex-col justify-between min-h-[220px]">
-            <div>
-              <div className="flex items-center gap-3 mb-md">
-                <div className="p-2 rounded-lg bg-surface-container-high text-primary-fixed"><Icon name="confirmation_number" /></div>
-                <input value={tiers[1].name} onChange={(e) => setTier(1, "name", e.target.value)} className="bg-transparent text-headline-md text-primary outline-none border-b border-white/10 focus:border-primary-fixed w-full" />
-              </div>
-              <div className="space-y-4">
-                <div className="space-y-1"><label className="text-label-sm text-on-surface-variant uppercase">מחיר ₪</label><input type="number" value={tiers[1].price} onChange={(e) => setTier(1, "price", e.target.value)} className="w-full bg-surface-container-low border border-white/10 rounded-lg p-3 text-primary focus:border-primary-fixed outline-none" /></div>
-                <div className="space-y-1"><label className="text-label-sm text-on-surface-variant uppercase">כמות</label><input type="number" value={tiers[1].qty} onChange={(e) => setTier(1, "qty", e.target.value)} className="w-full bg-surface-container-low border border-white/10 rounded-lg p-3 text-primary focus:border-primary-fixed outline-none" /></div>
+              <div className="flex items-center gap-2 text-body-md text-on-surface-variant">
+                תפוסת מקום:
+                <input type="number" value={venueCapacity} onChange={(e) => setVenueCapacity(e.target.value)} className="w-20 bg-surface-container-low border border-white/10 rounded p-1 text-center text-primary outline-none focus:border-primary-fixed" />
               </div>
             </div>
           </div>
-
-          {/* VIP + benefits */}
-          <div className="lg:col-span-2 glass-card rounded-xl p-md border-primary-fixed/20 flex flex-col md:flex-row gap-md">
-            <div className="flex-1">
-              <div className="flex items-center gap-3 mb-md">
-                <div className="p-2 rounded-lg bg-primary-container/20 text-primary-fixed"><Icon name="stars" /></div>
-                <input value={tiers[2].name} onChange={(e) => setTier(2, "name", e.target.value)} className="bg-transparent text-headline-md text-primary outline-none border-b border-white/10 focus:border-primary-fixed w-full" />
-              </div>
-              <div className="grid grid-cols-2 gap-md">
-                <div className="space-y-1"><label className="text-label-sm text-on-surface-variant uppercase">מחיר ₪</label><input type="number" value={tiers[2].price} onChange={(e) => setTier(2, "price", e.target.value)} className="w-full bg-surface-container-low border border-white/10 rounded-lg p-3 text-primary focus:border-primary-fixed outline-none" /></div>
-                <div className="space-y-1"><label className="text-label-sm text-on-surface-variant uppercase">כמות</label><input type="number" value={tiers[2].qty} onChange={(e) => setTier(2, "qty", e.target.value)} className="w-full bg-surface-container-low border border-white/10 rounded-lg p-3 text-primary focus:border-primary-fixed outline-none" /></div>
-              </div>
-            </div>
-            <div className="flex-1 bg-white/5 p-4 rounded-xl border border-white/5">
-              <p className="text-label-md text-primary-fixed mb-3 uppercase tracking-wider">הטבות VIP</p>
-              <div className="space-y-2">
-                {[
-                  { key: "backstage", label: "גישה לבקסטייג׳" },
-                  { key: "fastEntry", label: "כניסה מהירה" },
-                  { key: "table", label: "שולחן פרטי" },
-                ].map((b) => (
-                  <label key={b.key} className="flex items-center gap-3 cursor-pointer group">
-                    <input type="checkbox" checked={!!tiers[2].benefits?.[b.key]} onChange={() => toggleBenefit(2, b.key)} className="w-5 h-5 rounded border-white/20 bg-transparent text-primary-fixed focus:ring-0" />
-                    <span className="text-body-md group-hover:text-primary transition-colors">{b.label}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Extra dynamic tiers */}
-          {tiers.slice(3).map((t, idx) => (
-            <div key={idx + 3} className="lg:col-span-1 glass-card rounded-xl p-md flex flex-col justify-between min-h-[220px]">
-              <div className="flex items-center gap-3 mb-md">
-                <div className="p-2 rounded-lg bg-surface-container-high text-primary-fixed"><Icon name="local_activity" /></div>
-                <input value={t.name} onChange={(e) => setTier(idx + 3, "name", e.target.value)} className="bg-transparent text-headline-md text-primary outline-none border-b border-white/10 focus:border-primary-fixed w-full" />
-              </div>
-              <div className="space-y-4">
-                <div className="space-y-1"><label className="text-label-sm text-on-surface-variant uppercase">מחיר ₪</label><input type="number" value={t.price} onChange={(e) => setTier(idx + 3, "price", e.target.value)} className="w-full bg-surface-container-low border border-white/10 rounded-lg p-3 text-primary focus:border-primary-fixed outline-none" /></div>
-                <div className="space-y-1"><label className="text-label-sm text-on-surface-variant uppercase">כמות</label><input type="number" value={t.qty} onChange={(e) => setTier(idx + 3, "qty", e.target.value)} className="w-full bg-surface-container-low border border-white/10 rounded-lg p-3 text-primary focus:border-primary-fixed outline-none" /></div>
-              </div>
-            </div>
-          ))}
-
-          {/* Add tier */}
-          <button onClick={addTier} className="lg:col-span-3 border-2 border-dashed border-white/10 rounded-xl p-lg flex flex-col items-center justify-center gap-2 hover:border-primary-fixed/50 hover:bg-white/5 transition-all group">
-            <Icon name="add_circle" className="text-4xl text-on-surface-variant group-hover:text-primary-fixed transition-colors" />
-            <span className="text-label-md text-on-surface-variant uppercase group-hover:text-primary tracking-widest">הוסף סוג כרטיס +</span>
-          </button>
         </div>
       )}
 
@@ -477,17 +568,56 @@ export default function CreateEventPage() {
             {/* PR + visibility */}
             <section className="glass-card p-md rounded-xl space-y-md border-on-tertiary-container/30">
               <h3 className="text-headline-md text-on-tertiary-container flex items-center gap-2"><Icon name="campaign" className="text-on-tertiary-container" fill /> יח״צ ונראות</h3>
-              <div className="space-y-2">
-                <div className="flex justify-between items-end">
-                  <div>
-                    <p className="text-label-md text-primary uppercase">עמלת יח״צ</p>
-                    <p className="text-body-md text-on-surface-variant">תגמל את צוות היח״צ עבור כל מכירת כרטיס</p>
-                  </div>
-                  <span className="text-headline-md text-on-tertiary-container">{commission}%</span>
+              {/* Commission enable */}
+              <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg border border-white/10">
+                <div>
+                  <p className="text-label-md text-primary">הפעל עמלת יח״צ</p>
+                  <p className="text-body-md text-on-surface-variant">תגמל את צוות היח״צ עבור כל מכירת כרטיס</p>
                 </div>
-                <input type="range" min={0} max={20} value={commission} onChange={(e) => setCommission(Number(e.target.value))} className="w-full accent-[#b300b3]" />
-                <div className="flex justify-between text-label-sm text-on-surface-variant"><span>20%</span><span>10%</span><span>0%</span></div>
+                <button onClick={() => setCommissionEnabled((v) => !v)} className={`w-14 h-7 rounded-full relative shrink-0 transition-colors ${commissionEnabled ? "bg-on-tertiary-container" : "bg-surface-container-highest"}`} aria-label="הפעל עמלת יח״צ">
+                  <span className={`absolute top-0.5 w-6 h-6 bg-white rounded-full transition-all ${commissionEnabled ? "right-0.5" : "right-7"}`} />
+                </button>
               </div>
+
+              {commissionEnabled && (
+                <div className="space-y-3 p-4 bg-white/5 rounded-lg border border-white/10">
+                  {/* Mode switch: percentage vs per-ticket */}
+                  <div className="flex gap-2">
+                    {[
+                      { mode: "percent" as const, icon: "percent", label: "אחוזים" },
+                      { mode: "fixed" as const, icon: "sell", label: "סכום פר כרטיס" },
+                    ].map((m) => (
+                      <button
+                        key={m.mode}
+                        onClick={() => setCommissionMode(m.mode)}
+                        className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg border text-label-md transition-all ${commissionMode === m.mode ? "border-on-tertiary-container bg-on-tertiary-container/15 text-on-tertiary-container font-bold" : "border-white/10 bg-surface-container-low text-on-surface-variant hover:border-on-tertiary-container/40"}`}
+                      >
+                        <Icon name={m.icon} className="text-[18px]" /> {m.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {commissionMode === "percent" ? (
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-end">
+                        <p className="text-body-md text-on-surface-variant">אחוז מכל מכירה</p>
+                        <span className="text-headline-md text-on-tertiary-container">{commission}%</span>
+                      </div>
+                      <input type="range" min={0} max={20} value={commission} onChange={(e) => setCommission(Number(e.target.value))} className="w-full accent-[#b300b3]" />
+                      <div className="flex justify-between text-label-sm text-on-surface-variant"><span>20%</span><span>10%</span><span>0%</span></div>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <p className="text-body-md text-on-surface-variant">סכום קבוע (₪) ליחצן עבור כל כרטיס שנמכר</p>
+                      <div className="flex items-center gap-2">
+                        <span className="text-headline-md text-on-tertiary-container">₪</span>
+                        <input type="number" min={0} value={commissionFixed} onChange={(e) => setCommissionFixed(Number(e.target.value))} className="flex-1 bg-surface-container-low border border-white/10 rounded-lg p-3 text-primary text-headline-md focus:border-on-tertiary-container outline-none" />
+                        <span className="text-body-md text-on-surface-variant whitespace-nowrap">לכרטיס</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
               <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg border border-white/10">
                 <div className="flex items-center gap-4">
                   <Icon name="visibility" className="text-on-tertiary-container text-3xl" />
