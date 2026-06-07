@@ -17,6 +17,13 @@ export type NewEventInput = {
 
 export type CreateResult = { id: string; demo: boolean };
 
+// Fallback covers (until real image upload via Storage) so created events
+// never render a broken image in the feed.
+const DEFAULT_COVERS = [
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuC9BlsJh1ytbzdu948Nc8Sn0VY-Ghf0fkYIoFWbHp2aFnJ00sd35yRN5V-4HLogSecis1WUi9n3fHcxmVyBFHvjwLZ7y2qB4RKS9y7oUPClK2xOt8tNNnjDw9J5zMKnhJsAiqhqEKTYNc505RUcEXlp5X1d1-J5RhNp-GRCerDjjXT3a0k4BRViY4TNsjKMo1F5THcUDwuAyYi0sKtih9OR-44M_SLC0DzjBryx5h6lIWsd9VAze-kyq7BvIRF6fDJZVKHCvaqaOg",
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuABC4XLqjQb3v4mF80E1HS794ltzLAAVOLui9YOijYzGyWZy3va6v6bQYVzOhkOorLCbmbNzX2R4vyiupSY6nK907GJEuTeLx43D_z-DJJVZ9Ryy7H1cWmcyLu18O3WyPihGs8MRV4kyc-POrqr_Oo1CV1Afbv3Bq-hyNSg5l-_BaXWVob8_y5rl5KQMIO6njp31_8FoLpdBQ_N9uuTXFLAfafz6_r92RzXI9QT6QjJzpyx4sBJAWlBqG4DdWe9nRGznMl2nO0cSA",
+];
+
 function slugify(s: string) {
   const base = s
     .trim()
@@ -46,7 +53,7 @@ export async function createEvent(input: NewEventInput): Promise<CreateResult> {
     city: input.city,
     date: input.date,
     time: input.time,
-    image: input.image ?? "",
+    image: input.image || DEFAULT_COVERS[Math.floor(Math.random() * DEFAULT_COVERS.length)],
     genre: input.genre,
     occupancy: 0,
     from_price: fromPrice,
