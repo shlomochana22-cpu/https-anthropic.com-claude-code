@@ -44,6 +44,43 @@ export default function CreateEventPage() {
 
   const [aiSource, setAiSource] = useState<"ai" | "local" | null>(null);
   const [aiAction, setAiAction] = useState<"write" | "rewrite" | "shorten" | "lengthen" | null>(null);
+  const [titleLoading, setTitleLoading] = useState(false);
+  const [hashtags, setHashtags] = useState("");
+  const [hashtagsLoading, setHashtagsLoading] = useState(false);
+
+  const aiCopy = async (kind: "title" | "hashtags") => {
+    const res = await fetch("/api/ai/copy", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ kind, title, genres: genreList, category, city, location, time, date }),
+    });
+    const data = await res.json();
+    return (data?.text as string) || "";
+  };
+
+  const suggestTitle = async () => {
+    setTitleLoading(true);
+    try {
+      const t = await aiCopy("title");
+      if (t) setTitle(t.replace(/^["'״]+|["'״]+$/g, "").trim());
+    } catch {
+      /* keep current title on failure */
+    } finally {
+      setTitleLoading(false);
+    }
+  };
+
+  const genHashtags = async () => {
+    setHashtagsLoading(true);
+    try {
+      const t = await aiCopy("hashtags");
+      if (t) setHashtags(t.trim());
+    } catch {
+      setHashtags(["#נקסוס", ...(genreList.map((g) => `#${g.replace(/\s/g, "")}`))].join(" "));
+    } finally {
+      setHashtagsLoading(false);
+    }
+  };
 
   const runAI = async (action: "write" | "rewrite" | "shorten" | "lengthen") => {
     setAiLoading(true);
@@ -148,7 +185,12 @@ export default function CreateEventPage() {
           <div className="glass-card p-md rounded-xl space-y-6">
             <h3 className="text-headline-md text-primary flex items-center gap-2"><Icon name="info" className="text-primary-fixed" /> פרטים כלליים</h3>
             <div className="flex flex-col gap-2">
-              <label className="text-primary-fixed text-label-md uppercase tracking-wider">שם האירוע</label>
+              <div className="flex items-center justify-between gap-2">
+                <label className="text-primary-fixed text-label-md uppercase tracking-wider">שם האירוע</label>
+                <button onClick={suggestTitle} disabled={titleLoading} className="flex items-center gap-1.5 text-secondary-fixed text-label-sm hover:text-secondary-fixed/80 transition-colors disabled:opacity-50">
+                  <Icon name="auto_awesome" className={titleLoading ? "animate-spin text-[16px]" : "text-[16px]"} fill /> {titleLoading ? "חושב…" : "הצע שם עם AI"}
+                </button>
+              </div>
               <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="לדוגמה: Midnight Echoes: Cyberpunk Rave" className="bg-surface-container-low border border-white/10 rounded-lg px-4 py-4 text-body-lg text-primary focus:border-primary-fixed outline-none" />
             </div>
             <div className="flex flex-col gap-3">
@@ -457,6 +499,27 @@ export default function CreateEventPage() {
                 <button onClick={() => setVisible((v) => !v)} className={`w-14 h-7 rounded-full relative transition-colors ${visible ? "bg-on-tertiary-container" : "bg-surface-container-highest"}`}>
                   <span className={`absolute top-0.5 w-6 h-6 bg-white rounded-full transition-all ${visible ? "right-0.5" : "right-7"}`} />
                 </button>
+              </div>
+
+              {/* AI hashtags for social */}
+              <div className="p-4 bg-white/5 rounded-lg border border-white/10 space-y-3">
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <div className="flex items-center gap-2">
+                    <Icon name="tag" className="text-on-tertiary-container" />
+                    <p className="text-label-md text-primary">האשטגים לרשתות</p>
+                  </div>
+                  <button onClick={genHashtags} disabled={hashtagsLoading} className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-gradient-to-r from-primary-fixed/20 to-secondary-fixed/20 border border-primary-fixed/40 text-primary-fixed text-label-sm hover:from-primary-fixed/30 hover:to-secondary-fixed/30 transition-all active:scale-95 disabled:opacity-60">
+                    <Icon name="auto_awesome" className={hashtagsLoading ? "animate-spin text-[16px]" : "text-[16px]"} fill /> {hashtagsLoading ? "יוצר…" : "צור עם AI"}
+                  </button>
+                </div>
+                {hashtags && (
+                  <div className="flex items-start gap-2">
+                    <p className="flex-1 text-body-md text-secondary-fixed leading-relaxed break-words">{hashtags}</p>
+                    <button onClick={() => navigator.clipboard?.writeText(hashtags)} className="shrink-0 w-9 h-9 rounded-lg bg-surface-container-high border border-white/10 flex items-center justify-center text-primary active:scale-95 transition-transform" aria-label="העתק">
+                      <Icon name="content_copy" className="text-[18px]" />
+                    </button>
+                  </div>
+                )}
               </div>
             </section>
           </div>

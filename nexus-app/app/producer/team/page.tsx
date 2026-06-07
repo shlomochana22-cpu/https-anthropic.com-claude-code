@@ -28,6 +28,32 @@ const initial: Promoter[] = [
 export default function TeamPage() {
   const [team, setTeam] = useState<Promoter[]>(initial);
   const [invite, setInvite] = useState("");
+  const [promoName, setPromoName] = useState("");
+  const [promoMsg, setPromoMsg] = useState("");
+  const [promoLoading, setPromoLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const genPromo = async () => {
+    setPromoLoading(true);
+    try {
+      const res = await fetch("/api/ai/copy", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ kind: "promo", promoterName: promoName.trim() || undefined, title: "האירוע הקרוב שלך", city: "תל אביב" }),
+      });
+      const data = await res.json();
+      if (data?.text) setPromoMsg(data.text);
+    } catch {
+      setPromoMsg(`🔥 ${promoName ? promoName + ", " : ""}אל תפספסו את האירוע הקרוב!\nכרטיסים דרך הלינק האישי שלי 👇`);
+    } finally {
+      setPromoLoading(false);
+    }
+  };
+  const copyPromo = () => {
+    navigator.clipboard?.writeText(promoMsg);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
 
   const toggle = (id: string) => setTeam((t) => t.map((p) => (p.id === id ? { ...p, active: !p.active } : p)));
   const addInvite = () => {
@@ -79,6 +105,36 @@ export default function TeamPage() {
           </button>
         </div>
         <p className="text-[10px] text-on-surface-variant/60 mt-2">היחצן יקבל לינק אישי ייחודי לכל אירוע, ועמלה אוטומטית על כל מכירה.</p>
+      </div>
+
+      {/* AI share-message generator for promoters */}
+      <div className="glass-card p-md rounded-xl mb-lg border border-primary-fixed/20">
+        <div className="flex items-center justify-between gap-2 flex-wrap mb-3">
+          <h3 className="text-label-md text-primary-fixed uppercase tracking-wider flex items-center gap-2">
+            <Icon name="auto_awesome" fill /> הודעת שיתוף ליחצנים
+          </h3>
+          <button onClick={genPromo} disabled={promoLoading} className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-gradient-to-r from-primary-fixed/20 to-secondary-fixed/20 border border-primary-fixed/40 text-primary-fixed text-label-sm hover:from-primary-fixed/30 hover:to-secondary-fixed/30 transition-all active:scale-95 disabled:opacity-60">
+            <Icon name="auto_awesome" className={promoLoading ? "animate-spin text-[16px]" : "text-[16px]"} fill /> {promoLoading ? "יוצר…" : "צור עם AI"}
+          </button>
+        </div>
+        <input
+          value={promoName}
+          onChange={(e) => setPromoName(e.target.value)}
+          placeholder="שם היחצן (אופציונלי, לפנייה אישית)"
+          className="w-full bg-surface-container-low border border-white/10 rounded-lg px-4 py-2.5 text-body-md text-on-surface focus:border-primary-fixed outline-none mb-3"
+        />
+        {promoMsg ? (
+          <div className="flex items-start gap-2">
+            <textarea value={promoMsg} onChange={(e) => setPromoMsg(e.target.value)} rows={4} className="flex-1 bg-surface-container-low border border-white/10 rounded-lg px-4 py-3 text-body-md text-on-surface resize-none focus:border-primary-fixed outline-none" />
+            <button onClick={copyPromo} className="shrink-0 w-10 h-10 rounded-lg bg-surface-container-high border border-white/10 flex items-center justify-center text-primary active:scale-95 transition-transform" aria-label="העתק">
+              <Icon name={copied ? "check" : "content_copy"} className={`text-[18px] ${copied ? "text-primary-fixed" : ""}`} />
+            </button>
+          </div>
+        ) : (
+          <p className="text-[11px] text-on-surface-variant/60 flex items-center gap-1">
+            <Icon name="tips_and_updates" className="text-[14px]" /> צור הודעת וואטסאפ מוכנה שהיחצנים ישלחו ללקוחות, עם קריאה ללחוץ על הלינק האישי שלהם.
+          </p>
+        )}
       </div>
 
       {/* Team list */}
