@@ -42,21 +42,32 @@ export default function CreateEventPage() {
     setCustomGenre("");
   };
 
-  const writeWithAI = () => {
+  const [aiSource, setAiSource] = useState<"ai" | "local" | null>(null);
+
+  const writeWithAI = async () => {
     setAiLoading(true);
-    const g = genreList[0] || "מוזיקה אלקטרונית";
-    const place = location || city || "המקום החם בעיר";
-    const cat = category;
-    const name = title || "האירוע";
-    setTimeout(() => {
+    try {
+      const res = await fetch("/api/ai/describe", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ title, genres: genreList, category, city, location, time, age, ageVisible }),
+      });
+      const data = await res.json();
+      if (data?.text) {
+        setDescription(data.text);
+        setAiSource(data.source === "ai" ? "ai" : "local");
+      }
+    } catch {
+      // network/route failure — last-resort local draft so the button never dead-ends
       setDescription(
-        `${name} מגיע ל${place} לערב אחד בלתי נשכח. ` +
-          `${cat} שכולו ${genreList.join(", ") || g} — סאונד עוצמתי, הפקה ויזואלית מטורפת ולהקת DJ's שתחזיק אתכם על רחבת הריקודים עד הזריחה. ` +
-          `דלתות נפתחות ב-${time}${age && ageVisible ? `, כניסה מגיל ${age}` : ""}. ` +
-          `כמות הכרטיסים מוגבלת — אל תישארו בחוץ. מבטיחים לכם לילה שתזכרו הרבה אחרי שהמוזיקה נגמרת. 🔥`
+        `${title || "האירוע"} מגיע ל${location || city || "המקום החם בעיר"} לערב אחד בלתי נשכח. ` +
+          `${category} שכולו ${genreList.join(", ") || "מוזיקה אלקטרונית"} — סאונד עוצמתי, הפקה ויזואלית מטורפת ועד הזריחה. ` +
+          `דלתות נפתחות ב-${time}${age && ageVisible ? `, כניסה מגיל ${age}` : ""}. אל תישארו בחוץ. 🔥`
       );
+      setAiSource("local");
+    } finally {
       setAiLoading(false);
-    }, 900);
+    }
   };
 
   // step 2
@@ -240,9 +251,21 @@ export default function CreateEventPage() {
             <div className="flex flex-col gap-2">
               <label className="text-primary-fixed text-label-md uppercase tracking-wider">תיאור</label>
               <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={6} placeholder="תאר את האווירה, הליינאפ, ולמה לצפות... או תן ל-AI לכתוב עבורך ✨" className="bg-surface-container-low border border-white/10 rounded-lg px-4 py-4 text-body-md text-primary placeholder:text-on-surface-variant/30 resize-none focus:border-primary-fixed outline-none" />
-              <p className="text-[11px] text-on-surface-variant/60 flex items-center gap-1">
-                <Icon name="tips_and_updates" className="text-[14px]" /> ה-AI מנסח טקסט שיווקי על בסיס שם האירוע, הז'אנרים והמיקום שמילאת. אפשר לערוך אחר כך.
-              </p>
+              <div className="flex items-center justify-between gap-2 flex-wrap">
+                <p className="text-[11px] text-on-surface-variant/60 flex items-center gap-1">
+                  <Icon name="tips_and_updates" className="text-[14px]" /> ה-AI מנסח טקסט שיווקי על בסיס שם האירוע, הז'אנרים והמיקום שמילאת. אפשר לערוך אחר כך.
+                </p>
+                {aiSource === "ai" && (
+                  <span className="text-[10px] text-primary-fixed flex items-center gap-1 bg-primary-fixed/10 border border-primary-fixed/30 px-2 py-0.5 rounded-full">
+                    <Icon name="auto_awesome" className="text-[12px]" fill /> נוצר ע"י AI
+                  </span>
+                )}
+                {aiSource === "local" && (
+                  <span className="text-[10px] text-on-surface-variant flex items-center gap-1 bg-white/5 border border-white/10 px-2 py-0.5 rounded-full">
+                    <Icon name="draft" className="text-[12px]" /> טיוטה מקומית
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         </div>
