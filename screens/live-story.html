@@ -1,0 +1,49 @@
+<!-- עמוד אירוע - Live Story Time -->
+<!DOCTYPE html>
+<html class="dark" dir="rtl" lang="he"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NEXUS - עדכונים חיים</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600&amp;family=Varela+Round&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = { darkMode: "class", theme: { extend: { "colors": {
+        "secondary": "#d3fbff","background": "#0a0a0a","primary-container": "#bff520","surface-container": "#201f1f","on-background": "#e5e2e1","error-container": "#93000a","secondary-container": "#00eefc",
+        "surface": "#131313","on-primary-fixed": "#151f00","primary-fixed": "#bff520","error": "#ffb4ab","surface-container-low": "#1c1b1b","primary-fixed-dim": "#a5d700","primary": "#ffffff",
+        "on-surface-variant": "#c3c9ad","outline": "#8d937a","on-surface": "#e5e2e1","on-primary": "#273500","on-primary-container": "#536d00"
+      } } } }
+    </script>
+<style>
+        body { font-family: 'Varela Round', sans-serif; background-color: #0a0a0a; color: #e5e2e1; overflow-x: hidden; min-height: max(884px, 100dvh); }
+        .font-sora { font-family: 'Sora', sans-serif; }
+        .neon-border { position: relative; border: 2px solid #bff520; box-shadow: 0 0 10px rgba(191, 245, 32, 0.4), inset 0 0 5px rgba(191, 245, 32, 0.2); }
+        .story-ring { padding: 2px; background: linear-gradient(45deg, #bff520, #00eefc, #bff520); background-size: 200% 200%; animation: rotate-gradient 3s linear infinite; }
+        @keyframes rotate-gradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .glass-panel { background: rgba(26, 26, 26, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-background text-on-surface">
+<header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-white/10 h-16 flex justify-between items-center px-margin-mobile">
+<a href="event.html" class="active:scale-95 transition-transform"><span class="material-symbols-outlined text-primary-fixed transform scale-x-[-1]">arrow_back</span></a>
+<a href="../index.html" class="font-sora font-extrabold text-2xl tracking-tighter text-primary-fixed drop-shadow-[0_0_8px_rgba(191,245,32,0.6)]">NEXUS</a>
+<button class="active:scale-95 transition-transform"><span class="material-symbols-outlined text-primary-fixed">share</span></button>
+</header>
+<main class="pt-20 pb-24 overflow-y-auto min-h-screen">
+<section class="mb-8"><div class="px-margin-mobile mb-4 flex justify-between items-end"><h2 class="text-sm font-bold text-on-surface-variant uppercase tracking-widest">עדכונים חיים</h2><span class="flex items-center gap-1.5 bg-error-container/20 text-error px-3 py-1 rounded-full border border-error/30 animate-pulse"><span class="w-2 h-2 bg-error rounded-full"></span><span class="text-xs font-bold uppercase">חי מהעמדה</span></span></div>
+<div class="flex overflow-x-auto gap-4 px-margin-mobile no-scrollbar">
+<div class="flex-shrink-0 flex flex-col items-center gap-2 cursor-pointer"><div class="story-ring rounded-full p-[3px] w-20 h-20 shadow-[0_0_15px_rgba(191,245,32,0.4)]"><div class="w-full h-full rounded-full border-2 border-background overflow-hidden"><img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAf_eieuNljSdZEPg_WM_HfPhMhOyImYD6ehsHeH_TG0KOtrWPNVVyAKeDVyHbNOE5Gr1piS20NrFIBpCfLYSzsduAsz9ViRwLH04yTSJiiqzRVlWujELfp8BEm_w0mIi0_V1eWgF8jRWyafaUAcy-623Y7lSKcvidpoY9prR2J1gHc38uwRwfHQEXovDUq1GtaTFUijqfaOEij7eTWZVNgI7929CAYICrCFLHriZskTisDbVQXIfRlXYjgqOyG_HvzKLxd5HzUsQ"/></div></div><span class="text-xs font-bold text-primary-fixed">מפיק</span></div>
+<div class="flex-shrink-0 flex flex-col items-center gap-2 cursor-pointer"><div class="rounded-full p-[2px] border-2 border-primary-fixed/30 w-20 h-20"><div class="w-full h-full rounded-full overflow-hidden"><img class="w-full h-full object-cover grayscale" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCt-Evp_kXkCWtrpY1HueutHMPHgvJVlFrGxTsMBiUU9YR1CNh-wug9yba7S0cVS2_ToakyoZY3KNWmLMRW2Ov7P-GWtyT85c6x17njY6H2DykC72LEWvS4mdZobHbGA-rlIY_BJhsACnimPIdR9F0XzEa4aSASs0vKAfAWYVAlJo4IQZkH8-bfxZyP4dV9z7tg_6RwcQBA_dVbRmpZr-vAFczo-Q1bGVad1sMQj5Y88EMDIG10703VSkKJknaJ4alwak73B3fHJg"/></div></div><span class="text-xs font-medium text-on-surface-variant">VIBE_01</span></div>
+<div class="flex-shrink-0 flex flex-col items-center gap-2 cursor-pointer"><div class="rounded-full p-[2px] border-2 border-primary-fixed/30 w-20 h-20"><div class="w-full h-full rounded-full overflow-hidden"><img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1bOpzvzXrwjy6pdwG4QPzO_0ai32pgkv9nkwL0YC_F4PMMOJ2uioCKknk2IG7fc0_QrGmd-Bq1B-MRBpIvZTySov3hv_j9D7AWpbIIAqvHffuN5Y-WYCDzEA60Ls580-XxIsnPF4mlOth2Flh7hWqXeXQwm-fj_XQMMFaAiBERGjAuNre4agJIzLQidB6a1tHo6kn9H_d2r6ULZdHwRB9CMIOPGLGfcL8ogNULF51Ph-QwEH9vh8a_lblmyfjMikI17uyZe07Tg"/></div></div><span class="text-xs font-medium text-on-surface-variant">DJ_SET</span></div>
+</div></section>
+<section class="px-margin-mobile mb-8"><div class="relative w-full aspect-[9/16] max-h-[500px] rounded-3xl overflow-hidden neon-border"><img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvDQ-yjT1HJmiKWNpxYTx5mTiRbjVj6uATiEU1u_u8D7ZIoAlRDtiSNoR2YX2sRV6wnwR1ToN6YlHnDmf2smhGCztC95yDSRzBOyDtI0XunxVY7Y0Djc4lnfxJmzAi6mS8--R9YQoCKBX5fX5lvcI1bC9e_jODyP5DSC1AmcbHQbCL9caImAxcORZHmcsn7y_S6i5vTBo3013kxP3QvqpGB_jf7SCSpSf37JSjxmzemOR80h8DhRI_yLD_Avx77VIbXn8kiyImOg"/>
+<div class="absolute bottom-0 right-0 w-full p-6 bg-gradient-to-t from-black via-black/40 to-transparent"><div class="flex justify-between items-end gap-4"><div class="flex-1"><div class="flex items-center gap-2 mb-2"><span class="bg-primary-container text-on-primary-container text-[10px] font-bold px-2 py-0.5 rounded uppercase">בלעדי</span><span class="text-white/80 text-xs">לפני 2 דק'</span></div><p class="text-white font-bold text-lg leading-tight">הדרופ מגיע... אתם מוכנים? 🎹🔥</p></div><div class="flex flex-col gap-4"><button class="w-14 h-14 rounded-full glass-panel flex flex-col items-center justify-center active:scale-90 transition-transform"><span class="text-2xl">🔥</span><span class="text-[10px] font-bold text-white">4.2k</span></button></div></div></div>
+<div class="absolute top-4 left-4 right-4 flex flex-row-reverse gap-1"><div class="h-1 flex-1 bg-white/30 rounded-full overflow-hidden"><div class="h-full bg-primary-fixed w-[65%]"></div></div><div class="h-1 flex-1 bg-white/20 rounded-full"></div><div class="h-1 flex-1 bg-white/20 rounded-full"></div></div>
+</div></section>
+<section class="px-margin-mobile space-y-6 text-right"><div class="space-y-1"><h1 class="font-sora text-3xl text-primary-fixed tracking-tight">סולסטיס ריטואל</h1><div class="flex items-center justify-start gap-4 text-on-surface-variant text-sm font-medium"><span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">schedule</span> 22:00 - 05:00</span><a href="map.html" class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">location_on</span> האנגר 11, תל אביב</a></div></div>
+<div class="glass-panel p-5 rounded-2xl"><h3 class="font-sora text-sm font-bold text-primary-fixed mb-3 uppercase tracking-wider">ליינאפ</h3><div class="space-y-3"><div class="flex justify-between items-center"><span class="font-bold">Boris Brejcha</span><span class="text-xs px-2 py-0.5 rounded bg-primary-container/20 text-primary-fixed border border-primary-fixed/30">אמן מרכזי</span></div><div class="h-[1px] bg-white/5"></div><div class="flex justify-between items-center"><span class="font-bold">Ann Clue</span><span class="text-xs text-on-surface-variant">02:00 - 03:30</span></div><div class="h-[1px] bg-white/5"></div><div class="flex justify-between items-center"><span class="font-bold">Deniz Bul</span><span class="text-xs text-on-surface-variant">00:30 - 02:00</span></div></div></div>
+</section>
+</main>
+<nav class="fixed bottom-0 w-full z-50 bg-surface/90 backdrop-blur-xl border-t border-white/10 h-20 flex items-center px-margin-mobile gap-4"><div class="flex-1 text-right"><p class="text-[10px] font-bold text-on-surface-variant uppercase">החל מ-</p><p class="font-sora text-2xl text-primary-fixed font-extrabold">₪189</p></div><a href="order-summary.html" class="flex-[1.5] bg-primary-container text-on-primary-container font-sora font-bold py-3.5 px-6 rounded-xl flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(191,245,32,0.4)] active:scale-95 transition-all">רכישת כרטיסים<span class="material-symbols-outlined transform scale-x-[-1]">arrow_forward</span></a></nav>
+</body></html>
