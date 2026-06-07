@@ -110,7 +110,7 @@ export default function ProfilePage() {
 
         {/* Producer area entry — clear separation between the two faces */}
         <section className="mb-lg">
-          <Link href="/login" className="block glass-card rounded-2xl p-5 border border-primary-fixed/20 hover:bg-white/5 transition-colors relative overflow-hidden">
+          <Link href="/producer" className="block glass-card rounded-2xl p-5 border border-primary-fixed/20 hover:bg-white/5 transition-colors relative overflow-hidden">
             <div className="absolute -left-8 -bottom-8 w-32 h-32 bg-primary-fixed/10 blur-3xl rounded-full" />
             <div className="flex items-center justify-between relative z-10">
               <div className="flex items-center gap-4">

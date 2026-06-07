@@ -46,6 +46,30 @@ export default async function ProducerDashboard({
         </Link>
       </div>
 
+      {/* Quick navigation — all producer tools */}
+      <div className="mb-lg">
+        <h3 className="text-headline-md text-primary mb-md">ניהול מהיר</h3>
+        <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-gutter">
+          {[
+            { href: "/producer/create", icon: "add_circle", label: "יצירת אירוע" },
+            { href: "/producer/wallet", icon: "account_balance_wallet", label: "ארנק והעברות" },
+            { href: "/producer/leaderboard", icon: "leaderboard", label: "לידרבורד יחצנים" },
+            { href: "/producer/promoter", icon: "campaign", label: "דאשבורד יחצן" },
+            { href: "/producer/scanner", icon: "qr_code_scanner", label: "סורק כרטיסים" },
+            { href: "/producer/guests", icon: "group", label: "רשימות מוזמנים" },
+            { href: "/producer/stats", icon: "analytics", label: "סטטיסטיקות" },
+            { href: "/producer/coupons", icon: "local_offer", label: "קופונים" },
+            { href: "/producer/campaigns", icon: "ads_click", label: "קמפיינים" },
+            { href: "/producer/customers", icon: "contacts", label: "מאגר לקוחות" },
+          ].map((t) => (
+            <Link key={t.href} href={t.href} className="glass-card rounded-xl p-md flex flex-col items-center justify-center text-center gap-2 hover:bg-white/5 hover:border-primary-fixed/30 transition-all aspect-square">
+              <Icon name={t.icon} className="text-primary-fixed text-3xl" />
+              <span className="text-label-sm text-on-surface leading-tight">{t.label}</span>
+            </Link>
+          ))}
+        </div>
+      </div>
+
       {/* AI insights */}
       <div className="glass-card p-md rounded-xl mb-lg border border-primary-fixed/20">
         <div className="flex items-center gap-xs mb-md">

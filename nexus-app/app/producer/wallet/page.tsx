@@ -20,6 +20,24 @@ export default function ProducerWalletPage() {
         </button>
       </section>
 
+      {/* Quick actions — transfers */}
+      <section className="mb-8 max-w-2xl overflow-x-auto">
+        <div className="flex gap-gutter min-w-max">
+          {[
+            { icon: "send", label: "העברה לחבר" },
+            { icon: "campaign", label: "העברה ליחצן" },
+            { icon: "local_shipping", label: "העברה לספק" },
+            { icon: "account_balance", label: "הוספת חשבון" },
+            { icon: "description", label: "הפקת דוחות" },
+          ].map((a) => (
+            <button key={a.label} className="flex flex-col items-center justify-center p-4 rounded-2xl glass-card w-28 h-28 hover:border-primary-fixed/50 transition-all active:scale-90 shrink-0">
+              <Icon name={a.icon} className="text-primary-fixed mb-2 text-3xl" />
+              <span className="text-label-sm text-on-surface text-center">{a.label}</span>
+            </button>
+          ))}
+        </div>
+      </section>
+
       <section className="mb-8 max-w-2xl">
         <h3 className="text-headline-md text-on-surface mb-4">חשבונות בנק למשיכה</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
