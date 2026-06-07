@@ -1,0 +1,61 @@
+<!-- ניהול רשימות מוזמנים - נקסוס -->
+<!DOCTYPE html>
+<html class="dark" dir="rtl" lang="he"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NEXUS - Guest List</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600&amp;family=Varela+Round&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = { darkMode: "class", theme: { extend: { "colors": {
+          "on-surface": "#e5e2e1","surface": "#131313","secondary-fixed": "#7df4ff","error": "#ffb4ab","background": "#131313","secondary": "#d3fbff","surface-container-low": "#1c1b1b",
+          "primary-fixed": "#bff520","secondary-fixed-dim": "#00dbe9","secondary-container": "#00eefc","primary-fixed-dim": "#a5d700","on-surface-variant": "#c3c9ad","surface-container": "#201f1f",
+          "surface-container-highest": "#353534","primary-container": "#bff520","on-primary-fixed": "#151f00","surface-container-lowest": "#0e0e0e","outline": "#8d937a","on-primary": "#273500",
+          "on-primary-container": "#536d00","primary": "#ffffff","surface-container-high": "#2a2a2a","error-container": "#93000a","on-background": "#e5e2e1"
+        },
+        "fontFamily": { "label-sm": ["Sora"],"headline-lg-mobile": ["Sora"],"label-md": ["Sora"],"headline-md": ["Sora"],"body-md": ["Plus Jakarta Sans"] },
+        "spacing": { "base": "8px","lg": "48px","md": "24px","gutter": "16px","xs": "4px","sm": "12px","margin-mobile": "20px","margin-desktop": "64px" } } } }
+    </script>
+<style>
+        body { font-family: 'Varela Round', sans-serif; background-color: #0a0a0a; color: #e5e2e1; overflow-x: hidden; min-height: max(884px, 100dvh); }
+        .glass-panel { background: rgba(26, 26, 26, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .neon-glow-primary { filter: drop-shadow(0 0 12px rgba(191, 245, 32, 0.4)); }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="bg-background text-on-surface">
+<header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-white/10 flex justify-between items-center px-margin-mobile h-16">
+<div class="flex items-center gap-4"><a href="../index.html" class="text-primary-fixed active:scale-95 transition-transform"><span class="material-symbols-outlined">menu</span></a><h1 class="font-headline-md text-2xl font-extrabold tracking-tighter text-primary-fixed drop-shadow-[0_0_8px_rgba(191,245,32,0.6)]">NEXUS</h1></div>
+<a href="profile.html" class="w-8 h-8 rounded-full overflow-hidden border border-primary-fixed/30"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCd1YwRBUJ1zV9m-gUF3-pEvEqtNg7pKuQuqH7rpn3DztgCcmEM5G_q8X5c0NJ39omEPD2G3Wrah92A-_zOuK_2C4G42U_LtQrpXTFmdEvyyBXbzqNSh1hZGOgNfEWsbkaAKjkKPPjjsRLHkfhnHcF_oXVK5kmjej3mhcyOHiP6VtO1UCq_3yjAl-bIoGy0RoTdUtFszbpJV4iNnSCPLibt8msyKhKmWraaYK43CJeEA3VIGc4w74b2wk5hjkBPEU8-mp8buohZbA"/></a>
+</header>
+<main class="pt-24 pb-32 px-margin-mobile max-w-5xl mx-auto">
+<section class="mb-lg"><div class="flex flex-col mb-md"><h2 class="font-headline-lg-mobile text-3xl text-primary-fixed">ניהול רשימות מוזמנים</h2><p class="text-base text-on-surface-variant/80">שלום, Nexus Producer • צפייה וניהול של 1,248 מוזמנים</p></div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-gutter">
+<div class="glass-panel p-md rounded-xl flex flex-col justify-between"><span class="text-label-sm text-on-surface-variant">סך הכל מוזמנים</span><span class="font-headline-md text-2xl text-white mt-1">1,248</span></div>
+<div class="glass-panel p-md rounded-xl flex flex-col justify-between border-primary-fixed/20"><span class="text-label-sm text-primary-fixed">אושרו</span><span class="font-headline-md text-2xl text-primary-fixed mt-1">892</span></div>
+<div class="glass-panel p-md rounded-xl flex flex-col justify-between"><span class="text-label-sm text-secondary-fixed">נסרקו בקופה</span><span class="font-headline-md text-2xl text-secondary-fixed mt-1">412</span></div>
+<div class="glass-panel p-md rounded-xl flex flex-col justify-between"><span class="text-label-sm text-error">ממתינים</span><span class="font-headline-md text-2xl text-error mt-1">356</span></div>
+</div></section>
+<section class="mb-md"><div class="relative flex-grow"><span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span><input class="w-full bg-surface-container-highest/50 border border-white/10 rounded-xl py-3 pr-12 pl-4 text-on-surface focus:border-primary-fixed focus:ring-1 focus:ring-primary-fixed transition-all outline-none" placeholder="חיפוש לפי שם, טלפון או קוד..." type="text"/></div></section>
+<section class="space-y-gutter">
+<div class="glass-panel p-md rounded-xl flex items-center justify-between group hover:border-primary-fixed/40 transition-colors"><div class="flex items-center gap-md"><div class="w-12 h-12 rounded-full bg-gradient-to-br from-primary-fixed to-secondary-fixed flex items-center justify-center text-on-primary-fixed font-bold text-2xl">א</div><div class="flex flex-col"><span class="text-label-md text-white">איתי לוי</span><span class="text-label-sm text-on-surface-variant">054-1234567 • מוזמן VIP</span></div></div><div class="flex items-center gap-md"><span class="bg-primary-container/20 text-primary-fixed border border-primary-fixed/30 px-3 py-1 rounded-lg text-label-sm">Approved</span><button class="text-on-surface-variant hover:text-white transition-colors"><span class="material-symbols-outlined">more_vert</span></button></div></div>
+<div class="glass-panel p-md rounded-xl flex items-center justify-between group hover:border-secondary-fixed/40 transition-colors"><div class="flex items-center gap-md"><div class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant"><span class="material-symbols-outlined">person</span></div><div class="flex flex-col"><span class="text-label-md text-white">דנה כהן</span><span class="text-label-sm text-on-surface-variant">052-8889900 • מוזמן הפקה</span></div></div><div class="flex items-center gap-md"><span class="bg-secondary-fixed/10 text-secondary-fixed border border-secondary-fixed/30 px-3 py-1 rounded-lg text-label-sm">Scanned</span><button class="text-on-surface-variant hover:text-white transition-colors"><span class="material-symbols-outlined">more_vert</span></button></div></div>
+<div class="glass-panel p-md rounded-xl flex items-center justify-between border-error/20 group hover:border-error/40 transition-colors"><div class="flex items-center gap-md"><div class="w-12 h-12 rounded-full bg-error-container/40 flex items-center justify-center text-error font-bold text-2xl">נ</div><div class="flex flex-col"><span class="text-label-md text-white">נועם אברהם</span><span class="text-label-sm text-on-surface-variant">050-5556677 • רשימה רגילה</span></div></div><div class="flex items-center gap-md"><button class="text-primary-fixed text-label-sm hover:underline hidden md:block">אשר כניסה</button><span class="bg-error-container/20 text-error border border-error/30 px-3 py-1 rounded-lg text-label-sm">Pending</span><button class="text-on-surface-variant hover:text-white transition-colors"><span class="material-symbols-outlined">more_vert</span></button></div></div>
+</section>
+</main>
+<aside class="hidden lg:flex fixed right-0 top-16 h-[calc(100vh-64px)] w-[280px] bg-surface-container-high border-l border-white/5 flex-col p-md space-y-2 z-40">
+<h3 class="text-label-sm text-on-surface-variant uppercase tracking-widest mb-4 px-2">תפריט ניהול</h3>
+<div class="flex items-center gap-3 p-3 bg-primary-container text-on-primary-container rounded-lg font-bold"><span class="material-symbols-outlined">group</span><span>Guest Lists</span></div>
+<a href="producer-dashboard.html" class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-white/5 rounded-lg transition-colors"><span class="material-symbols-outlined">calendar_today</span><span>Event Manager</span></a>
+<a href="coupons.html" class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-white/5 rounded-lg transition-colors"><span class="material-symbols-outlined">local_offer</span><span>Coupons</span></a>
+<a href="customers.html" class="flex items-center gap-3 p-3 text-on-surface-variant hover:bg-white/5 rounded-lg transition-colors"><span class="material-symbols-outlined">history</span><span>Customers</span></a>
+</aside>
+<a href="#" class="fixed bottom-24 left-6 w-16 h-16 bg-primary-fixed text-on-primary-fixed rounded-full shadow-lg shadow-primary-fixed/20 flex items-center justify-center neon-glow-primary active:scale-90 transition-all duration-200 z-50"><span class="material-symbols-outlined text-[32px]">person_add</span></a>
+<nav class="fixed bottom-0 w-full z-50 bg-surface/90 backdrop-blur-xl border-t border-white/10 flex justify-around items-center h-20 pb-safe px-4 lg:hidden">
+<a href="discover.html" class="flex flex-col items-center justify-center text-on-surface-variant/60"><span class="material-symbols-outlined">explore</span><span class="text-label-sm mt-1">Explore</span></a>
+<a href="producer-dashboard.html" class="flex flex-col items-center justify-center text-on-surface-variant/60"><span class="material-symbols-outlined">confirmation_number</span><span class="text-label-sm mt-1">Tickets</span></a>
+<a href="campaigns.html" class="flex flex-col items-center justify-center text-primary-fixed drop-shadow-[0_0_10px_rgba(191,245,32,0.4)]"><span class="material-symbols-outlined">analytics</span><span class="text-label-sm mt-1">ProTools</span></a>
+<a href="profile.html" class="flex flex-col items-center justify-center text-on-surface-variant/60"><span class="material-symbols-outlined">person</span><span class="text-label-sm mt-1">Profile</span></a>
+</nav>
+</body></html>

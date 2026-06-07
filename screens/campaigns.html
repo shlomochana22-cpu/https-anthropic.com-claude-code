@@ -1,0 +1,52 @@
+<!-- קמפיינים שיווקיים - נקסוס -->
+<!DOCTYPE html>
+<html class="dark" dir="rtl" lang="he"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NEXUS - קמפיינים</title>
+<link href="https://fonts.googleapis.com/css2?family=Varela+Round&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = { darkMode: "class", theme: { extend: { "colors": {
+          "secondary": "#d3fbff","background": "#131313","primary-container": "#bff520","surface-container": "#201f1f","on-background": "#e5e2e1","secondary-container": "#00eefc","surface-container-highest": "#353534",
+          "surface": "#131313","on-primary-fixed": "#151f00","primary-fixed": "#bff520","error": "#ffb4ab","surface-container-low": "#1c1b1b","primary-fixed-dim": "#a5d700","primary": "#ffffff",
+          "on-surface-variant": "#c3c9ad","secondary-fixed-dim": "#00dbe9","surface-container-high": "#2a2a2a","outline": "#8d937a","on-surface": "#e5e2e1","on-primary": "#273500",
+          "on-primary-container": "#536d00","surface-container-lowest": "#0e0e0e","secondary-fixed": "#7df4ff"
+        },
+        "spacing": { "xs": "4px","md": "24px","sm": "12px","lg": "48px","xl": "80px","gutter": "16px","base": "8px","margin-mobile": "20px","margin-desktop": "64px" },
+        "fontFamily": { "varela": ["Varela Round","sans-serif"],"headline-lg-mobile": ["Varela Round"],"headline-md": ["Varela Round"],"label-md": ["Varela Round"],"label-sm": ["Varela Round"],"body-md": ["Varela Round"] },
+        "fontSize": { "headline-lg-mobile": ["28px"],"headline-md": ["24px"],"label-md": ["14px"],"label-sm": ["12px"],"body-md": ["16px"] } } } }
+    </script>
+<style>
+        body { font-family: 'Varela Round', sans-serif; background-color: #0a0a0a; color: #e5e2e1; min-height: max(884px, 100dvh); }
+        .neon-glow-primary { box-shadow: 0 0 15px rgba(191, 245, 32, 0.4); }
+        @keyframes pulse-neon { 0% { box-shadow: 0 0 5px rgba(191, 245, 32, 0.6); transform: scale(1); } 50% { box-shadow: 0 0 25px rgba(191, 245, 32, 0.9); transform: scale(1.02); } 100% { box-shadow: 0 0 5px rgba(191, 245, 32, 0.6); transform: scale(1); } }
+        .animate-pulse-neon { animation: pulse-neon 2s infinite ease-in-out; }
+        .glass-card { background: rgba(26, 26, 26, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen pb-32" dir="rtl">
+<header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-white/10 flex justify-between items-center px-margin-mobile h-16">
+<div class="flex items-center gap-sm"><a href="../index.html" class="material-symbols-outlined text-primary-fixed cursor-pointer active:scale-95 transition-transform">menu</a><h1 class="font-headline-md text-2xl font-extrabold tracking-tighter text-primary-fixed drop-shadow-[0_0_8px_rgba(191,245,32,0.6)]">NEXUS</h1></div>
+<a href="profile.html" class="h-10 w-10 rounded-full overflow-hidden border border-primary-fixed/30 ring-2 ring-primary-fixed/10 active:scale-95 transition-transform"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDoUXgWN4tsxnwgMaEGV3oG1ONTmOrRqBweLDuUhDdT8FxfNlLlAhXcIiv5qeE_9oM91JXEwWnL2_aEqMfiOHOLwcHdOKCd17nPeBx1ZRq2oXep3pB-5i9jQkeAL8kot3ENy2VhTSvrClo4c35tS1Yzo2zAP2R1V8mGze4CmrWoXqw52N5p-iIuMIxZe6KPylBl55fhjcqg9QtSgB9k8j9ugh2V3wCt_FqYlTg8OTb8bRpzRWBP7LyBT5Xr0QY50aCC-IhqgDcdUA"/></a>
+</header>
+<main class="pt-24 px-margin-mobile max-w-2xl mx-auto space-y-gutter">
+<div class="mb-sm"><h2 class="font-headline-lg-mobile text-3xl text-primary-fixed mb-1">סטודיו קמפיינים</h2><p class="text-base text-on-surface-variant/80">עצבו והפיצו את השידור הממוקד שלכם.</p></div>
+<section class="space-y-sm"><label class="text-label-md text-primary-fixed uppercase tracking-wider">מקטעי קהל יעד</label><div class="grid grid-cols-2 gap-sm">
+<button class="glass-card p-md rounded-xl text-right border-primary-fixed bg-primary-container/10"><div class="flex justify-between items-start mb-2"><span class="material-symbols-outlined text-primary-fixed">hub</span><span class="material-symbols-outlined text-primary-fixed" style="font-variation-settings: 'FILL' 1;">check_circle</span></div><div class="text-label-md text-on-background">חובבי טכנו</div><div class="text-[10px] text-on-surface-variant/60">1.2k חברים</div></button>
+<button class="glass-card p-md rounded-xl text-right hover:border-white/20 transition-all"><div class="flex justify-between items-start mb-2"><span class="material-symbols-outlined text-on-surface-variant/40">groups</span></div><div class="text-label-md text-on-background">גילאי 24-35</div><div class="text-[10px] text-on-surface-variant/60">3.8k חברים</div></button>
+</div></section>
+<section class="glass-card rounded-xl p-md space-y-md"><div class="flex items-center justify-between border-b border-white/5 pb-sm"><label class="text-label-md text-primary-fixed uppercase">עורך הודעות</label><div class="flex bg-surface-container-highest p-1 rounded-full text-[10px]" dir="ltr"><button class="px-3 py-1 bg-primary-fixed text-on-primary-fixed rounded-full font-bold">PUSH</button><button class="px-3 py-1 text-on-surface-variant/60">SMS</button></div></div>
+<textarea class="w-full bg-surface-container-low border border-white/10 rounded-xl p-md text-base text-on-surface focus:outline-none focus:border-primary-fixed/50 transition-colors min-h-[140px]">הערב: Nexus Underground חוזר. הציגו את כרטיס החבר לכניסה עד 00:00. לינק בביו.</textarea>
+<div class="flex items-center gap-sm"><button class="flex-1 flex items-center justify-center gap-2 py-sm bg-surface-container-highest rounded-lg text-label-md text-on-surface hover:bg-surface-variant transition-colors"><span class="material-symbols-outlined text-[18px]">image</span>הוספת מדיה</button><button class="flex-1 flex items-center justify-center gap-2 py-sm bg-surface-container-highest rounded-lg text-label-md text-on-surface hover:bg-surface-variant transition-colors"><span class="material-symbols-outlined text-[18px]">link</span>לינק חכם</button></div></section>
+<button class="w-full bg-primary-fixed text-on-primary-fixed font-headline-md text-2xl py-md rounded-xl font-bold flex items-center justify-center gap-sm animate-pulse-neon active:scale-95 transition-transform"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">bolt</span>שליחת קמפיין</button>
+<div class="p-md bg-secondary-container/5 rounded-xl border border-secondary-container/10"><div class="flex items-center gap-sm mb-2"><span class="material-symbols-outlined text-secondary-fixed-dim">auto_graph</span><span class="text-label-md text-secondary-fixed">תובנות אסטרטגיות</span></div><p class="text-base text-on-surface-variant/80 italic">"להודעות שנשלחות ב-21:00 עבור אירועי מועדונים יש שיעור המרה גבוה ב-35% באזור שלך."</p></div>
+</main>
+<nav class="fixed bottom-0 w-full z-50 bg-surface/90 backdrop-blur-xl border-t border-white/10 flex justify-around items-center h-20 pb-safe px-4 rounded-t-xl shadow-[0_-4px_20px_rgba(0,0,0,0.5)]">
+<a class="flex flex-col items-center justify-center text-on-surface-variant/60 hover:text-primary-fixed/80 transition-all active:scale-90" href="discover.html"><span class="material-symbols-outlined">explore</span><span class="text-label-sm mt-1">גילוי</span></a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant/60 hover:text-primary-fixed/80 transition-all active:scale-90" href="guest-list.html"><span class="material-symbols-outlined">confirmation_number</span><span class="text-label-sm mt-1">כרטיסים</span></a>
+<a class="flex flex-col items-center justify-center text-primary-fixed drop-shadow-[0_0_10px_rgba(191,245,32,0.4)] transition-all active:scale-90" href="campaigns.html"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">analytics</span><span class="text-label-sm mt-1">כלי מקצוענים</span></a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant/60 hover:text-primary-fixed/80 transition-all active:scale-90" href="profile.html"><span class="material-symbols-outlined">person</span><span class="text-label-sm mt-1">פרופיל</span></a>
+</nav>
+</body></html>

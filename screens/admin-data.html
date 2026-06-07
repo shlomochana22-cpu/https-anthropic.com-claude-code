@@ -1,0 +1,66 @@
+<!-- ניהול דאטא גלובלי - אדמין | NEXUS -->
+<!DOCTYPE html>
+<html class="dark" dir="rtl" lang="he"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ניהול דאטא גלובלי - אדמין | NEXUS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = { darkMode: "class", theme: { extend: { "colors": {
+        "secondary-fixed": "#7df4ff","error": "#ffb4ab","background": "#131313","tertiary-container": "#ffd7f5","on-surface": "#e5e2e1","surface": "#131313","on-background": "#e5e2e1","secondary": "#d3fbff",
+        "surface-container-low": "#1c1b1b","tertiary-fixed-dim": "#ffabf3","surface-container": "#201f1f","on-surface-variant": "#c3c9ad","tertiary-fixed": "#ffd7f5","primary-fixed": "#bff520",
+        "secondary-fixed-dim": "#00dbe9","secondary-container": "#00eefc","primary-fixed-dim": "#a5d700","surface-tint": "#a5d700","primary": "#ffffff","surface-variant": "#353534","surface-container-high": "#2a2a2a",
+        "surface-dim": "#131313","primary-container": "#bff520","on-primary-fixed": "#151f00","surface-container-highest": "#353534","on-primary": "#273500","on-primary-container": "#536d00","surface-container-lowest": "#0e0e0e","outline": "#8d937a"
+      },
+      "spacing": { "xs": "4px","sm": "12px","margin-mobile": "20px","md": "24px","gutter": "16px","margin-desktop": "64px","xl": "80px","lg": "48px","base": "8px" },
+      "fontFamily": { "label-sm": ["Sora"],"headline-lg-mobile": ["Sora"],"label-md": ["Sora"],"headline-md": ["Sora"],"headline-lg": ["Sora"],"body-md": ["Plus Jakarta Sans"] } } } }
+    </script>
+<style>
+        body { background-color: #0a0a0a; color: #e5e2e1; font-family: 'Plus Jakarta Sans', sans-serif; }
+        .glass-panel { background: rgba(26, 26, 26, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .neon-text-primary { text-shadow: 0 0 8px rgba(191, 245, 32, 0.6); }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+<aside class="hidden md:flex fixed right-0 top-0 h-full w-[280px] bg-surface-container-high border-l border-white/5 shadow-2xl z-50 flex-col p-md space-y-2">
+<div class="mb-lg px-2"><span class="font-headline-md text-2xl font-extrabold tracking-tighter text-primary-fixed drop-shadow-[0_0_8px_rgba(191,245,32,0.6)]">NEXUS</span></div>
+<div class="flex items-center space-x-3 space-x-reverse mb-xl p-3 bg-white/5 rounded-xl border border-white/5"><div class="w-10 h-10 rounded-full bg-primary-fixed/20 flex items-center justify-center text-primary-fixed"><span class="material-symbols-outlined">shield_person</span></div><div class="flex flex-col"><span class="text-label-md text-primary-fixed">Nexus Admin</span><span class="text-[10px] text-on-surface-variant uppercase tracking-wider">Superuser Access</span></div></div>
+<nav class="space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 bg-primary-container text-on-primary-container rounded-lg font-bold transition-all" href="admin-data.html"><span class="material-symbols-outlined">analytics</span><span>Global Data</span></a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-white/5 rounded-lg transition-all group" href="customers.html"><span class="material-symbols-outlined group-hover:text-primary-fixed">group</span><span>Users Management</span></a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-white/5 rounded-lg transition-all group" href="producer-dashboard.html"><span class="material-symbols-outlined group-hover:text-primary-fixed">event</span><span>Event Producers</span></a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-white/5 rounded-lg transition-all group" href="wallet.html"><span class="material-symbols-outlined group-hover:text-primary-fixed">account_balance_wallet</span><span>Financials</span></a>
+<div class="pt-lg mt-lg border-t border-white/5"><a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-white/5 rounded-lg transition-all group" href="../index.html"><span class="material-symbols-outlined group-hover:text-error">logout</span><span>← Hub</span></a></div>
+</nav>
+</aside>
+<header class="md:hidden fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-white/10 flex justify-between items-center px-margin-mobile h-16"><a href="../index.html" class="font-headline-md text-2xl font-extrabold tracking-tighter text-primary-fixed drop-shadow-[0_0_8px_rgba(191,245,32,0.6)]">NEXUS</a><div class="w-8 h-8 rounded-full bg-primary-fixed/20 flex items-center justify-center border border-primary-fixed/30"><span class="material-symbols-outlined text-primary-fixed text-sm">person</span></div></header>
+<main class="md:mr-[280px] pt-20 md:pt-10 pb-32 px-margin-mobile md:px-margin-desktop min-h-screen">
+<header class="mb-lg"><h1 class="font-headline-lg text-3xl mb-2">ניהול דאטא גלובלי - אדמין</h1><p class="text-on-surface-variant text-base">סקירה מלאה של תנועת המשתמשים והעדפות המוזיקה בפלטפורמה</p>
+<button class="mt-4 flex items-center gap-2 px-4 py-2 bg-primary-fixed text-on-primary-fixed rounded-lg font-bold text-sm hover:bg-primary-fixed/90 transition-all shadow-[0_0_8px_rgba(191,245,32,0.4)]"><span class="material-symbols-outlined">download</span><span>ייצוא לאקסל (Excel)</span></button></header>
+<section class="grid grid-cols-2 md:grid-cols-4 gap-gutter mb-xl">
+<div class="glass-panel p-md rounded-xl flex flex-col justify-between h-32"><span class="text-on-surface-variant text-sm">סה"כ לקוחות</span><div class="flex items-end justify-between"><span class="font-headline-lg text-3xl text-primary-fixed neon-text-primary">124,502</span><span class="text-primary-fixed-dim text-xs bg-primary-fixed/10 px-1.5 py-0.5 rounded">+12%</span></div></div>
+<div class="glass-panel p-md rounded-xl flex flex-col justify-between h-32"><span class="text-on-surface-variant text-sm">פילוח מגדר (ז/נ)</span><div class="w-full h-2 bg-white/10 rounded-full overflow-hidden flex mt-2"><div class="h-full bg-secondary-fixed shadow-[0_0_8px_rgba(125,244,255,0.4)]" style="width: 58%"></div><div class="h-full bg-tertiary-fixed-dim" style="width: 42%"></div></div><div class="flex justify-between text-[10px] text-on-surface-variant mt-1"><span>58% גברים</span><span>42% נשים</span></div></div>
+<div class="glass-panel p-md rounded-xl flex flex-col justify-between h-32"><span class="text-on-surface-variant text-sm">ז'אנר מוביל</span><div class="flex items-center gap-2"><span class="font-headline-md text-2xl text-secondary-fixed">Techno</span><span class="material-symbols-outlined text-secondary-fixed" style="font-variation-settings: 'FILL' 1;">trending_up</span></div><span class="text-[10px] text-on-surface-variant">32,104 העדפות רשומות</span></div>
+<div class="glass-panel p-md rounded-xl flex flex-col justify-between h-32"><span class="text-on-surface-variant text-sm">רכישות אקטיביות</span><span class="font-headline-lg text-3xl text-primary-fixed">8,912</span><span class="text-[10px] text-on-surface-variant">24 שעות האחרונות</span></div>
+</section>
+<section class="glass-panel rounded-xl overflow-hidden"><div class="overflow-x-auto"><table class="w-full text-right border-collapse">
+<thead><tr class="bg-white/5 text-on-surface-variant border-b border-white/5"><th class="p-md text-sm">משתמש</th><th class="p-md text-sm">גיל</th><th class="p-md text-sm">ז'אנר מועדף</th><th class="p-md text-sm">סטטוס</th><th class="p-md text-sm text-center">פעולות</th></tr></thead>
+<tbody class="divide-y divide-white/5">
+<tr class="hover:bg-white/[0.02] transition-colors group"><td class="p-md"><div class="flex items-center gap-3"><img class="w-10 h-10 rounded-full object-cover grayscale group-hover:grayscale-0 transition-all border border-white/10" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJnjbXYJBRVksddIx0XLOdVqfYKS8si1ihdMOyqV-QEIyUiPRjHFdOx_GwvjbCNAj2w8h2-taJd4HP_NK1h0rmPDlzHAZ_j0ialljRZD9Re2xboUD78kkDbEqMpNjuAz0-DJHVAw1zzh2GVGu-XFFrFKTzFcRXaX4uOK5_1A9RM2-T2LDaDslpqdkXpZp1qj54Y6tcsNf7ZPsXe0uvxEtS0QVrvrcCZrD96wGuG-0SjJOH1e0bvnNXT0BcVxCK7nh3ZIqTGGX-9A"/><div class="flex flex-col"><span class="text-label-md">עידן רייכלר</span><span class="text-[10px] text-on-surface-variant">idan@nexus.io</span></div></div></td><td class="p-md">24</td><td class="p-md"><span class="bg-secondary-fixed/10 text-secondary-fixed px-2 py-0.5 rounded text-xs font-bold border border-secondary-fixed/20">Techno</span></td><td class="p-md"><div class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-primary-fixed shadow-[0_0_8px_rgba(191,245,32,0.8)]"></div><span class="text-xs">מחובר כעת</span></div></td><td class="p-md text-center"><button class="material-symbols-outlined text-on-surface-variant hover:text-primary-fixed transition-colors">more_vert</button></td></tr>
+<tr class="hover:bg-white/[0.02] transition-colors group"><td class="p-md"><div class="flex items-center gap-3"><img class="w-10 h-10 rounded-full object-cover grayscale group-hover:grayscale-0 transition-all border border-white/10" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDF7QCxtQI8GqrzW5sBTBwm3BaOxAZKV_GE86joAgFHUeZhilOl_rsa-6N8jwZt-eP2vPvRCkCKT7UWpyrJE5p8hXpkOknWrJaO8q7QpY6YbJLbnbuvGdbMbn4l8ZSEmjUsboA9r7kgYb6pCfn0GDIwMNsWS_2JEJrvJzgZlE3Jn7cMBdFygReY1HAlwZTAmVAIQipQxumd5fMqPTsIj2TsCSYnN8p-MyRckKDDiT64_KQVqxLgJL6IyZZY-CnLmVBr0uZhbHOTUg"/><div class="flex flex-col"><span class="text-label-md">מאיה בר</span><span class="text-[10px] text-on-surface-variant">maya.b@gmail.com</span></div></div></td><td class="p-md">22</td><td class="p-md"><span class="bg-tertiary-fixed-dim/10 text-tertiary-fixed-dim px-2 py-0.5 rounded text-xs font-bold border border-tertiary-fixed-dim/20">Mainstream</span></td><td class="p-md"><div class="flex items-center gap-2 text-on-surface-variant opacity-50"><div class="w-1.5 h-1.5 rounded-full bg-on-surface-variant"></div><span class="text-xs">לפני 3 שע'</span></div></td><td class="p-md text-center"><button class="material-symbols-outlined text-on-surface-variant hover:text-primary-fixed transition-colors">more_vert</button></td></tr>
+</tbody></table></div>
+<div class="p-md border-t border-white/5 flex items-center justify-between"><div class="flex gap-2"><button class="w-8 h-8 flex items-center justify-center rounded bg-white/5 text-on-surface-variant hover:bg-primary-fixed hover:text-on-primary-fixed transition-all">1</button><button class="w-8 h-8 flex items-center justify-center rounded text-on-surface-variant hover:bg-white/5 transition-all">2</button></div><span class="text-xs text-on-surface-variant">מציג 1-10 מתוך 124,502 משתמשים</span></div>
+</section>
+</main>
+<nav class="md:hidden fixed bottom-0 w-full z-50 rounded-t-xl bg-surface/90 backdrop-blur-xl border-t border-white/10 flex justify-around items-center h-20 pb-safe px-4 shadow-[0_-4px_20px_rgba(0,0,0,0.5)]">
+<a class="flex flex-col items-center justify-center text-primary-fixed drop-shadow-[0_0_10px_rgba(191,245,32,0.4)]" href="admin-data.html"><span class="material-symbols-outlined">analytics</span><span class="text-label-sm mt-1">Data</span></a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant/60" href="customers.html"><span class="material-symbols-outlined">group</span><span class="text-label-sm mt-1">Users</span></a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant/60" href="producer-dashboard.html"><span class="material-symbols-outlined">event</span><span class="text-label-sm mt-1">Events</span></a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant/60" href="../index.html"><span class="material-symbols-outlined">settings</span><span class="text-label-sm mt-1">Admin</span></a>
+</nav>
+<div class="fixed pointer-events-none w-96 h-96 -translate-x-1/2 -translate-y-1/2 bg-primary-fixed/5 blur-[120px] rounded-full z-[-1]" id="cursor-glow"></div>
+<script>document.addEventListener('mousemove', (e) => { const g = document.getElementById('cursor-glow'); if (g) { g.style.left = e.clientX + 'px'; g.style.top = e.clientY + 'px'; } });</script>
+</body></html>

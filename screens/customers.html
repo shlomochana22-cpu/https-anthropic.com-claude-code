@@ -1,0 +1,59 @@
+<!-- מאגר לקוחות - דאטא מפיק -->
+<!DOCTYPE html>
+<html class="dark" dir="rtl" lang="he"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NEXUS - מאגר לקוחות</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600&amp;family=Varela+Round&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = { darkMode: "class", theme: { extend: { "colors": {
+          "secondary-fixed": "#7df4ff","error": "#ffb4ab","background": "#131313","on-surface": "#e5e2e1","surface": "#131313","on-background": "#e5e2e1","secondary": "#d3fbff","surface-container-low": "#1c1b1b",
+          "surface-container": "#201f1f","on-surface-variant": "#c3c9ad","tertiary-fixed-dim": "#ffabf3","secondary-fixed-dim": "#00dbe9","secondary-container": "#00eefc","primary-fixed": "#bff520",
+          "primary-fixed-dim": "#a5d700","surface-tint": "#a5d700","primary": "#ffffff","surface-variant": "#353534","surface-container-high": "#2a2a2a","primary-container": "#bff520","on-primary-fixed": "#151f00",
+          "surface-container-highest": "#353534","on-primary": "#273500","on-primary-container": "#536d00","surface-container-lowest": "#0e0e0e","outline": "#8d937a","error-container": "#93000a"
+        },
+        "fontFamily": { "label-sm": ["Sora"],"headline-lg-mobile": ["Sora"],"label-md": ["Sora"],"headline-md": ["Sora"],"body-md": ["Plus Jakarta Sans"] },
+        "spacing": { "xs": "4px","sm": "12px","margin-mobile": "20px","md": "24px","gutter": "16px","margin-desktop": "64px","xl": "80px","lg": "48px","base": "8px" } } } }
+    </script>
+<style>
+        body { font-family: 'Varela Round', sans-serif; background-color: #0a0a0a; color: #e5e2e1; }
+        .glass-panel { background: rgba(26, 26, 26, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .neon-glow-primary { box-shadow: 0 0 15px rgba(191, 245, 32, 0.3); }
+        .neon-border-focus:focus-within { border-color: #bff520; box-shadow: 0 0 10px rgba(191, 245, 32, 0.4); }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="bg-background min-h-screen flex">
+<aside class="hidden md:flex flex-col h-full w-[280px] fixed right-0 top-0 z-40 bg-surface-container-high border-l border-white/5 shadow-2xl overflow-y-auto">
+<div class="flex flex-col p-md space-y-2"><div class="mb-lg px-2"><h1 class="font-headline-md text-2xl font-extrabold tracking-tighter text-primary-fixed drop-shadow-[0_0_8px_rgba(191,245,32,0.6)]">NEXUS</h1><p class="text-on-surface-variant text-xs mt-1">Control Center</p></div>
+<nav class="space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-white/5 rounded-lg transition-all" href="producer-dashboard.html"><span class="material-symbols-outlined">calendar_today</span><span>Event Manager</span></a>
+<a class="flex items-center gap-3 px-4 py-3 bg-primary-container text-on-primary-container rounded-lg font-bold" href="customers.html"><span class="material-symbols-outlined">group</span><span>Customers</span></a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-white/5 rounded-lg transition-all" href="coupons.html"><span class="material-symbols-outlined">local_offer</span><span>Coupons</span></a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-white/5 rounded-lg transition-all" href="admin-data.html"><span class="material-symbols-outlined">analytics</span><span>Global Data</span></a>
+</nav>
+<a href="../index.html" class="mt-auto px-4 text-on-surface-variant/40 text-[10px]">← Hub · v2.4.0</a></div>
+</aside>
+<main class="flex-1 mr-0 md:mr-[280px] mb-20 md:mb-0">
+<header class="fixed top-0 w-full md:w-[calc(100%-280px)] z-30 bg-surface/80 backdrop-blur-xl border-b border-white/10 h-16 flex justify-between items-center px-margin-mobile"><div class="flex items-center gap-4"><a href="../index.html" class="material-symbols-outlined md:hidden text-primary-fixed">menu</a><h2 class="font-headline-md text-2xl font-bold text-primary-fixed">מאגר לקוחות</h2></div>
+<button class="flex items-center gap-2 px-4 py-2 bg-primary-container text-on-primary-container rounded-lg font-bold text-sm hover:opacity-90 transition-all active:scale-95 neon-glow-primary"><span class="material-symbols-outlined text-lg">download</span><span class="whitespace-nowrap">ייצוא לאקסל</span></button></header>
+<div class="pt-24 px-margin-mobile md:px-margin-desktop pb-12">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter mb-lg"><div class="md:col-span-3 glass-panel rounded-2xl p-md flex flex-col justify-center"><div class="relative"><div class="absolute inset-y-0 right-4 flex items-center pointer-events-none"><span class="material-symbols-outlined text-primary-fixed">search</span></div><input class="w-full bg-surface-container-low border border-white/10 rounded-xl py-4 pr-12 pl-4 text-on-surface outline-none neon-border-focus transition-all" placeholder="חיפוש לפי שם, טלפון או אימייל..." type="text"/></div></div><div class="glass-panel rounded-2xl p-md flex flex-col items-center justify-center border-primary-fixed/20"><span class="text-on-surface-variant text-sm mb-1">סה"כ לקוחות פעילים</span><span class="text-4xl font-extrabold text-primary-fixed drop-shadow-[0_0_10px_rgba(191,245,32,0.4)]">12,482</span></div></div>
+<div class="flex overflow-x-auto gap-3 pb-6"><button class="px-6 py-2 bg-primary-container text-on-primary-container rounded-full font-bold whitespace-nowrap active:scale-95 transition-transform">הכל</button><button class="px-6 py-2 bg-surface-container-high border border-white/5 text-on-surface-variant hover:text-primary-fixed rounded-full whitespace-nowrap transition-colors">VIP</button><button class="px-6 py-2 bg-surface-container-high border border-white/5 text-on-surface-variant hover:text-primary-fixed rounded-full whitespace-nowrap transition-colors">נשים</button><button class="px-6 py-2 bg-surface-container-high border border-white/5 text-on-surface-variant hover:text-primary-fixed rounded-full whitespace-nowrap transition-colors">תל אביב</button></div>
+<div class="glass-panel rounded-2xl overflow-hidden border border-white/5 shadow-2xl"><div class="overflow-x-auto"><table class="w-full text-right border-collapse">
+<thead><tr class="bg-surface-container-highest/50 border-b border-white/5"><th class="px-md py-4 text-on-surface-variant text-sm">לקוח</th><th class="px-md py-4 text-on-surface-variant text-sm">גיל</th><th class="px-md py-4 text-on-surface-variant text-sm">מגדר</th><th class="px-md py-4 text-on-surface-variant text-sm">אירוע אחרון</th><th class="px-md py-4 text-on-surface-variant text-sm">סטטוס</th><th class="px-md py-4 text-on-surface-variant text-sm">פעולות</th></tr></thead>
+<tbody class="divide-y divide-white/5">
+<tr class="hover:bg-white/5 transition-colors group"><td class="px-md py-4"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-lg overflow-hidden border border-white/10"><img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRCQdiMfJ1aUw_SBC2TUgyvs2qpT1hehcKA346frb5mpgWjoU_wA7DkpNxCCczEOkJKxNlLtBVc1EVMYjAHs-8cG5tU7V3D9a-eQiEr-hDY_Zca9-c0lAmJca3ozk6FeLeDWXqD5oIfW4PQNtQYGQRjWwz8PExtJF6LOrlugmrfDWwxvPH52L-SU0lSTHNyYasgI4tuulH8nv5CLI26oIQSCH6UUPA0mPig8QNGyQqSYhZ9CZ8JxMc826m5D5OwxRLMAgDx9z_iA"/></div><span class="font-bold text-on-surface">נירה שמואלי</span></div></td><td class="px-md py-4 text-on-surface-variant">28</td><td class="px-md py-4 text-on-surface-variant">נקבה</td><td class="px-md py-4 text-on-surface-variant">12/05/2024</td><td class="px-md py-4"><span class="px-3 py-1 bg-primary-fixed/10 text-primary-fixed text-xs rounded-full border border-primary-fixed/20">פעיל מאוד</span></td><td class="px-md py-4"><div class="flex items-center gap-2"><button class="material-symbols-outlined text-sm p-2 bg-surface-container-low rounded-lg hover:text-primary-fixed transition-colors">edit</button><button class="material-symbols-outlined text-sm p-2 bg-surface-container-low rounded-lg hover:text-error transition-colors">delete</button></div></td></tr>
+<tr class="hover:bg-white/5 transition-colors group"><td class="px-md py-4"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-lg overflow-hidden border border-white/10"><img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-3N7GYfzYgwmO1tcviVDTDGoAVNA-hQyuDtdxGqRO09JC3aCdHCmqykikrnTEIqzWcu-GHc3tu4pcUD_6GJejswo5QSc48Q6cjBTlV6-ymMA6yOEGneiaq4fMmpK0esma4gMWcwN-1-eclDwTGpuJr3Jb-_aX6gQBhiXTuRupfZ7-73eyOfnI4saxgAD3KdQwSnSy9KU1u2nXOWRK11jikIHQKsLI2kfboekN6FTD0bP4376DDqz2b38UI2YlZknrh9UjO5Of1g"/></div><span class="font-bold text-on-surface">אבי כהן</span></div></td><td class="px-md py-4 text-on-surface-variant">31</td><td class="px-md py-4 text-on-surface-variant">זכר</td><td class="px-md py-4 text-on-surface-variant">28/04/2024</td><td class="px-md py-4"><span class="px-3 py-1 bg-secondary-container/10 text-secondary-fixed text-xs rounded-full border border-secondary-fixed/20">VIP</span></td><td class="px-md py-4"><div class="flex items-center gap-2"><button class="material-symbols-outlined text-sm p-2 bg-surface-container-low rounded-lg hover:text-primary-fixed transition-colors">edit</button><button class="material-symbols-outlined text-sm p-2 bg-surface-container-low rounded-lg hover:text-error transition-colors">delete</button></div></td></tr>
+</tbody></table></div></div>
+</div>
+</main>
+<nav class="md:hidden fixed bottom-0 w-full z-50 bg-surface/90 backdrop-blur-xl border-t border-white/10 h-20 pb-safe px-4 flex justify-around items-center shadow-[0_-4px_20px_rgba(0,0,0,0.5)]">
+<a class="flex flex-col items-center justify-center text-on-surface-variant/60" href="discover.html"><span class="material-symbols-outlined">explore</span><span class="text-[10px] mt-1">Explore</span></a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant/60" href="producer-dashboard.html"><span class="material-symbols-outlined">confirmation_number</span><span class="text-[10px] mt-1">Tickets</span></a>
+<a class="flex flex-col items-center justify-center text-primary-fixed drop-shadow-[0_0_10px_rgba(191,245,32,0.4)]" href="customers.html"><span class="material-symbols-outlined">analytics</span><span class="text-[10px] mt-1 font-bold">ProTools</span></a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant/60" href="profile.html"><span class="material-symbols-outlined">person</span><span class="text-[10px] mt-1">Profile</span></a>
+</nav>
+</body></html>
