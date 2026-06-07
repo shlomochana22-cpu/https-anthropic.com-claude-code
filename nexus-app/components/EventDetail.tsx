@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Icon } from "./Icon";
 import type { NexusEvent } from "@/lib/events";
 
@@ -53,6 +54,18 @@ export function EventDetail({ event }: { event: NexusEvent }) {
               <span className="text-label-md">{it.value}</span>
             </div>
           ))}
+        </section>
+
+        {/* Live + map shortcuts */}
+        <section className="px-margin-mobile mt-md grid grid-cols-2 gap-sm">
+          <Link href={`/events/${event.id}/live`} className="glass-card rounded-xl p-sm flex items-center justify-center gap-2 hover:bg-white/5 transition-colors">
+            <span className="w-2 h-2 bg-error rounded-full animate-pulse" />
+            <span className="text-label-md text-error font-bold">עדכונים חיים</span>
+          </Link>
+          <Link href={`/events/${event.id}/map`} className="glass-card rounded-xl p-sm flex items-center justify-center gap-2 hover:bg-white/5 transition-colors">
+            <Icon name="map" className="text-primary-fixed" />
+            <span className="text-label-md text-primary-fixed">מפת המתחם</span>
+          </Link>
         </section>
 
         {/* Occupancy */}

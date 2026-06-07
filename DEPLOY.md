@@ -55,6 +55,25 @@ npm run dev          # http://localhost:3000
 
 ---
 
+## 4.5) הפעלת נתונים אמיתיים (Supabase) על האתר החי
+
+האתר רץ עם נתוני דמו עד שמחברים Supabase. כדי להפוך אותו ל"אמיתי":
+
+1. **צור פרויקט** ב-[supabase.com](https://supabase.com).
+2. **הרץ את הסכמה** — פתח SQL Editor והדבק את כל
+   `nexus-app/supabase/migrations/0001_init.sql` → Run.
+   (זה יוצר events, ticket_tiers, profiles, orders, tickets + RLS + נתוני התחלה.)
+3. **הוסף את המפתחות ב-Vercel** — Project → Settings → Environment Variables:
+   - `NEXT_PUBLIC_SUPABASE_URL` = ה-Project URL (מ-Settings → API)
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` = ה-anon public key
+4. **Redeploy** (Deployments → ⋯ → Redeploy).
+
+מרגע זה, באתר החי:
+- האירועים נטענים מ-Postgres (כולל אירועים שמפיק יוצר ב"יצירת אירוע").
+- כניסה/הרשמה עוברת דרך Supabase Auth.
+- רכישה יוצרת `order` + `ticket` אמיתיים, ומסך "הכרטיסים שלי" מציג QR סָריק.
+- הסורק (`/producer/scanner`) מאמת את ה-QR מול ה-DB.
+
 ## 4) חיבור הדומיין שלך — nexusevents.co.il
 
 לאחר שהאתר עלה ל-Vercel:
