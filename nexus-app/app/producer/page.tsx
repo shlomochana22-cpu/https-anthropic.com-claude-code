@@ -26,7 +26,7 @@ export default async function ProducerDashboard() {
           <p className="text-label-md text-on-surface-variant mb-xs">סה"כ כרטיסים</p>
           <p className="text-headline-lg text-primary">1,240</p>
         </div>
-        <Link href="/wallet" className="glass-card p-md rounded-xl">
+        <Link href="/producer/wallet" className="glass-card p-md rounded-xl">
           <Icon name="payments" className="text-tertiary-fixed-dim bg-tertiary-fixed-dim/10 p-2 rounded-lg mb-sm inline-block" />
           <p className="text-label-md text-on-surface-variant mb-xs">הכנסות החודש</p>
           <p className="text-headline-lg text-primary">₪84,300</p>

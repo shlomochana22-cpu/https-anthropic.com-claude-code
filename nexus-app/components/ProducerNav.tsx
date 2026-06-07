@@ -10,9 +10,11 @@ const links = [
   { href: "/producer/guests", icon: "group", label: "רשימות מוזמנים" },
   { href: "/producer/scanner", icon: "qr_code_scanner", label: "סורק כרטיסים" },
   { href: "/producer/stats", icon: "analytics", label: "סטטיסטיקות" },
-  { href: "/producer/leaderboard", icon: "leaderboard", label: "לידרבורד" },
+  { href: "/producer/wallet", icon: "account_balance_wallet", label: "ארנק והכנסות" },
+  { href: "/producer/leaderboard", icon: "leaderboard", label: "לידרבורד יחצנים" },
+  { href: "/producer/promoter", icon: "campaign", label: "דאשבורד יחצן" },
   { href: "/producer/coupons", icon: "local_offer", label: "קופונים" },
-  { href: "/producer/campaigns", icon: "campaign", label: "קמפיינים" },
+  { href: "/producer/campaigns", icon: "ads_click", label: "קמפיינים" },
   { href: "/producer/customers", icon: "contacts", label: "מאגר לקוחות" },
 ];
 
