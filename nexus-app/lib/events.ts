@@ -29,6 +29,12 @@ const IMG2 =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuC9BlsJh1ytbzdu948Nc8Sn0VY-Ghf0fkYIoFWbHp2aFnJ00sd35yRN5V-4HLogSecis1WUi9n3fHcxmVyBFHvjwLZ7y2qB4RKS9y7oUPClK2xOt8tNNnjDw9J5zMKnhJsAiqhqEKTYNc505RUcEXlp5X1d1-J5RhNp-GRCerDjjXT3a0k4BRViY4TNsjKMo1F5THcUDwuAyYi0sKtih9OR-44M_SLC0DzjBryx5h6lIWsd9VAze-kyq7BvIRF6fDJZVKHCvaqaOg";
 const IMG3 =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuAIlzh3o2VP_QjZh01MoZyKagfZFyu3Xi3pComMnjIXI1n8so1N0eVXCz3ig3Ijo-9lnrp4yCY6pq38wUblaZc0FDAc93LosPuezVyfI82-9v7pC1W9XPSjSStgwQC8007ceN55uz6cxD4ufZCbik4-J2bhJxwQHfKuy6OTzr7ch-IuufE2tA5UDKOV-CJ4Eadb0cqsWje3v9kjbok2eqmdsIKorNkSWPPzTiX4E4gq5t9d1gndDz0t7J3lr2aYsv8UE0OIPeHZlg";
+const IMG_FOREST =
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuA5Hjff4EH-F3Sdbz5y4o-3DyDv6jG0pN4rOEg9Xg7ctZdGYb44Zz7XnyRoUT3Sk9Btq2TH8MWl7_93NK_7ufmI6cabBXkvglwP9sV14SIylNZDhtUBNSp5QXZ44LKG_mpFRHuuedcag0MbXMKov5zZ72SwQzIiq6RDo8D5NS9A6yrNz0F7Bu1mD-QhaYT4YHUeEWWi6-DNL_MNALsJST5jPD80G94s_ZTq_EKHe6dvmIUZPdWC_IiWOu4ZfIXFHQiQH1r1kBZ9Gg";
+const IMG_INDUSTRIAL =
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuB3QYWUZ9Wkli9oW7XrIte6wVWldOFyGnnrPwefTnGKayQNRA6sgcxnRTw6lBxKqDbzDcH0BK2Rp8KoA3uNmNkmm_e11Efa6bJkHKwUXKvWqu5eRUUKUbf9M_r7qY5LTnJyYpFlK2HQQ8hD6dDysDpvWszcpE_JkRvQHkFCNLeGT2BkxY1ERrErBUIEMTMa7x868pymI-bfbqpeVutQIegIUTSf9hTawyZFVX0uVAnL9G7jTdzx9nOjDpKqaQWsr0LnmUoru9akBQ";
+const IMG_POOL =
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuAINH71GmXS2WnTmrT0lyQPuH9ZrX1x2j75V5wGowNSTrJeHASXGF144chc3k--crgfN7nSSPzZSSx-14Jf1_jgmVfGeQJF4m9vcpI1g-iOxNtALobYBrLYzQ7Wpb5XOmYnxsR8qi1M_pYWGVyXIpEY3gU61cf7yZ820AkZTzVlxMcTUQODkI0qN4BF_Ukgil9NVTdYhvtpCAx4LhXVmN3wxIIcvEZ_KBma-eh1QyRjHDKhgBAXVSeTZIpolF1Y61z12oPsu94_oQ";
 
 export const events: NexusEvent[] = [
   {
@@ -83,6 +89,60 @@ export const events: NexusEvent[] = [
     fromPrice: 120,
     tiers: [
       { id: "regular", name: "Regular Ticket", description: "כניסה רגילה", price: 120 },
+    ],
+  },
+  {
+    id: "secret-forest-rave",
+    title: "SECRET FOREST RAVE",
+    subtitle: "ריב בלב היער, עד הזריחה",
+    venue: "יער בן שמן",
+    city: "מרכז",
+    date: "01.09",
+    time: "22:00",
+    image: IMG_FOREST,
+    badge: "מיקום סודי",
+    genre: "פסייטראנס",
+    occupancy: 64,
+    fromPrice: 90,
+    tiers: [
+      { id: "regular", name: "כניסה רגילה", description: "כולל חניה", price: 90 },
+      { id: "transport", name: "כרטיס + הסעה", description: "הסעות מהמרכז", price: 140, exclusive: true },
+    ],
+  },
+  {
+    id: "industrial-techno",
+    title: "INDUSTRIAL TECHNO NIGHT",
+    subtitle: "טכנו תעשייתי כבד עד הבוקר",
+    venue: "מועדון הבלוק",
+    city: "תל אביב",
+    date: "02.09",
+    time: "23:30",
+    image: IMG_INDUSTRIAL,
+    badge: "Fast Selling",
+    genre: "טכנו",
+    occupancy: 78,
+    fromPrice: 150,
+    tiers: [
+      { id: "regular", name: "Regular", description: "כניסה רגילה", price: 150 },
+      { id: "vip", name: "VIP Bunker", description: "מתחם VIP + בר פתוח שעה", price: 290, exclusive: true },
+    ],
+  },
+  {
+    id: "pool-vibes-eilat",
+    title: "POOL VIBES: EILAT EDITION",
+    subtitle: "מסיבת בריכה על שפת הים האדום",
+    venue: "מלון רויאל",
+    city: "אילת",
+    date: "03.09",
+    time: "14:00",
+    image: IMG_POOL,
+    badge: "TOP PICK",
+    genre: "מיינסטרים",
+    occupancy: 55,
+    fromPrice: 220,
+    tiers: [
+      { id: "regular", name: "כניסה לבריכה", description: "כולל מגבת", price: 220 },
+      { id: "cabana", name: "Cabana VIP", description: "קבנה פרטית + שירות", price: 480, exclusive: true },
     ],
   },
 ];

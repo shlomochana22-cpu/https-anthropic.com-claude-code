@@ -2,10 +2,23 @@ import Link from "next/link";
 import { Icon } from "@/components/Icon";
 import { getEvents } from "@/lib/queries";
 
-export default async function ProducerDashboard() {
+export default async function ProducerDashboard({
+  searchParams,
+}: {
+  searchParams: { created?: string };
+}) {
   const events = await getEvents();
   return (
     <main className="pt-10 md:pt-12 pb-32 px-margin-mobile md:px-margin-desktop">
+      {searchParams.created && (
+        <div className="mb-md glass-card border border-primary-fixed/30 rounded-xl p-4 flex items-center gap-3">
+          <Icon name="check_circle" className="text-primary-fixed" fill />
+          <p className="text-on-surface">
+            האירוע נוצר בהצלחה ונשמר{" "}
+            <span className="text-on-surface-variant text-label-sm font-mono">({searchParams.created})</span>
+          </p>
+        </div>
+      )}
       <header className="mb-lg">
         <h1 className="text-headline-xl text-primary-fixed mb-xs">שלום אלי</h1>
         <p className="text-body-lg text-on-surface-variant">הנה סקירה של הביצועים שלך להיום.</p>
