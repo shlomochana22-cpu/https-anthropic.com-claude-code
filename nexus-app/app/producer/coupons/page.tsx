@@ -33,10 +33,23 @@ export default function CouponsPage() {
                   <input type="number" placeholder="ללא הגבלה" className="w-full bg-surface-container-lowest border border-white/10 rounded-lg p-3 text-on-surface outline-none focus:border-primary-fixed transition-colors" />
                 </div>
               </div>
+              <div className="space-y-1">
+                <label className="text-sm font-bold text-primary-fixed uppercase tracking-wider block mr-1">תאריך תפוגה</label>
+                <input type="date" className="w-full bg-surface-container-lowest border border-white/10 rounded-lg p-3 text-on-surface outline-none focus:border-primary-fixed transition-colors [color-scheme:dark]" />
+              </div>
               <button className="w-full mt-lg bg-primary-fixed text-black font-bold py-4 rounded-lg flex items-center justify-center gap-2 hover:brightness-110 active:scale-95 transition-all shadow-neon-primary">
                 <Icon name="rocket_launch" /> צור קופון עכשיו
               </button>
             </div>
+          </div>
+
+          {/* Savings insight */}
+          <div className="bg-surface-container-low border border-white/5 p-md rounded-xl flex items-center justify-between">
+            <div>
+              <p className="text-on-surface-variant text-label-sm">חיסכון מצטבר ללקוחות</p>
+              <h4 className="text-headline-md font-bold text-secondary-fixed-dim">₪12,450</h4>
+            </div>
+            <div className="w-12 h-12 bg-secondary-fixed/10 rounded-full flex items-center justify-center text-secondary-fixed-dim"><Icon name="trending_up" /></div>
           </div>
         </div>
 
@@ -71,6 +84,12 @@ export default function CouponsPage() {
                 <div className="w-20 h-1 bg-surface-container-highest rounded-full mt-1 overflow-hidden">
                   <div className={`h-full ${c.active ? "bg-primary-fixed" : "bg-error"}`} style={{ width: `${(c.used / c.cap) * 100}%` }} />
                 </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className={`w-11 h-6 rounded-full relative shrink-0 ${c.active ? "bg-primary-fixed" : "bg-surface-container-highest"}`}>
+                  <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full transition-all ${c.active ? "right-0.5" : "right-[22px]"}`} />
+                </span>
+                <button className="text-on-surface-variant hover:text-error transition-colors"><Icon name="delete_outline" /></button>
               </div>
             </div>
           ))}

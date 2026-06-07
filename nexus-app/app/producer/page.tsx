@@ -52,10 +52,45 @@ export default async function ProducerDashboard({
           <Icon name="auto_awesome" className="text-primary-fixed animate-pulse" />
           <h3 className="text-headline-md text-primary">תובנות בינה מלאכותית</h3>
         </div>
-        <p className="text-body-lg leading-relaxed">
+        <p className="text-body-lg leading-relaxed mb-md">
           הקהל שלך מגיע בעיקר מ<span className="text-primary-fixed">תל אביב (70%)</span> בגילי{" "}
           <span className="text-secondary-fixed">22-28</span>.
         </p>
+        <div className="flex flex-wrap gap-sm">
+          <div className="flex-1 min-w-[140px] bg-white/5 p-sm rounded-lg border border-white/5">
+            <p className="text-label-sm text-on-surface-variant mb-xs">יעילות שיווק</p>
+            <div className="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden"><div className="h-full bg-primary-fixed w-[85%]" /></div>
+            <p className="text-right text-label-sm text-primary-fixed mt-1">85% גבוהה</p>
+          </div>
+          <div className="flex-1 min-w-[140px] bg-white/5 p-sm rounded-lg border border-white/5">
+            <p className="text-label-sm text-on-surface-variant mb-xs">שימור לקוחות</p>
+            <div className="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden"><div className="h-full bg-secondary-fixed w-[42%]" /></div>
+            <p className="text-right text-label-sm text-secondary-fixed mt-1">42% יציב</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Audience demographics */}
+      <div className="mb-lg">
+        <h3 className="text-headline-md text-primary mb-md">דמוגרפיית קהל</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+          <div className="glass-card p-md rounded-xl">
+            <p className="text-label-md text-on-surface-variant mb-md">פילוח לפי גיל</p>
+            <div className="flex items-end gap-sm h-32">
+              {[25, 100, 75, 50, 30].map((h, i) => (
+                <div key={i} className="flex-1 bg-primary-fixed/20 rounded-t relative group" style={{ height: `${h}%` }}>
+                  <div className="absolute inset-0 bg-primary-fixed opacity-0 group-hover:opacity-100 transition-opacity rounded-t" />
+                </div>
+              ))}
+            </div>
+            <div className="flex justify-between text-[10px] text-on-surface-variant mt-2"><span>18-21</span><span>22-25</span><span>26-30</span><span>31-35</span><span>35+</span></div>
+          </div>
+          <div className="glass-card p-md rounded-xl flex flex-col justify-center gap-md">
+            <p className="text-label-md text-on-surface-variant">מגדר</p>
+            <div className="flex items-center gap-md"><div className="w-full h-4 bg-surface-container-high rounded-full overflow-hidden"><div className="h-full bg-secondary-fixed w-[55%]" /></div><span className="text-label-md text-secondary-fixed min-w-[5rem]">נשים 55%</span></div>
+            <div className="flex items-center gap-md"><div className="w-full h-4 bg-surface-container-high rounded-full overflow-hidden"><div className="h-full bg-primary-fixed w-[45%]" /></div><span className="text-label-md text-primary-fixed min-w-[5rem]">גברים 45%</span></div>
+          </div>
+        </div>
       </div>
 
       {/* Active events */}

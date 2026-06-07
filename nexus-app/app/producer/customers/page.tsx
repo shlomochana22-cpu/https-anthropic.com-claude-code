@@ -1,9 +1,9 @@
 import { Icon } from "@/components/Icon";
 
 const rows = [
-  { name: "נירה שמואלי", age: 28, gender: "נקבה", last: "12/05/2024", status: "פעיל מאוד", tone: "primary" },
-  { name: "אבי כהן", age: 31, gender: "זכר", last: "28/04/2024", status: "VIP", tone: "cyan" },
-  { name: "מיה לוין", age: 24, gender: "נקבה", last: "10/05/2024", status: "חדש", tone: "muted" },
+  { name: "נירה שמואלי", age: 28, gender: "נקבה", birth: "15/08/1995", last: "12/05/2024", status: "פעיל מאוד", tone: "primary" },
+  { name: "אבי כהן", age: 31, gender: "זכר", birth: "02/11/1992", last: "28/04/2024", status: "VIP", tone: "cyan" },
+  { name: "מיה לוין", age: 24, gender: "נקבה", birth: "21/01/2000", last: "10/05/2024", status: "חדש", tone: "muted" },
 ];
 
 export default function CustomersPage() {
@@ -37,6 +37,7 @@ export default function CustomersPage() {
                 <th className="px-md py-4">לקוח</th>
                 <th className="px-md py-4">גיל</th>
                 <th className="px-md py-4">מגדר</th>
+                <th className="px-md py-4">תאריך לידה</th>
                 <th className="px-md py-4">אירוע אחרון</th>
                 <th className="px-md py-4">סטטוס</th>
                 <th className="px-md py-4">פעולות</th>
@@ -55,6 +56,7 @@ export default function CustomersPage() {
                   </td>
                   <td className="px-md py-4 text-on-surface-variant">{r.age}</td>
                   <td className="px-md py-4 text-on-surface-variant">{r.gender}</td>
+                  <td className="px-md py-4 text-on-surface-variant">{r.birth}</td>
                   <td className="px-md py-4 text-on-surface-variant">{r.last}</td>
                   <td className="px-md py-4">
                     <span className={`px-3 py-1 text-xs rounded-full border ${
@@ -74,6 +76,19 @@ export default function CustomersPage() {
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* Pagination */}
+      <div className="mt-lg flex justify-center items-center gap-4">
+        <button className="w-10 h-10 flex items-center justify-center rounded-lg border border-white/10 text-on-surface-variant hover:border-primary-fixed hover:text-primary-fixed transition-all"><Icon name="chevron_right" /></button>
+        <div className="flex gap-2">
+          <button className="w-10 h-10 flex items-center justify-center rounded-lg bg-primary-container text-on-primary-container font-bold">1</button>
+          <button className="w-10 h-10 flex items-center justify-center rounded-lg border border-white/10 text-on-surface-variant hover:border-primary-fixed">2</button>
+          <button className="w-10 h-10 flex items-center justify-center rounded-lg border border-white/10 text-on-surface-variant hover:border-primary-fixed">3</button>
+          <span className="flex items-center px-2 text-on-surface-variant">...</span>
+          <button className="w-10 h-10 flex items-center justify-center rounded-lg border border-white/10 text-on-surface-variant hover:border-primary-fixed">42</button>
+        </div>
+        <button className="w-10 h-10 flex items-center justify-center rounded-lg border border-white/10 text-on-surface-variant hover:border-primary-fixed hover:text-primary-fixed transition-all"><Icon name="chevron_left" /></button>
       </div>
     </main>
   );

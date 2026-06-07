@@ -41,6 +41,42 @@ export default function AdminPage() {
         ))}
       </section>
 
+      {/* Advanced filtering */}
+      <section className="glass-card p-md rounded-xl mb-gutter">
+        <div className="flex items-center gap-2 mb-md text-primary-fixed">
+          <Icon name="filter_list" />
+          <h3 className="text-label-md">סינון מתקדם</h3>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-md">
+          <div className="space-y-2">
+            <label className="text-[10px] uppercase font-bold text-on-surface-variant tracking-widest block">טווח גילאים</label>
+            <div className="flex gap-2">
+              <input type="number" placeholder="מ-" className="w-full bg-surface-container-low border border-white/10 rounded-lg p-2 text-sm focus:border-primary-fixed outline-none" />
+              <input type="number" placeholder="עד" className="w-full bg-surface-container-low border border-white/10 rounded-lg p-2 text-sm focus:border-primary-fixed outline-none" />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <label className="text-[10px] uppercase font-bold text-on-surface-variant tracking-widest block">מגדר</label>
+            <select className="w-full bg-surface-container-low border border-white/10 rounded-lg p-2 text-sm focus:border-primary-fixed outline-none appearance-none"><option>הכל</option><option>זכר</option><option>נקבה</option><option>אחר</option></select>
+          </div>
+          <div className="space-y-2">
+            <label className="text-[10px] uppercase font-bold text-on-surface-variant tracking-widest block">ז'אנר מוזיקלי</label>
+            <div className="flex flex-wrap gap-2">
+              {["Techno", "Trance", "Mainstream", "Melodic"].map((g, i) => (
+                <button key={g} className={`px-3 py-1 rounded-full text-xs ${i === 0 ? "bg-primary-fixed text-on-primary-fixed font-bold border border-primary-fixed" : "bg-transparent text-on-surface-variant border border-white/10 hover:border-primary-fixed"} transition-all`}>{g}</button>
+              ))}
+            </div>
+          </div>
+          <div className="space-y-2">
+            <label className="text-[10px] uppercase font-bold text-on-surface-variant tracking-widest block">חיפוש משתמש</label>
+            <div className="relative">
+              <Icon name="search" className="absolute right-2 top-2 text-on-surface-variant text-sm" />
+              <input placeholder="שם, מייל או טלפון..." className="w-full bg-surface-container-low border border-white/10 rounded-lg p-2 pr-8 text-sm focus:border-primary-fixed outline-none text-right" />
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="glass-card rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-right border-collapse">
@@ -87,6 +123,48 @@ export default function AdminPage() {
         </div>
         <div className="p-md border-t border-white/5 text-xs text-on-surface-variant text-left">
           מציג 1-10 מתוך 124,502 משתמשים
+        </div>
+      </section>
+
+      {/* Growth chart + top producers */}
+      <section className="mt-xl grid grid-cols-1 md:grid-cols-3 gap-gutter">
+        <div className="glass-card p-md rounded-xl md:col-span-2">
+          <div className="flex justify-between items-center mb-md">
+            <h3 className="text-label-md text-primary-fixed uppercase tracking-wider">צמיחת משתמשים (חודשי)</h3>
+            <div className="flex gap-4 text-[10px] text-on-surface-variant">
+              <div className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-primary-fixed" /> 2024</div>
+              <div className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-white/20" /> 2023</div>
+            </div>
+          </div>
+          <div className="h-44 w-full flex items-end gap-2 relative">
+            <div className="absolute inset-x-0 bottom-0 border-b border-white/10 h-px" />
+            {[40, 60, 55, 80, 70, 95, 85].map((h, i) => (
+              <div key={i} className={`flex-1 bg-primary-fixed/20 border-t-2 border-primary-fixed transition-all hover:brightness-150 ${h === 95 ? "shadow-[0_0_20px_rgba(191,245,32,0.3)]" : ""}`} style={{ height: `${h}%` }} />
+            ))}
+          </div>
+          <div className="flex justify-between mt-2 text-[10px] text-on-surface-variant">
+            <span>ינו'</span><span>פבר'</span><span>מרץ</span><span>אפר'</span><span>מאי</span><span>יוני</span><span>יולי</span>
+          </div>
+        </div>
+        <div className="glass-card p-md rounded-xl flex flex-col">
+          <h3 className="text-label-md text-primary-fixed mb-md">הפקות מבוקשות</h3>
+          <div className="space-y-4 flex-1">
+            {[
+              { letter: "S", name: "Spoons Production", v: "15.2k" },
+              { letter: "U", name: "Unity Events", v: "12.8k" },
+              { letter: "M", name: "Music First", v: "9.4k" },
+              { letter: "B", name: "Boombox Crew", v: "8.1k", dim: true },
+            ].map((p) => (
+              <div key={p.name} className={`flex items-center justify-between ${p.dim ? "opacity-50" : ""}`}>
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded bg-white/5 flex items-center justify-center font-bold text-xs">{p.letter}</div>
+                  <span className="text-sm">{p.name}</span>
+                </div>
+                <span className="text-xs font-bold text-primary-fixed">{p.v}</span>
+              </div>
+            ))}
+          </div>
+          <button className="w-full mt-4 py-2 text-xs border border-white/10 rounded-lg hover:border-primary-fixed/50 hover:text-primary-fixed transition-all">צפה בכל המפיקים</button>
         </div>
       </section>
     </main>

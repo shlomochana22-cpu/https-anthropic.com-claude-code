@@ -61,11 +61,38 @@ export default function CampaignsPage() {
             ))}
           </div>
         </div>
-        <textarea
-          rows={5}
-          defaultValue="הערב: Nexus Underground חוזר. הציגו את כרטיס החבר לכניסה עד 00:00. לינק בביו."
-          className="w-full bg-surface-container-low border border-white/10 rounded-xl p-md text-on-surface focus:border-primary-fixed/50 outline-none transition-colors"
-        />
+        <div className="relative">
+          <textarea
+            rows={5}
+            defaultValue="הערב: Nexus Underground חוזר. הציגו את כרטיס החבר לכניסה עד 00:00. לינק בביו."
+            maxLength={160}
+            className="w-full bg-surface-container-low border border-white/10 rounded-xl p-md text-on-surface focus:border-primary-fixed/50 outline-none transition-colors"
+          />
+          <span className="absolute bottom-3 left-3 text-[10px] font-mono text-on-surface-variant/40" dir="ltr">84/160</span>
+        </div>
+        <div className="flex items-center gap-sm">
+          <button className="flex-1 flex items-center justify-center gap-2 py-sm bg-surface-container-highest rounded-lg text-label-md text-on-surface hover:bg-surface-variant transition-colors"><Icon name="image" className="text-[18px]" /> הוספת מדיה</button>
+          <button className="flex-1 flex items-center justify-center gap-2 py-sm bg-surface-container-highest rounded-lg text-label-md text-on-surface hover:bg-surface-variant transition-colors"><Icon name="link" className="text-[18px]" /> לינק חכם</button>
+        </div>
+      </section>
+
+      {/* Scheduling */}
+      <section className="glass-card rounded-xl p-md space-y-sm">
+        <label className="text-label-md text-primary-fixed uppercase">לו"ז הפצה</label>
+        <div className="flex items-center gap-sm">
+          <div className="flex-1 bg-surface-container-low border border-white/10 rounded-lg p-sm flex items-center gap-2">
+            <Icon name="calendar_month" className="text-primary-fixed/60" />
+            <span className="text-body-md text-on-surface">הערב, 24 באוק'</span>
+          </div>
+          <div className="flex-1 bg-surface-container-low border border-white/10 rounded-lg p-sm flex items-center gap-2">
+            <Icon name="schedule" className="text-primary-fixed/60" />
+            <span className="text-body-md text-on-surface">21:00</span>
+          </div>
+        </div>
+        <div className="flex items-center justify-between pt-1">
+          <span className="text-label-sm text-on-surface-variant/60">מסירה משוערת: מיידי</span>
+          <span className="text-label-sm text-primary-fixed/80">98% תפוצה חזויה</span>
+        </div>
       </section>
 
       <button className="w-full bg-primary-fixed text-on-primary-fixed text-2xl py-md rounded-xl font-bold flex items-center justify-center gap-sm shadow-neon-primary active:scale-95 transition-transform">
