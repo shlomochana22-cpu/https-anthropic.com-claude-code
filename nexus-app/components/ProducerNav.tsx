@@ -1,8 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Icon } from "./Icon";
+import { browserSupabase } from "@/lib/supabaseBrowser";
+
+async function signOut(router: ReturnType<typeof useRouter>) {
+  const sb = browserSupabase();
+  if (sb) await sb.auth.signOut();
+  router.push("/");
+}
 
 const links = [
   { href: "/producer", icon: "dashboard", label: "דאשבורד" },
@@ -21,6 +28,7 @@ const links = [
 /** Desktop sidebar for the producer (Pro) area. */
 export function ProducerSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   return (
     <aside className="hidden md:flex fixed right-0 top-0 h-full w-[280px] z-40 bg-surface-container-high border-l border-white/5 shadow-2xl flex-col p-md">
       <Link href="/" className="mb-lg px-2 block">
@@ -46,10 +54,10 @@ export function ProducerSidebar() {
           );
         })}
       </nav>
-      <Link href="/login" className="mt-auto flex items-center gap-3 px-4 py-3 text-error hover:bg-error/10 rounded-lg transition-all">
+      <button onClick={() => signOut(router)} className="mt-auto flex items-center gap-3 px-4 py-3 text-error hover:bg-error/10 rounded-lg transition-all w-full text-right">
         <Icon name="logout" />
         <span className="text-label-md">יציאה</span>
-      </Link>
+      </button>
     </aside>
   );
 }

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Icon } from "@/components/Icon";
+import { ProducerGreeting } from "@/components/ProducerGreeting";
 import { getEvents } from "@/lib/queries";
 
 export default async function ProducerDashboard({
@@ -20,7 +21,7 @@ export default async function ProducerDashboard({
         </div>
       )}
       <header className="mb-lg">
-        <h1 className="text-headline-xl text-primary-fixed mb-xs">שלום אלי</h1>
+        <h1 className="text-headline-xl text-primary-fixed mb-xs">שלום <ProducerGreeting /></h1>
         <p className="text-body-lg text-on-surface-variant">הנה סקירה של הביצועים שלך להיום.</p>
       </header>
 
