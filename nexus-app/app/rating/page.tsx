@@ -43,6 +43,23 @@ export default function RatingPage() {
               ))}
             </div>
           </div>
+          <div className="grid grid-cols-1 gap-sm pt-sm border-t border-white/5">
+            {[
+              { label: "מערכת סאונד", icon: "volume_up", filled: 4 },
+              { label: "אנרגיית קהל", icon: "groups", filled: 5 },
+              { label: "ארגון", icon: "event_seat", filled: 3 },
+            ].map((m) => (
+              <div key={m.label} className="flex items-center justify-between">
+                <span className="text-label-md text-on-surface-variant">{m.label}</span>
+                <div className="flex flex-row-reverse gap-1">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <Icon key={i} name={m.icon} className={`text-md cursor-pointer ${i <= m.filled ? "text-primary-fixed/70 hover:text-primary-fixed" : "text-on-surface-variant/20"}`} />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+
           <div className="pt-sm">
             <label className="block text-xs text-primary-fixed uppercase tracking-widest mb-2 px-1">כתבו ביקורת</label>
             <textarea

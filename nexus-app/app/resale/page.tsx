@@ -15,6 +15,22 @@ export default async function ResalePage() {
           <p className="text-on-surface-variant opacity-80">קנו ומכרו כרטיסים בצורה בטוחה ומאובטחת.</p>
         </section>
 
+        <div className="flex flex-col gap-md mb-lg">
+          <div className="relative w-full group">
+            <Icon name="search" className="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary-fixed transition-colors" />
+            <input className="w-full h-14 bg-surface-container rounded-xl pr-12 pl-4 border border-white/5 focus:border-primary-fixed focus:ring-1 focus:ring-primary-fixed transition-all text-white outline-none" placeholder="חיפוש אירועים..." />
+          </div>
+          <button className="w-full h-14 bg-primary-container text-on-primary-container font-bold rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-all shadow-neon-primary">
+            <Icon name="sell" /> מכירת הכרטיס שלי
+          </button>
+        </div>
+
+        <div className="flex gap-sm overflow-x-auto pb-4 mb-2 hide-scrollbar">
+          {["הכל", "היום", "טכנו", "מסיבות בית", "הופעות חיות"].map((c, i) => (
+            <button key={c} className={`px-md py-2 rounded-full text-label-md whitespace-nowrap ${i === 0 ? "bg-primary-container text-on-primary-container font-bold" : "bg-surface-container text-on-surface-variant border border-white/5"}`}>{c}</button>
+          ))}
+        </div>
+
         <div className="grid grid-cols-2 gap-sm mb-lg">
           <div className="glass-card p-md rounded-xl flex items-center gap-3 border-r-4 border-primary-fixed">
             <Icon name="verified_user" className="text-primary-fixed" fill />
@@ -55,6 +71,7 @@ export default async function ResalePage() {
                   </div>
                   <div className="text-right">
                     <div className="text-primary-fixed text-headline-md">₪{e.fromPrice}</div>
+                    <div className="text-on-surface-variant text-[10px] line-through">₪{Math.round(e.fromPrice * 1.4)}</div>
                   </div>
                 </div>
                 <span className="self-end bg-white/5 text-primary-fixed px-md py-2 rounded-lg text-label-md font-bold border border-primary-fixed/20">

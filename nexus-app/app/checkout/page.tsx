@@ -1,5 +1,7 @@
 import { Header } from "@/components/Header";
 import { PayButton } from "@/components/PayButton";
+import { Countdown } from "@/components/Countdown";
+import { Icon } from "@/components/Icon";
 import { getEventById } from "@/lib/queries";
 
 export default async function CheckoutPage({
@@ -17,6 +19,7 @@ export default async function CheckoutPage({
     <>
       <Header back={event ? `/events/${event.id}` : "/"} />
       <main className="pt-24 pb-40 px-margin-mobile max-w-md mx-auto">
+        <Countdown minutes={10} />
         <h1 className="text-headline-lg-mobile mb-md text-white">סיכום הזמנה</h1>
 
         {event && (
@@ -46,6 +49,13 @@ export default async function CheckoutPage({
             <span className="text-headline-md text-white">סה"כ לתשלום</span>
             <span className="text-headline-md text-primary-fixed neon-text">₪{total}</span>
           </div>
+        </div>
+
+        <div className="flex items-center gap-3 p-4 bg-primary-fixed/5 rounded-xl border border-primary-fixed/20">
+          <Icon name="bolt" className="text-primary-fixed" />
+          <p className="text-label-sm text-on-surface-variant">
+            ברכישה זו תצברו <span className="text-primary-fixed font-bold">{Math.max(1, Math.round(total / 7))} נקודות NEXUS</span> להטבות עתידיות.
+          </p>
         </div>
       </main>
 

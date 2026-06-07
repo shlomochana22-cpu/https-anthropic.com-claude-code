@@ -11,6 +11,7 @@ export function EventDetail({ event }: { event: NexusEvent }) {
   const [qty, setQty] = useState<Record<string, number>>(
     Object.fromEntries(event.tiers.map((t) => [t.id, t.id === "regular" ? 1 : 0]))
   );
+  const [descOpen, setDescOpen] = useState(false);
 
   const total = useMemo(
     () => event.tiers.reduce((sum, t) => sum + (qty[t.id] || 0) * t.price, 0),
@@ -87,6 +88,21 @@ export function EventDetail({ event }: { event: NexusEvent }) {
           </div>
         </section>
 
+        {/* Description */}
+        <section className="px-margin-mobile mt-lg">
+          <h3 className="text-headline-md text-primary mb-sm">על האירוע</h3>
+          <p className={`text-on-surface-variant text-body-md leading-relaxed ${descOpen ? "" : "line-clamp-3"}`}>
+            הצטרפו אלינו ל{event.title} — לילה בלתי נשכח עם {event.subtitle}. חווית סאונד טוטאלית עם
+            המערכת הטובה בעולם, תאורה שתשאב אתכם למימד אחר וליינאפ שישאיר אתכם על הרגליים עד אור הבוקר.
+            שימו לב: הכניסה מותנית בבדיקת גיל והצגת תעודת זהות פיזית בלבד. מומלץ להצטייד בכרטיסים מראש
+            עקב ביקוש שיא.
+          </p>
+          <button onClick={() => setDescOpen((v) => !v)} className="text-primary-fixed-dim font-bold text-label-md mt-2 flex items-center gap-1">
+            {descOpen ? "סגור" : "קרא עוד"}
+            <Icon name={descOpen ? "expand_less" : "expand_more"} className="text-sm" />
+          </button>
+        </section>
+
         {/* Tiers */}
         <section className="px-margin-mobile mt-lg">
           <h3 className="text-headline-md text-primary mb-md">סוגי כרטיסים</h3>
@@ -136,6 +152,23 @@ export function EventDetail({ event }: { event: NexusEvent }) {
               </div>
             ))}
           </div>
+        </section>
+        {/* Directions */}
+        <section className="px-margin-mobile mt-lg mb-8">
+          <h3 className="text-headline-md text-primary mb-sm">איך מגיעים</h3>
+          <Link href={`/events/${event.id}/map`} className="block h-40 rounded-2xl overflow-hidden glass-card relative">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              alt="מפה"
+              className="w-full h-full object-cover opacity-50 grayscale contrast-125"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjO6McQiHvw1lDmliN6f8Rn3o-mGiOjUYhLFDzTd0Luxi10fml4UXi47l7PMcZ3qDao8Z9bIF3ysUMcWBdarDCQOPgPmRbtKZJylSOsURejUQ1FQPI0S2iSuqb1wps4dCIdqOPWJJKdmdRlYxbnzdbCOGjI1bDPAjVens2ybZzbktYH2ApPTyw5wB4dmyP9LzUcofS6J7LDNgBgVUkqkERnx-gceoTYroRVFLCvFeNfe_KtG3HgDiEEpfJHdzTtDwcQp_2fjzolg"
+            />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="bg-primary-container text-on-primary-container px-4 py-2 rounded-full font-bold flex items-center gap-2 shadow-[0_0_20px_rgba(191,245,32,0.6)]">
+                <Icon name="directions" className="text-sm" /> נווט ליעד
+              </div>
+            </div>
+          </Link>
         </section>
       </main>
 

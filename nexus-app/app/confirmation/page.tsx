@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Header } from "@/components/Header";
 import { Icon } from "@/components/Icon";
+import { Confetti } from "@/components/Confetti";
 import { getEventById } from "@/lib/queries";
 
 export default async function ConfirmationPage({
@@ -13,6 +14,7 @@ export default async function ConfirmationPage({
 
   return (
     <>
+      <Confetti />
       <Header back="/tickets" />
       <main className="pt-24 pb-32 px-margin-mobile max-w-lg mx-auto flex flex-col items-center">
         <div className="mb-8 flex flex-col items-center">
@@ -61,12 +63,17 @@ export default async function ConfirmationPage({
           </div>
         </div>
 
-        <Link
-          href="/tickets"
-          className="w-full py-4 bg-primary-fixed text-on-primary-fixed text-headline-md rounded-xl shadow-neon-primary active:scale-95 transition-all flex items-center justify-center gap-3"
-        >
-          צפה בכרטיסים שלי <Icon name="confirmation_number" />
-        </Link>
+        <div className="w-full space-y-4">
+          <Link
+            href="/tickets"
+            className="w-full py-4 bg-primary-fixed text-on-primary-fixed text-headline-md rounded-xl shadow-neon-primary active:scale-95 transition-all flex items-center justify-center gap-3"
+          >
+            צפה בכרטיסים שלי <Icon name="confirmation_number" />
+          </Link>
+          <button className="w-full py-4 glass-card text-white text-headline-md rounded-xl border border-white/20 active:scale-95 transition-all flex items-center justify-center gap-3">
+            <Icon name="account_balance_wallet" /> הוסף ל-Apple Wallet
+          </button>
+        </div>
       </main>
     </>
   );
