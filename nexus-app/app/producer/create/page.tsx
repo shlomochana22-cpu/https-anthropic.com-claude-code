@@ -43,14 +43,16 @@ export default function CreateEventPage() {
   };
 
   const [aiSource, setAiSource] = useState<"ai" | "local" | null>(null);
+  const [aiAction, setAiAction] = useState<"write" | "rewrite" | "shorten" | "lengthen" | null>(null);
 
-  const writeWithAI = async () => {
+  const runAI = async (action: "write" | "rewrite" | "shorten" | "lengthen") => {
     setAiLoading(true);
+    setAiAction(action);
     try {
       const res = await fetch("/api/ai/describe", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ title, genres: genreList, category, city, location, time, age, ageVisible }),
+        body: JSON.stringify({ title, genres: genreList, category, city, location, time, age, ageVisible, action, current: description }),
       });
       const data = await res.json();
       if (data?.text) {
@@ -67,6 +69,7 @@ export default function CreateEventPage() {
       setAiSource("local");
     } finally {
       setAiLoading(false);
+      setAiAction(null);
     }
   };
 
@@ -240,17 +243,39 @@ export default function CreateEventPage() {
             <div className="flex items-center justify-between gap-3 mb-6 flex-wrap">
               <h3 className="text-headline-md text-primary flex items-center gap-2"><Icon name="description" className="text-primary-fixed" /> סיפור האירוע</h3>
               <button
-                onClick={writeWithAI}
+                onClick={() => runAI("write")}
                 disabled={aiLoading}
                 className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-primary-fixed/20 to-secondary-fixed/20 border border-primary-fixed/40 text-primary-fixed text-label-md hover:from-primary-fixed/30 hover:to-secondary-fixed/30 transition-all active:scale-95 disabled:opacity-60"
               >
-                <Icon name="auto_awesome" className={aiLoading ? "animate-spin" : "animate-pulse"} fill />
-                {aiLoading ? "כותב…" : "כתוב עם AI"}
+                <Icon name="auto_awesome" className={aiLoading && aiAction === "write" ? "animate-spin" : "animate-pulse"} fill />
+                {aiLoading && aiAction === "write" ? "כותב…" : "כתוב עם AI"}
               </button>
             </div>
             <div className="flex flex-col gap-2">
               <label className="text-primary-fixed text-label-md uppercase tracking-wider">תיאור</label>
               <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={6} placeholder="תאר את האווירה, הליינאפ, ולמה לצפות... או תן ל-AI לכתוב עבורך ✨" className="bg-surface-container-low border border-white/10 rounded-lg px-4 py-4 text-body-md text-primary placeholder:text-on-surface-variant/30 resize-none focus:border-primary-fixed outline-none" />
+
+              {/* AI refine toolbar — appears once there's text to work on */}
+              {description.trim() && (
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { action: "rewrite" as const, icon: "refresh", label: "שכתב" },
+                    { action: "shorten" as const, icon: "compress", label: "קצר" },
+                    { action: "lengthen" as const, icon: "expand", label: "הארך" },
+                  ].map((b) => (
+                    <button
+                      key={b.action}
+                      onClick={() => runAI(b.action)}
+                      disabled={aiLoading}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-high border border-white/10 text-secondary-fixed text-label-sm hover:border-secondary-fixed/50 transition-all active:scale-95 disabled:opacity-50"
+                    >
+                      <Icon name={b.icon} className={`text-[16px] ${aiLoading && aiAction === b.action ? "animate-spin" : ""}`} />
+                      {aiLoading && aiAction === b.action ? "…" : b.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+
               <div className="flex items-center justify-between gap-2 flex-wrap">
                 <p className="text-[11px] text-on-surface-variant/60 flex items-center gap-1">
                   <Icon name="tips_and_updates" className="text-[14px]" /> ה-AI מנסח טקסט שיווקי על בסיס שם האירוע, הז'אנרים והמיקום שמילאת. אפשר לערוך אחר כך.
