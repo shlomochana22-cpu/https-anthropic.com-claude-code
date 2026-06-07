@@ -1,0 +1,96 @@
+<!-- הקמת אירוע - כרטיסים ומחירים (Varela Round) -->
+<!DOCTYPE html>
+<html class="dark" dir="rtl" lang="he"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NEXUS PRO | יצירת אירוע - כרטיסים</title>
+<link href="https://fonts.googleapis.com/css2?family=Varela+Round&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = { darkMode: "class", theme: { extend: {
+          "colors": {
+            "on-error-container": "#ffdad6","background": "#0a0a0a","on-tertiary-container": "#b300b3","surface-container-lowest": "#0e0e0e",
+            "surface-bright": "#3a3939","on-primary": "#273500","secondary-fixed-dim": "#00dbe9","primary": "#ffffff","tertiary-container": "#ffd7f5",
+            "on-tertiary": "#5b005b","on-primary-container": "#536d00","surface-container-low": "#1c1b1b","surface-container": "#201f1f","on-background": "#e5e2e1",
+            "surface-container-highest": "#353534","on-primary-fixed": "#151f00","on-surface": "#e5e2e1","tertiary-fixed": "#ffd7f5","primary-fixed": "#bff520",
+            "tertiary": "#ffffff","primary-fixed-dim": "#a5d700","primary-container": "#bff520","outline": "#8d937a","surface-dim": "#131313","on-error": "#690005",
+            "surface-variant": "#353534","secondary-container": "#00eefc","secondary-fixed": "#7df4ff","on-primary-fixed-variant": "#3a4d00","secondary": "#d3fbff",
+            "on-surface-variant": "#c3c9ad","surface": "#131313","surface-container-high": "#2a2a2a","outline-variant": "#434934","error": "#ffb4ab","error-container": "#93000a"
+          },
+          "borderRadius": { "DEFAULT": "0.25rem","lg": "0.5rem","xl": "0.75rem","full": "9999px" },
+          "spacing": { "margin-desktop": "64px","gutter": "16px","base": "8px","xs": "4px","md": "24px","margin-mobile": "20px","xl": "80px","lg": "48px","sm": "12px" },
+          "fontFamily": { "headline-lg-mobile": ["Varela Round","sans-serif"],"body-md": ["Varela Round","sans-serif"],"label-sm": ["Varela Round","sans-serif"],"body-lg": ["Varela Round","sans-serif"],"headline-lg": ["Varela Round","sans-serif"],"headline-md": ["Varela Round","sans-serif"],"label-md": ["Varela Round","sans-serif"],"headline-xl": ["Varela Round","sans-serif"] },
+          "fontSize": {
+            "headline-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "700"}],"body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+            "label-sm": ["12px", {"lineHeight": "1", "fontWeight": "500"}],"body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+            "headline-lg": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],"headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+            "label-md": ["14px", {"lineHeight": "1", "fontWeight": "600"}],"headline-xl": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}]
+          }
+        } } }
+    </script>
+<style>
+        body { background-color: #0a0a0a; color: #e5e2e1; font-family: 'Varela Round', sans-serif; overflow-x: hidden; min-height: max(884px, 100dvh); }
+        .glass-panel { background: rgba(26, 26, 26, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .neon-border-pulse { position: relative; }
+        .neon-border-pulse::after { content: ''; position: absolute; inset: -1px; background: linear-gradient(90deg, #bff520, transparent, #bff520); z-index: -1; border-radius: inherit; animation: border-rotate 4s linear infinite; opacity: 0.3; }
+        @keyframes border-rotate { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
+        .capacity-glow { box-shadow: 0 0 15px rgba(0, 238, 252, 0.4); }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="bg-background">
+<header class="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-xl border-b border-white/10 shadow-xl h-20 flex items-center justify-between px-margin-mobile md:px-margin-desktop">
+<div class="flex items-center gap-4"><a href="create-general.html" class="material-symbols-outlined text-primary hover:bg-white/5 p-2 rounded-full transition-colors active:scale-95 duration-200 rotate-180 md:rotate-0">arrow_back</a><h1 class="font-headline-xl text-headline-xl font-extrabold tracking-tighter text-primary drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]">NEXUS PRO</h1></div>
+<a href="create-media.html" class="hidden md:block bg-primary-container text-on-primary-container px-6 py-2 rounded-lg font-label-md text-label-md hover:bg-primary-container/90 active:scale-95 transition-all">פרסם אירוע</a>
+</header>
+<aside class="hidden md:flex fixed right-0 top-0 h-full w-[280px] z-40 bg-surface-container-lowest border-l border-white/5 shadow-2xl flex-col p-6 pt-28 gap-4">
+<div class="flex items-center gap-3 mb-8 px-2"><div class="w-12 h-12 rounded-full bg-primary-container overflow-hidden"><img alt="Producer" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBctfh-xO0O7IzGRe-UwnJCtwsXi7HyxdbZMWy_HuBX4dxNpVQo2F2xMKpJn24eG-mL9ocvXmUjGOoavrOyCpH4RgPU4-adZot2dK1AZAiZebbPmMXAzTi6St89JFsg_T3kSs6Cd6rjn50ZWYecT-XXTeOgsWHf67cX7MH9XU-YAmUOtOkma7OFzGlerLuNquo1mPP7nt1LN3WLBe_z0lymec2C49BFxJgMAi5pHJzyLSpuyg9bzR5nrEQkc_YnLobstvagA_hptQ"/></div><div><p class="font-headline-md text-headline-md text-primary">Nexus Producer</p><p class="font-label-md text-label-md text-on-surface-variant">לוח בקרה פרו</p></div></div>
+<nav class="space-y-2">
+<a href="create-general.html" class="flex items-center gap-3 p-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all rounded-lg cursor-pointer"><span class="material-symbols-outlined">info</span><span class="font-label-md text-label-md">מידע בסיסי</span></a>
+<div class="flex items-center gap-3 p-3 bg-primary-container text-on-primary-container rounded-lg font-bold shadow-[0_0_20px_rgba(191,245,32,0.3)]"><span class="material-symbols-outlined">confirmation_number</span><span class="font-label-md text-label-md">כרטיסים</span></div>
+<a href="create-media.html" class="flex items-center gap-3 p-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all rounded-lg cursor-pointer"><span class="material-symbols-outlined">campaign</span><span class="font-label-md text-label-md">מדיה ויח"צ</span></a>
+</nav>
+</aside>
+<main class="pt-24 pb-32 px-margin-mobile md:pl-margin-desktop md:pr-[300px] max-w-7xl mx-auto">
+<section class="mb-lg">
+<div class="flex justify-between items-end mb-sm"><div><h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary-fixed mb-xs">שלב 2 מתוך 3: כרטיסים</h2><p class="font-body-md text-body-md text-on-surface-variant">הגדר את סוגי הכרטיסים ותפוסת המקום.</p></div><p class="font-label-md text-label-md text-primary-fixed mb-1">66% הושלמו</p></div>
+<div class="w-full h-2 bg-surface-container-highest rounded-full overflow-hidden"><div class="w-2/3 h-full bg-primary-fixed shadow-[0_0_10px_#bff520]"></div></div>
+</section>
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+<div class="lg:col-span-2 glass-panel rounded-xl p-md relative overflow-hidden flex flex-col justify-between min-h-[220px]">
+<div class="absolute top-0 left-0 p-4"><span class="bg-[#00eefc]/10 text-[#00eefc] px-3 py-1 rounded-full text-xs font-bold border border-[#00eefc]/30 uppercase tracking-widest">מוגבל</span></div>
+<div><div class="flex items-center gap-3 mb-md"><div class="p-2 rounded-lg bg-surface-container-high text-primary-fixed"><span class="material-symbols-outlined">bolt</span></div><h3 class="font-headline-md text-headline-md text-primary">מכירה מוקדמת</h3></div>
+<div class="grid grid-cols-2 md:grid-cols-3 gap-md">
+<div class="space-y-1"><label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-tighter">מחיר (ILS)</label><input class="w-full bg-surface-container-low border border-white/10 rounded-lg p-3 text-primary focus:border-primary-fixed focus:ring-1 focus:ring-primary-fixed outline-none transition-all" type="number" value="80"/></div>
+<div class="space-y-1"><label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-tighter">כמות</label><input class="w-full bg-surface-container-low border border-white/10 rounded-lg p-3 text-primary focus:border-primary-fixed focus:ring-1 focus:ring-primary-fixed outline-none transition-all" type="number" value="150"/></div>
+<div class="col-span-2 md:col-span-1 space-y-1"><label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-tighter">סיום מכירה</label><input class="w-full bg-surface-container-low border border-white/10 rounded-lg p-3 text-primary focus:border-primary-fixed focus:ring-1 focus:ring-primary-fixed outline-none transition-all" type="date" value="2024-06-15"/></div>
+</div></div>
+</div>
+<div class="lg:col-span-1 glass-panel rounded-xl p-md flex flex-col justify-center items-center text-center gap-4 bg-gradient-to-br from-surface-container-low to-black">
+<h3 class="font-label-md text-label-md text-on-surface-variant uppercase">תפוסה כוללת</h3>
+<div class="relative w-40 h-40"><svg class="w-full h-full transform -rotate-90"><circle class="text-surface-container-highest" cx="80" cy="80" fill="transparent" r="70" stroke="currentColor" stroke-width="8"></circle><circle class="text-secondary-container capacity-glow" cx="80" cy="80" fill="transparent" r="70" stroke="currentColor" stroke-dasharray="440" stroke-dashoffset="110" stroke-width="12"></circle></svg><div class="absolute inset-0 flex flex-col items-center justify-center"><span class="font-headline-xl text-headline-xl text-primary leading-none">1,200</span><span class="font-label-sm text-label-sm text-secondary-container">הוקצו סה״כ</span></div></div>
+<p class="font-body-md text-body-md text-on-surface-variant">תפוסת המקום: 1,500</p>
+</div>
+<div class="lg:col-span-1 glass-panel rounded-xl p-md flex flex-col justify-between min-h-[220px]">
+<div><div class="flex items-center gap-3 mb-md"><div class="p-2 rounded-lg bg-surface-container-high text-primary-fixed"><span class="material-symbols-outlined">confirmation_number</span></div><h3 class="font-headline-md text-headline-md text-primary">רגיל</h3></div>
+<div class="space-y-4"><div class="space-y-1"><label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-tighter">מחיר</label><input class="w-full bg-surface-container-low border border-white/10 rounded-lg p-3 text-primary focus:border-primary-fixed outline-none transition-all" type="number" value="120"/></div><div class="space-y-1"><label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-tighter">כמות</label><input class="w-full bg-surface-container-low border border-white/10 rounded-lg p-3 text-primary focus:border-primary-fixed outline-none transition-all" type="number" value="800"/></div></div></div>
+</div>
+<div class="lg:col-span-2 glass-panel rounded-xl p-md border-primary-fixed/20 relative overflow-hidden flex flex-col md:flex-row gap-md neon-border-pulse">
+<div class="flex-1"><div class="flex items-center gap-3 mb-md"><div class="p-2 rounded-lg bg-primary-container/20 text-primary-fixed"><span class="material-symbols-outlined">stars</span></div><h3 class="font-headline-md text-headline-md text-primary">כרטיס VIP</h3></div>
+<div class="grid grid-cols-2 gap-md"><div class="space-y-1"><label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-tighter">מחיר</label><input class="w-full bg-surface-container-low border border-white/10 rounded-lg p-3 text-primary focus:border-primary-fixed outline-none" type="number" value="350"/></div><div class="space-y-1"><label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-tighter">כמות</label><input class="w-full bg-surface-container-low border border-white/10 rounded-lg p-3 text-primary focus:border-primary-fixed outline-none" type="number" value="250"/></div></div></div>
+<div class="flex-1 bg-white/5 p-4 rounded-xl border border-white/5"><p class="font-label-md text-label-md text-primary-fixed mb-3 uppercase tracking-wider">הטבות VIP</p>
+<div class="space-y-2"><label class="flex items-center gap-3 cursor-pointer group"><input checked="" class="w-5 h-5 rounded border-white/20 bg-transparent text-primary-fixed focus:ring-0" type="checkbox"/><span class="font-body-md text-body-md group-hover:text-primary transition-colors">גישה לבקסטייג׳</span></label>
+<label class="flex items-center gap-3 cursor-pointer group"><input checked="" class="w-5 h-5 rounded border-white/20 bg-transparent text-primary-fixed focus:ring-0" type="checkbox"/><span class="font-body-md text-body-md group-hover:text-primary transition-colors">כניסה מהירה</span></label>
+<label class="flex items-center gap-3 cursor-pointer group opacity-50"><input class="w-5 h-5 rounded border-white/20 bg-transparent text-primary-fixed focus:ring-0" type="checkbox"/><span class="font-body-md text-body-md group-hover:text-primary transition-colors">שולחן פרטי</span></label></div>
+</div>
+</div>
+<button class="lg:col-span-3 border-2 border-dashed border-white/10 rounded-xl p-lg flex flex-col items-center justify-center gap-2 hover:border-primary-fixed/50 hover:bg-white/5 transition-all group"><span class="material-symbols-outlined text-4xl text-on-surface-variant group-hover:text-primary-fixed transition-colors">add_circle</span><span class="font-label-md text-label-md text-on-surface-variant uppercase group-hover:text-primary tracking-widest">הוסף סוג כרטיס +</span></button>
+</section>
+<div class="fixed bottom-0 left-0 right-0 p-margin-mobile bg-background/80 backdrop-blur-xl border-t border-white/5 flex gap-gutter md:relative md:bg-transparent md:border-none md:p-0 md:mt-xl md:justify-start">
+<a href="create-media.html" class="flex-[2] md:flex-none md:w-64 bg-primary-fixed text-on-primary-fixed px-lg py-4 rounded-xl font-headline-md text-label-md shadow-[0_0_30px_rgba(191,245,32,0.4)] hover:scale-[1.02] transition-all flex items-center justify-center gap-2 active:scale-95">הבא: מדיה ויח״צ<span class="material-symbols-outlined rotate-180">arrow_forward</span></a>
+<button class="flex-1 md:flex-none md:w-48 bg-surface-container-high text-primary border border-white/10 px-lg py-4 rounded-xl font-label-md text-label-md hover:bg-surface-container-highest transition-all flex items-center justify-center gap-2 active:scale-95"><span class="material-symbols-outlined">save</span>שמור טיוטה</button>
+</div>
+</main>
+<div class="fixed top-[-10%] left-[-10%] w-[500px] h-[500px] bg-primary-fixed/10 blur-[120px] rounded-full -z-10 pointer-events-none"></div>
+</body></html>

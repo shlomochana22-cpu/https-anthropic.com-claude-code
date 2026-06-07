@@ -1,0 +1,78 @@
+<!-- כניסת מפיק - נקסוס (Varela Round) -->
+<!DOCTYPE html>
+<html class="dark" dir="rtl" lang="he"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NEXUS PRO | כניסת מפיקים</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Varela+Round&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = { darkMode: "class", theme: { extend: {
+        "colors": {
+          "background": "#131313","surface-variant": "#353534","outline": "#8d937a","error-container": "#93000a","primary-fixed-dim": "#a5d700",
+          "outline-variant": "#434934","secondary-container": "#00eefc","surface-container-lowest": "#0e0e0e","secondary": "#d3fbff",
+          "surface-container-highest": "#353534","surface-container": "#201f1f","error": "#ffb4ab","surface-tint": "#a5d700","on-primary-fixed": "#151f00",
+          "on-background": "#e5e2e1","primary": "#ffffff","on-surface": "#e5e2e1","primary-fixed": "#bff520","on-surface-variant": "#c3c9ad",
+          "tertiary": "#ffffff","secondary-fixed": "#7df4ff","surface-bright": "#3a3939","surface-container-high": "#2a2a2a","primary-container": "#bff520",
+          "on-primary-container": "#536d00","surface": "#131313","secondary-fixed-dim": "#00dbe9","on-primary": "#273500","on-error": "#690005",
+          "surface-container-low": "#1c1b1b","on-secondary": "#00363a"
+        },
+        "borderRadius": { "DEFAULT": "0.25rem","lg": "0.5rem","xl": "0.75rem","full": "9999px" },
+        "spacing": { "xs": "4px","md": "24px","xl": "80px","sm": "12px","margin-desktop": "64px","lg": "48px","margin-mobile": "20px","gutter": "16px","base": "8px" },
+        "fontFamily": { "body-md": ["Varela Round","sans-serif"],"body-lg": ["Varela Round","sans-serif"],"label-md": ["Varela Round","sans-serif"],"label-sm": ["Varela Round","sans-serif"],"headline-md": ["Varela Round","sans-serif"],"headline-lg": ["Varela Round","sans-serif"],"headline-xl": ["Varela Round","sans-serif"],"headline-lg-mobile": ["Varela Round","sans-serif"] },
+        "fontSize": {
+          "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],"body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+          "label-md": ["14px", {"lineHeight": "1", "fontWeight": "600"}],"label-sm": ["12px", {"lineHeight": "1", "fontWeight": "500"}],
+          "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],"headline-lg": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+          "headline-xl": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],"headline-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "700"}]
+        }
+      } } }
+    </script>
+<style>
+        body { background-color: #131313; color: #e5e2e1; font-family: 'Varela Round', sans-serif; }
+        .glass-panel { background: rgba(26, 26, 26, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .neon-glow:focus-within { box-shadow: 0 0 15px rgba(191, 245, 32, 0.3); border-color: #bff520; }
+        .primary-btn-glow { box-shadow: 0 0 20px rgba(191, 245, 32, 0.4); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .primary-btn-glow:active { transform: scale(0.96); }
+        input::placeholder { color: #8d937a; opacity: 0.6; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
+        body { min-height: max(884px, 100dvh); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center overflow-x-hidden font-body-md">
+<div class="fixed inset-0 z-0 pointer-events-none">
+<div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary-fixed/10 blur-[120px] rounded-full"></div>
+<div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-secondary-fixed/5 blur-[120px] rounded-full"></div>
+</div>
+<header class="fixed top-0 w-full z-50 flex items-center justify-center py-8 px-margin-mobile">
+<a href="../index.html" class="flex items-center gap-2 group cursor-pointer">
+<span class="material-symbols-outlined text-primary-fixed text-3xl group-hover:drop-shadow-[0_0_8px_rgba(191,245,32,0.8)] transition-all">bolt</span>
+<span class="font-headline-md text-headline-md font-extrabold tracking-tighter text-primary-fixed drop-shadow-[0_0_10px_rgba(191,245,32,0.4)]">NEXUS</span>
+<div class="bg-primary-fixed text-on-primary-fixed px-2 py-0.5 rounded-sm text-[10px] font-bold tracking-widest mr-1 mt-1">PRO</div>
+</a>
+</header>
+<main class="relative z-10 w-full max-w-[480px] px-margin-mobile py-xl flex flex-col items-center">
+<div class="text-center mb-lg space-y-3">
+<h1 class="font-headline-xl text-headline-xl text-primary tracking-tight">כניסת מפיקים</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-[320px] mx-auto leading-relaxed">נהל את האירועים, המכירות והקהל שלך במקום אחד.</p>
+</div>
+<form class="w-full glass-panel rounded-xl p-md flex flex-col gap-md" onsubmit="event.preventDefault(); window.location.href='producer-dashboard.html';">
+<div class="space-y-2"><label class="block text-label-sm font-label-sm uppercase tracking-widest text-on-surface-variant mr-1">כתובת אימייל</label>
+<div class="relative neon-glow border border-outline-variant/40 bg-surface-container-lowest rounded-lg transition-all"><input class="w-full bg-transparent border-none focus:ring-0 py-4 px-md text-body-md text-primary" placeholder="name@nexus.co.il" required="" type="email"/><span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline-variant">alternate_email</span></div></div>
+<div class="space-y-2"><div class="flex justify-between items-center px-1"><label class="text-label-sm font-label-sm uppercase tracking-widest text-on-surface-variant">סיסמה</label><a class="text-label-sm font-label-sm text-primary-fixed hover:text-primary-fixed-dim transition-colors" href="#">שכחתי סיסמה?</a></div>
+<div class="relative neon-glow border border-outline-variant/40 bg-surface-container-lowest rounded-lg transition-all"><input class="w-full bg-transparent border-none focus:ring-0 py-4 px-md text-body-md text-primary" placeholder="••••••••" required="" type="password"/><span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline-variant">lock</span></div></div>
+<button class="w-full bg-primary-fixed text-on-primary-fixed py-4 rounded-lg font-headline-md text-headline-md primary-btn-glow mt-2 hover:bg-primary-fixed-dim" type="submit">כניסה למערכת</button>
+<div class="text-center mt-2"><p class="font-body-md text-body-md text-on-surface-variant">עדיין אין לך חשבון מפיק? <a class="text-primary-fixed font-bold mr-1 hover:underline decoration-2 underline-offset-4" href="#">הגש בקשה להצטרפות</a></p></div>
+</form>
+<div class="mt-xl w-full flex flex-wrap justify-center items-center gap-md opacity-60">
+<div class="flex items-center gap-2 grayscale hover:grayscale-0 transition-all cursor-default"><span class="material-symbols-outlined text-secondary-fixed text-xl">verified_user</span><span class="text-label-sm font-label-sm uppercase tracking-widest">SSL SECURE</span></div>
+<div class="flex items-center gap-2 grayscale hover:grayscale-0 transition-all cursor-default"><span class="material-symbols-outlined text-secondary-fixed text-xl">encrypted</span><span class="text-label-sm font-label-sm uppercase tracking-widest">ENCRYPTED DATA</span></div>
+<div class="flex items-center gap-2 grayscale hover:grayscale-0 transition-all cursor-default"><span class="material-symbols-outlined text-secondary-fixed text-xl">shield_person</span><span class="text-label-sm font-label-sm uppercase tracking-widest">NEXUS PROTECTION</span></div>
+</div>
+</main>
+<footer class="w-full py-8 mt-auto px-margin-mobile text-center border-t border-outline-variant/30 flex flex-col items-center gap-4 relative z-10">
+<div class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant">© 2024 NEXUS NIGHTLIFE TECHNOLOGY. ALL RIGHTS RESERVED.</div>
+<div class="flex gap-gutter"><a class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant hover:text-primary-fixed transition-colors opacity-80 hover:opacity-100" href="help.html">Support</a><a class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant hover:text-primary-fixed transition-colors opacity-80 hover:opacity-100" href="#">Privacy Policy</a><a class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant hover:text-primary-fixed transition-colors opacity-80 hover:opacity-100" href="#">Terms of Service</a></div>
+</footer>
+</body></html>
