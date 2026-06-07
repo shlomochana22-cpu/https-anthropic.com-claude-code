@@ -1,0 +1,65 @@
+<!-- סטטיסטיקה מפורטת - נקסוס (Varela Round) -->
+<!DOCTYPE html>
+<html class="dark" dir="rtl" lang="he"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NEXUS | Producer Stats</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Varela+Round&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = { darkMode: "class", theme: { extend: { "colors": {
+          "secondary-fixed": "#7df4ff","outline": "#8d937a","surface": "#131313","secondary": "#d3fbff","surface-container": "#201f1f","on-surface-variant": "#c3c9ad",
+          "primary-container": "#bff520","secondary-fixed-dim": "#00dbe9","surface-dim": "#131313","surface-tint": "#a5d700","secondary-container": "#00eefc","surface-bright": "#3a3939",
+          "primary-fixed-dim": "#a5d700","primary-fixed": "#bff520","on-primary": "#273500","error": "#ffb4ab","surface-container-low": "#1c1b1b","primary": "#ffffff","on-surface": "#e5e2e1",
+          "surface-container-highest": "#353534","surface-variant": "#353534","tertiary": "#ffffff","surface-container-high": "#2a2a2a","on-background": "#e5e2e1","on-primary-fixed": "#151f00",
+          "surface-container-lowest": "#0e0e0e","tertiary-fixed-dim": "#ffabf3","background": "#131313","on-primary-container": "#536d00","outline-variant": "#434934"
+        },
+        "spacing": { "xs": "4px","sm": "12px","gutter": "16px","base": "8px","xl": "80px","lg": "48px","md": "24px","margin-mobile": "20px","margin-desktop": "64px" } } } }
+    </script>
+<style>
+        body { background-color: #0a0a0a; color: #e5e2e1; font-family: 'Varela Round', sans-serif; }
+        .glass-card { background: rgba(26, 26, 26, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .neon-glow-primary { filter: drop-shadow(0 0 8px rgba(191, 245, 32, 0.4)); }
+        .pulse-light { animation: pulse-soft 2s infinite ease-in-out; }
+        @keyframes pulse-soft { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+        body { min-height: max(884px, 100dvh); }
+    </style>
+</head>
+<body class="overflow-x-hidden font-['Varela_Round']">
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-mobile h-16 bg-background/80 backdrop-blur-xl border-b border-white/10">
+<div class="flex items-center gap-4"><a href="producer-dashboard.html" class="text-primary-fixed hover:opacity-80 transition-opacity"><span class="material-symbols-outlined">menu</span></a><h1 class="text-2xl font-extrabold tracking-tighter text-primary-fixed drop-shadow-[0_0_10px_rgba(191,245,32,0.4)]">NEXUS</h1></div>
+<div class="flex items-center gap-4"><span class="hidden md:block text-sm text-on-surface-variant">היי, אלי</span><a href="../index.html" class="w-10 h-10 rounded-full border-2 border-primary-fixed overflow-hidden bg-surface-container"><img alt="Producer" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCoIvBvBVy84Gh0KA6FGWax5cZTIOzPpRyLY5sF_8iK3_ldyZZxK0AMf7LUtyurIyZ4fC29_SKpdl7Zror3KsDxl3hviDHVqtSIP40-TxIgamt9KVJ5T7gHgmJcadXkVpTTbQTNdHCapWBggpXIFNd-4WOQhjIoxnzUWjPtaAUX0y8GVJ9AkRY5xX2s7DUvCk7ee1Bsy1xuxfzXUxLa0ZEn3Iyp_fj2lEq5lyYghr30ctzm85r4miScmuwbFqODzXuC5g2XPI4m7Q"/></a></div>
+</header>
+<main class="pt-24 pb-32 px-margin-mobile md:px-margin-desktop max-w-7xl mx-auto space-y-md">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-gutter"><div><h2 class="text-3xl md:text-[32px] font-bold text-primary-fixed neon-glow-primary">סטטיסטיקה מפורטת</h2><p class="text-base text-on-surface-variant mt-1">ניתוח ביצועים בזמן אמת לאירוע: <span class="text-secondary-fixed">Cyber Rave 2024</span></p></div>
+<div class="flex bg-surface-container-low p-1 rounded-xl border border-white/5"><button class="px-6 py-2 rounded-lg text-sm font-bold bg-primary-container text-on-primary-container shadow-lg">היום</button><button class="px-6 py-2 rounded-lg text-sm text-on-surface-variant hover:text-white transition-colors">השבוע</button><button class="px-6 py-2 rounded-lg text-sm text-on-surface-variant hover:text-white transition-colors">החודש</button><button class="px-6 py-2 rounded-lg text-sm text-on-surface-variant hover:text-white transition-colors">הכל</button></div></div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<div class="md:col-span-2 glass-card rounded-2xl p-md flex flex-col justify-between overflow-hidden relative"><div><div class="flex justify-between items-start"><div><span class="text-xs text-on-surface-variant uppercase tracking-widest">סה"כ הכנסות</span><h3 class="text-5xl font-extrabold text-primary-fixed leading-none mt-2">₪142,500</h3></div><span class="flex items-center gap-1 text-primary-fixed text-sm bg-primary-container/10 px-2 py-1 rounded-md"><span class="material-symbols-outlined text-[18px]">trending_up</span>12.5%+</span></div></div>
+<div class="h-48 mt-md relative"><svg class="w-full h-full" viewBox="0 0 400 100"><defs><linearGradient id="cg" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#c8ff2e" stop-opacity="0.6"></stop><stop offset="100%" stop-color="#c8ff2e" stop-opacity="0"></stop></linearGradient></defs><path d="M0,80 Q50,75 100,40 T200,50 T300,20 T400,30" fill="none" stroke="#c8ff2e" stroke-width="3" style="filter: drop-shadow(0 0 5px #c8ff2e);"></path><path d="M0,80 Q50,75 100,40 T200,50 T300,20 T400,30 L400,100 L0,100 Z" fill="url(#cg)"></path></svg></div></div>
+<div class="glass-card rounded-2xl p-md flex flex-col items-center justify-center text-center"><span class="text-xs text-on-surface-variant uppercase tracking-widest mb-6">כרגע באירוע</span><div class="relative w-48 h-48"><svg class="w-full h-full -rotate-90" viewBox="0 0 100 100"><circle class="text-white/5 stroke-current" cx="50" cy="50" fill="transparent" r="40" stroke-width="8"></circle><circle class="text-primary-fixed stroke-current drop-shadow-[0_0_8px_rgba(191,245,32,0.8)]" cx="50" cy="50" fill="transparent" r="40" stroke-dasharray="251.2" stroke-dashoffset="60" stroke-linecap="round" stroke-width="8"></circle></svg><div class="absolute inset-0 flex flex-col items-center justify-center"><span class="text-3xl font-bold text-primary-fixed">1,240</span><span class="text-xs text-on-surface-variant">מתוך 1,800</span></div></div><div class="mt-6 flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-primary-fixed pulse-light"></div><span class="text-sm font-bold text-primary-fixed">עדכון חי</span></div></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<div class="glass-card rounded-2xl p-md"><div class="flex justify-between items-center mb-md"><h3 class="text-2xl font-bold text-white">פילוח כרטיסים</h3><span class="material-symbols-outlined text-on-surface-variant">confirmation_number</span></div><div class="space-y-6">
+<div class="space-y-2"><div class="flex justify-between text-sm font-bold"><span class="text-white">Early Bird</span><span class="text-primary-fixed">450/450</span></div><div class="w-full bg-white/5 h-3 rounded-full overflow-hidden"><div class="h-full bg-primary-fixed w-full neon-glow-primary"></div></div><div class="flex justify-between text-[10px] text-on-surface-variant uppercase"><span>סולד אאוט</span><span>₪25,000</span></div></div>
+<div class="space-y-2"><div class="flex justify-between text-sm font-bold"><span class="text-white">Regular Entry</span><span class="text-primary-fixed">820/1000</span></div><div class="w-full bg-white/5 h-3 rounded-full overflow-hidden"><div class="h-full bg-primary-fixed w-[82%] opacity-80"></div></div><div class="flex justify-between text-[10px] text-on-surface-variant uppercase"><span>נמכר מהר</span><span>₪82,000</span></div></div>
+<div class="space-y-2"><div class="flex justify-between text-sm font-bold"><span class="text-white">VIP Nexus Lounge</span><span class="text-secondary-fixed">125/350</span></div><div class="w-full bg-white/5 h-3 rounded-full overflow-hidden"><div class="h-full bg-secondary-fixed-dim w-[35%] shadow-[0_0_10px_rgba(0,219,233,0.5)]"></div></div><div class="flex justify-between text-[10px] text-on-surface-variant uppercase"><span>נותרו כרטיסים</span><span>₪35,500</span></div></div>
+</div></div>
+<div class="glass-card rounded-2xl p-md"><div class="flex justify-between items-center mb-md"><h3 class="text-2xl font-bold text-white">דמוגרפיה</h3></div>
+<div class="mb-gutter"><div class="flex justify-between mb-2 text-sm font-bold"><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-secondary-fixed-dim"></span><span class="text-white">גברים 58%</span></div><div class="flex items-center gap-2"><span class="text-white">נשים 42%</span><span class="w-2 h-2 rounded-full bg-tertiary-fixed-dim"></span></div></div><div class="w-full h-8 flex rounded-xl overflow-hidden"><div class="h-full bg-secondary-fixed-dim w-[58%] border-r border-black/20"></div><div class="h-full bg-tertiary-fixed-dim w-[42%]"></div></div></div>
+<div class="flex items-end justify-between h-32 gap-2 mt-4">
+<div class="flex flex-col items-center flex-1 gap-2"><div class="w-full bg-primary-fixed/20 rounded-t-md h-[40%]"></div><span class="text-[10px] text-on-surface-variant">18-21</span></div>
+<div class="flex flex-col items-center flex-1 gap-2"><div class="w-full bg-primary-fixed/60 rounded-t-md h-[85%]"></div><span class="text-[10px] text-on-surface-variant">22-25</span></div>
+<div class="flex flex-col items-center flex-1 gap-2"><div class="w-full bg-primary-fixed rounded-t-md h-[100%] neon-glow-primary"></div><span class="text-[10px] font-bold text-primary-fixed">26-30</span></div>
+<div class="flex flex-col items-center flex-1 gap-2"><div class="w-full bg-primary-fixed/40 rounded-t-md h-[30%]"></div><span class="text-[10px] text-on-surface-variant">31-35</span></div>
+<div class="flex flex-col items-center flex-1 gap-2"><div class="w-full bg-primary-fixed/10 rounded-t-md h-[15%]"></div><span class="text-[10px] text-on-surface-variant">35+</span></div>
+</div></div>
+</div>
+</main>
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-safe h-20 bg-surface-container-lowest/90 backdrop-blur-2xl border-t border-white/5 shadow-[0_-8px_24px_rgba(0,0,0,0.5)] rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant/60 hover:text-primary-fixed transition-colors" href="discover.html"><span class="material-symbols-outlined">explore</span><span class="text-label-sm">מרקטפלייס</span></a>
+<a class="flex flex-col items-center justify-center text-primary-container drop-shadow-[0_0_8px_rgba(191,245,32,0.6)] scale-110" href="producer-dashboard.html"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span><span class="text-label-sm">דאשבורד</span></a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant/60 hover:text-primary-fixed transition-colors" href="notifications.html"><span class="material-symbols-outlined">notifications</span><span class="text-label-sm">התראות</span></a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant/60 hover:text-primary-fixed transition-colors" href="profile.html"><span class="material-symbols-outlined">person</span><span class="text-label-sm">פרופיל</span></a>
+</nav>
+</body></html>
