@@ -1,13 +1,13 @@
 import { Header } from "@/components/Header";
 import { PayButton } from "@/components/PayButton";
-import { getEvent } from "@/lib/events";
+import { getEventById } from "@/lib/queries";
 
-export default function CheckoutPage({
+export default async function CheckoutPage({
   searchParams,
 }: {
   searchParams: { event?: string; total?: string };
 }) {
-  const event = searchParams.event ? getEvent(searchParams.event) : undefined;
+  const event = searchParams.event ? await getEventById(searchParams.event) : undefined;
   const subtotal = Number(searchParams.total ?? 0);
   const fee = 15;
   const total = subtotal + fee;

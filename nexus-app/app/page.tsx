@@ -3,11 +3,12 @@ import { Header } from "@/components/Header";
 import { BottomNav } from "@/components/BottomNav";
 import { EventCard } from "@/components/EventCard";
 import { Icon } from "@/components/Icon";
-import { events } from "@/lib/events";
+import { getEvents } from "@/lib/queries";
 
 const categories = ["הכל", "טכנו", "מיינסטרים", "היפ הופ", "פסייטראנס", "פופ"];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const events = await getEvents();
   const featured = events[0];
   return (
     <>

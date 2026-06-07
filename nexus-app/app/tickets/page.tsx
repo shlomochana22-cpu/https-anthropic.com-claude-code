@@ -1,9 +1,10 @@
 import { Header } from "@/components/Header";
 import { BottomNav } from "@/components/BottomNav";
 import { Icon } from "@/components/Icon";
-import { events } from "@/lib/events";
+import { getEvents } from "@/lib/queries";
 
-export default function TicketsPage() {
+export default async function TicketsPage() {
+  const events = await getEvents();
   const e = events[0];
   return (
     <>

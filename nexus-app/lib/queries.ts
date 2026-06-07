@@ -1,0 +1,75 @@
+import { getSupabase } from "./supabase";
+import { events as mockEvents, type NexusEvent, type TicketTier } from "./events";
+
+/**
+ * Data access layer. Each function queries Supabase when configured, and
+ * otherwise falls back to the in-memory mock so the app runs without keys.
+ */
+
+type EventRow = {
+  id: string;
+  title: string;
+  subtitle: string | null;
+  venue: string | null;
+  city: string | null;
+  date: string | null;
+  time: string | null;
+  image: string | null;
+  badge: string | null;
+  occupancy: number;
+  from_price: number;
+  ticket_tiers: {
+    slug: string;
+    name: string;
+    description: string | null;
+    price: number;
+    sold_out: boolean;
+    exclusive: boolean;
+    sort_order: number;
+  }[];
+};
+
+function rowToEvent(row: EventRow): NexusEvent {
+  const tiers: TicketTier[] = [...(row.ticket_tiers ?? [])]
+    .sort((a, b) => a.sort_order - b.sort_order)
+    .map((t) => ({
+      id: t.slug,
+      name: t.name,
+      description: t.description ?? "",
+      price: t.price,
+      soldOut: t.sold_out,
+      exclusive: t.exclusive,
+    }));
+  return {
+    id: row.id,
+    title: row.title,
+    subtitle: row.subtitle ?? "",
+    venue: row.venue ?? "",
+    city: row.city ?? "",
+    date: row.date ?? "",
+    time: row.time ?? "",
+    image: row.image ?? "",
+    badge: row.badge ?? undefined,
+    occupancy: row.occupancy,
+    fromPrice: row.from_price,
+    tiers,
+  };
+}
+
+const SELECT = "*, ticket_tiers(slug,name,description,price,sold_out,exclusive,sort_order)";
+
+export async function getEvents(): Promise<NexusEvent[]> {
+  const sb = getSupabase();
+  if (!sb) return mockEvents;
+  const { data, error } = await sb.from("events").select(SELECT).order("created_at");
+  if (error || !data) return mockEvents;
+  return (data as EventRow[]).map(rowToEvent);
+}
+
+export async function getEventById(id: string): Promise<NexusEvent | undefined> {
+  const sb = getSupabase();
+  if (!sb) return mockEvents.find((e) => e.id === id);
+  const { data, error } = await sb.from("events").select(SELECT).eq("id", id).single();
+  if (error || !data) return mockEvents.find((e) => e.id === id);
+  return rowToEvent(data as EventRow);
+}

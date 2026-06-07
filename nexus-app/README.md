@@ -35,6 +35,28 @@ tailwind.config.ts      # design tokens: צבעי NEXUS, spacing, typography
 
 `/` → `/events/[id]` → בחירת כרטיסים (state) → `/checkout` → `/confirmation` → `/tickets`
 
+## שלב 3 — Supabase (התשתית מוכנה)
+
+שכבת הנתונים מחוברת ל-Supabase עם **fallback אוטומטי ל-mock** — האפליקציה
+רצה גם בלי מפתחות, וברגע שמוסיפים אותם היא קוראת מה-DB האמיתי.
+
+```
+lib/supabase.ts                 # client (נוצר רק כשיש env)
+lib/queries.ts                  # getEvents/getEventById — DB או mock
+supabase/migrations/0001_init.sql  # סכמה + RLS + טריגר משתמש + seed
+.env.example                    # NEXT_PUBLIC_SUPABASE_URL / ANON_KEY
+```
+
+### הקמה
+1. צרו פרויקט ב-[supabase.com](https://supabase.com).
+2. הריצו את `supabase/migrations/0001_init.sql` ב-SQL editor.
+3. `cp .env.example .env.local` ומלאו URL + anon key מ-Project Settings → API.
+4. `npm run dev` — עכשיו הנתונים מגיעים מ-Postgres.
+
+**סכמה:** `events`, `ticket_tiers`, `profiles`, `orders`, `tickets`
+(עם RLS owner-only, QR ייחודי לכל כרטיס, וטריגר ליצירת profile בהרשמה).
+
 ## הבא בתור
-- המרת שאר המסכים מ-`screens/` לקומפוננטות React.
-- **שלב 3:** חיבור Supabase (`lib/events.ts` → שאילתות אמיתיות, Auth, QR).
+- המרת שאר המסכים מ-`screens/` לקומפוננטות React (profile/favorites/notifications הם stubs; צד מפיק/אדמין טרם הומר).
+- Supabase Auth (login/signup) + יצירת `orders`/`tickets` אמיתיים ב-checkout.
+- אימות QR אמיתי במסך הסורק.

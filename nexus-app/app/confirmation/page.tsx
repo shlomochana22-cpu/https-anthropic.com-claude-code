@@ -1,14 +1,14 @@
 import Link from "next/link";
 import { Header } from "@/components/Header";
 import { Icon } from "@/components/Icon";
-import { getEvent } from "@/lib/events";
+import { getEventById } from "@/lib/queries";
 
-export default function ConfirmationPage({
+export default async function ConfirmationPage({
   searchParams,
 }: {
   searchParams: { event?: string };
 }) {
-  const event = searchParams.event ? getEvent(searchParams.event) : undefined;
+  const event = searchParams.event ? await getEventById(searchParams.event) : undefined;
 
   return (
     <>
