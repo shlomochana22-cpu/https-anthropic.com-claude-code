@@ -15,6 +15,7 @@ create table if not exists public.events (
   time        text,             -- display string e.g. "23:00"
   image       text,
   badge       text,
+  genre       text,
   occupancy   int  not null default 0 check (occupancy between 0 and 100),
   from_price  int  not null default 0,
   created_at  timestamptz not null default now()
@@ -118,10 +119,10 @@ create policy "own tickets insert" on public.tickets for insert with check (auth
 -- Seed data (matches lib/events.ts mock)
 -- ─────────────────────────────────────────────────────────────
 
-insert into public.events (id, title, subtitle, venue, city, date, time, image, badge, occupancy, from_price) values
-  ('electric-night','Electric Night at Block Club','לילה בלתי נשכח במועדון הבלוק','מועדון הבלוק','תל אביב','24.05.24','23:00','https://lh3.googleusercontent.com/aida-public/AB6AXuC1O4Fan1VztsSOvfbIhXajsSec9GmEu_MpVC8Ay_in3OabYFsN4Pq5_TZAUMQ2DqeeaW1LsF2D3zZEKMl_1oQ-1RYt4zF2RA4xzHLBLvL9AhPis8p7WAiKmWJF9UFCLw0rRcjhI7GsKgfC0FmL9qlsn_okfvAsiDN3tSb3nAH88YFIGAaoOESpYSAlPNMTqVPjlXZ66LugA8HEgygOKJ4GaGTaUm_pfAiJp7iDqzOKm4mf42cRpB9UKW2RGz9r6oPFGiHVR0TwZg','Fast Selling',85,120),
-  ('summer-odyssey','SUMMER ODYSSEY 2024','פסטיבל הטכנו הגדול של הקיץ','האומן 17','תל אביב','24.08','23:00','https://lh3.googleusercontent.com/aida-public/AB6AXuC9BlsJh1ytbzdu948Nc8Sn0VY-Ghf0fkYIoFWbHp2aFnJ00sd35yRN5V-4HLogSecis1WUi9n3fHcxmVyBFHvjwLZ7y2qB4RKS9y7oUPClK2xOt8tNNnjDw9J5zMKnhJsAiqhqEKTYNc505RUcEXlp5X1d1-J5RhNp-GRCerDjjXT3a0k4BRViY4TNsjKMo1F5THcUDwuAyYi0sKtih9OR-44M_SLC0DzjBryx5h6lIWsd9VAze-kyq7BvIRF6fDJZVKHCvaqaOg','TOP PICK',72,180),
-  ('neon-rooftop','NEON ROOFTOP SESSIONS','מסיבת גג עם נוף לים','גג העיר','חיפה','30.08','22:00','https://lh3.googleusercontent.com/aida-public/AB6AXuAIlzh3o2VP_QjZh01MoZyKagfZFyu3Xi3pComMnjIXI1n8so1N0eVXCz3ig3Ijo-9lnrp4yCY6pq38wUblaZc0FDAc93LosPuezVyfI82-9v7pC1W9XPSjSStgwQC8007ceN55uz6cxD4ufZCbik4-J2bhJxwQHfKuy6OTzr7ch-IuufE2tA5UDKOV-CJ4Eadb0cqsWje3v9kjbok2eqmdsIKorNkSWPPzTiX4E4gq5t9d1gndDz0t7J3lr2aYsv8UE0OIPeHZlg','מכירה אחרונה',91,120)
+insert into public.events (id, title, subtitle, venue, city, date, time, image, badge, genre, occupancy, from_price) values
+  ('electric-night','Electric Night at Block Club','לילה בלתי נשכח במועדון הבלוק','מועדון הבלוק','תל אביב','24.05.24','23:00','https://lh3.googleusercontent.com/aida-public/AB6AXuC1O4Fan1VztsSOvfbIhXajsSec9GmEu_MpVC8Ay_in3OabYFsN4Pq5_TZAUMQ2DqeeaW1LsF2D3zZEKMl_1oQ-1RYt4zF2RA4xzHLBLvL9AhPis8p7WAiKmWJF9UFCLw0rRcjhI7GsKgfC0FmL9qlsn_okfvAsiDN3tSb3nAH88YFIGAaoOESpYSAlPNMTqVPjlXZ66LugA8HEgygOKJ4GaGTaUm_pfAiJp7iDqzOKm4mf42cRpB9UKW2RGz9r6oPFGiHVR0TwZg','Fast Selling','טכנו',85,120),
+  ('summer-odyssey','SUMMER ODYSSEY 2024','פסטיבל הטכנו הגדול של הקיץ','האומן 17','תל אביב','24.08','23:00','https://lh3.googleusercontent.com/aida-public/AB6AXuC9BlsJh1ytbzdu948Nc8Sn0VY-Ghf0fkYIoFWbHp2aFnJ00sd35yRN5V-4HLogSecis1WUi9n3fHcxmVyBFHvjwLZ7y2qB4RKS9y7oUPClK2xOt8tNNnjDw9J5zMKnhJsAiqhqEKTYNc505RUcEXlp5X1d1-J5RhNp-GRCerDjjXT3a0k4BRViY4TNsjKMo1F5THcUDwuAyYi0sKtih9OR-44M_SLC0DzjBryx5h6lIWsd9VAze-kyq7BvIRF6fDJZVKHCvaqaOg','TOP PICK','מיינסטרים',72,180),
+  ('neon-rooftop','NEON ROOFTOP SESSIONS','מסיבת גג עם נוף לים','גג העיר','חיפה','30.08','22:00','https://lh3.googleusercontent.com/aida-public/AB6AXuAIlzh3o2VP_QjZh01MoZyKagfZFyu3Xi3pComMnjIXI1n8so1N0eVXCz3ig3Ijo-9lnrp4yCY6pq38wUblaZc0FDAc93LosPuezVyfI82-9v7pC1W9XPSjSStgwQC8007ceN55uz6cxD4ufZCbik4-J2bhJxwQHfKuy6OTzr7ch-IuufE2tA5UDKOV-CJ4Eadb0cqsWje3v9kjbok2eqmdsIKorNkSWPPzTiX4E4gq5t9d1gndDz0t7J3lr2aYsv8UE0OIPeHZlg','מכירה אחרונה','פופ',91,120)
 on conflict (id) do nothing;
 
 insert into public.ticket_tiers (event_id, slug, name, description, price, sold_out, exclusive, sort_order) values

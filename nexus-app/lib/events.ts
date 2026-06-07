@@ -17,6 +17,7 @@ export type NexusEvent = {
   time: string;
   image: string;
   badge?: string;
+  genre: string;
   occupancy: number; // 0-100
   fromPrice: number;
   tiers: TicketTier[];
@@ -40,6 +41,7 @@ export const events: NexusEvent[] = [
     time: "23:00",
     image: IMG,
     badge: "Fast Selling",
+    genre: "טכנו",
     occupancy: 85,
     fromPrice: 120,
     tiers: [
@@ -58,6 +60,7 @@ export const events: NexusEvent[] = [
     time: "23:00",
     image: IMG2,
     badge: "TOP PICK",
+    genre: "מיינסטרים",
     occupancy: 72,
     fromPrice: 180,
     tiers: [
@@ -75,6 +78,7 @@ export const events: NexusEvent[] = [
     time: "22:00",
     image: IMG3,
     badge: "מכירה אחרונה",
+    genre: "פופ",
     occupancy: 91,
     fromPrice: 120,
     tiers: [

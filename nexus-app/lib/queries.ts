@@ -16,6 +16,7 @@ type EventRow = {
   time: string | null;
   image: string | null;
   badge: string | null;
+  genre: string | null;
   occupancy: number;
   from_price: number;
   ticket_tiers: {
@@ -50,6 +51,7 @@ function rowToEvent(row: EventRow): NexusEvent {
     time: row.time ?? "",
     image: row.image ?? "",
     badge: row.badge ?? undefined,
+    genre: row.genre ?? "",
     occupancy: row.occupancy,
     fromPrice: row.from_price,
     tiers,
