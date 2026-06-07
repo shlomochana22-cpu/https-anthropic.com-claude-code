@@ -33,7 +33,13 @@ npm run dev          # http://localhost:3000
 
 ## 3) URL ציבורי — פריסה ל-Vercel (חינם, ~2 דקות)
 
-הריפו כבר מחובר ל-GitHub, אז זה כמעט בלחיצה אחת:
+**לינק ייבוא ישיר** (מתחבר עם GitHub ובוחר את הריפו אוטומטית):
+<https://vercel.com/new/git/external?repository-url=https://github.com/shlomochana22-cpu/https-anthropic.com-claude-code&root-directory=nexus-app&project-name=nexus-events>
+
+> חשוב לוודא שב-**Root Directory** מופיע `nexus-app`. הקובץ `nexus-app/vercel.json`
+> כבר מגדיר framework=Next.js, buildCommand ו-installCommand — אין מה להגדיר ידנית.
+
+או ידנית — הריפו כבר מחובר ל-GitHub, אז זה כמעט בלחיצה אחת:
 
 1. היכנס ל-[vercel.com](https://vercel.com) והתחבר עם GitHub.
 2. **Add New → Project** → בחר את הריפו
