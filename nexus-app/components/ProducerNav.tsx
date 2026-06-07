@@ -19,6 +19,7 @@ const links = [
   { href: "/producer/scanner", icon: "qr_code_scanner", label: "סורק כרטיסים" },
   { href: "/producer/stats", icon: "analytics", label: "סטטיסטיקות" },
   { href: "/producer/wallet", icon: "account_balance_wallet", label: "ארנק והכנסות" },
+  { href: "/producer/team", icon: "groups", label: "ניהול צוות" },
   { href: "/producer/leaderboard", icon: "leaderboard", label: "לידרבורד יחצנים" },
   { href: "/producer/promoter", icon: "campaign", label: "דאשבורד יחצן" },
   { href: "/producer/coupons", icon: "local_offer", label: "קופונים" },

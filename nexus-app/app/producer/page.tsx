@@ -55,6 +55,7 @@ export default async function ProducerDashboard({
             { href: "/producer/events", icon: "confirmation_number", label: "ניהול אירועים" },
             { href: "/producer/create", icon: "add_circle", label: "יצירת אירוע" },
             { href: "/producer/wallet", icon: "account_balance_wallet", label: "ארנק והעברות" },
+            { href: "/producer/team", icon: "groups", label: "ניהול צוות" },
             { href: "/producer/leaderboard", icon: "leaderboard", label: "לידרבורד יחצנים" },
             { href: "/producer/promoter", icon: "campaign", label: "דאשבורד יחצן" },
             { href: "/producer/scanner", icon: "qr_code_scanner", label: "סורק כרטיסים" },
