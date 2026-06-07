@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Icon } from "./Icon";
+import { SafeImage } from "./SafeImage";
 import type { NexusEvent } from "@/lib/events";
 
 export function EventDetail({ event }: { event: NexusEvent }) {
@@ -27,8 +28,7 @@ export function EventDetail({ event }: { event: NexusEvent }) {
       <main className="pt-16 pb-32">
         {/* Hero */}
         <section className="relative w-full h-[360px] overflow-hidden">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className="w-full h-full object-cover" src={event.image} alt={event.title} />
+          <SafeImage className="w-full h-full object-cover" src={event.image} alt={event.title} />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
           <div className="absolute bottom-0 left-0 w-full px-margin-mobile pb-sm">
             {event.badge && (

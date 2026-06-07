@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Icon } from "./Icon";
+import { SafeImage } from "./SafeImage";
 import type { NexusEvent } from "@/lib/events";
 
 /** Horizontal list-style event card that links to the event page. */
@@ -10,8 +11,7 @@ export function EventCard({ event }: { event: NexusEvent }) {
       className="flex gap-md glass p-sm rounded-xl hover:bg-white/5 transition-all group border-white/5"
     >
       <div className="w-24 h-24 rounded-lg overflow-hidden shrink-0">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img className="w-full h-full object-cover" src={event.image} alt={event.title} />
+        <SafeImage className="w-full h-full object-cover" src={event.image} alt={event.title} />
       </div>
       <div className="flex flex-col justify-between flex-1 py-1">
         <div>

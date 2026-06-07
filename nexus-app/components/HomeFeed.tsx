@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Icon } from "./Icon";
+import { SafeImage } from "./SafeImage";
 import type { NexusEvent } from "@/lib/events";
 
 const filterChips = [
@@ -112,8 +113,7 @@ export function HomeFeed({ events }: { events: NexusEvent[] }) {
                   href={`/events/${e.id}`}
                   className="min-w-[85vw] md:min-w-[400px] aspect-[4/5] relative rounded-xl overflow-hidden glass group shrink-0"
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src={e.image} alt={e.title} />
+                  <SafeImage className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src={e.image} alt={e.title} />
                   <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-90" />
                   <div className="absolute top-4 left-4">
                     <span className="bg-primary-fixed text-on-primary-fixed text-label-sm px-3 py-1 rounded-full neon-glow">{e.badge}</span>
@@ -186,8 +186,7 @@ export function HomeFeed({ events }: { events: NexusEvent[] }) {
               {hot.map((e) => (
                 <Link key={e.id} href={`/events/${e.id}`} className="glass rounded-xl overflow-hidden flex flex-col group">
                   <div className="relative aspect-square overflow-hidden">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src={e.image} alt={e.title} />
+                    <SafeImage className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src={e.image} alt={e.title} />
                     <div className="absolute top-2 right-2 bg-background/60 backdrop-blur-md px-2 py-1 rounded text-[10px]">{e.date} • {e.city}</div>
                   </div>
                   <div className="p-3 flex flex-col flex-1">
@@ -223,8 +222,7 @@ function EventRow({ e }: { e: NexusEvent }) {
   return (
     <Link href={`/events/${e.id}`} className="flex gap-md glass p-sm rounded-xl hover:bg-white/5 transition-all group border-white/5">
       <div className="w-24 h-24 rounded-lg overflow-hidden shrink-0">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img className="w-full h-full object-cover" src={e.image} alt={e.title} />
+        <SafeImage className="w-full h-full object-cover" src={e.image} alt={e.title} />
       </div>
       <div className="flex flex-col justify-between flex-1 py-1">
         <div>
