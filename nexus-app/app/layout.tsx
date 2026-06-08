@@ -29,8 +29,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="he" dir="rtl" className={`dark ${varela.variable}`}>
+    <html lang="he" dir="rtl" translate="no" className={`dark notranslate ${varela.variable}`}>
       <head>
+        {/* Stop Chrome/Google auto-translate from rewriting text nodes — it
+            corrupts React's DOM and crashes on removeChild/insertBefore. */}
+        <meta name="google" content="notranslate" />
         <link
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
           rel="stylesheet"
