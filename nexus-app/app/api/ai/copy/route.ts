@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 export const runtime = "edge";
 
-type Kind = "title" | "hashtags" | "promo";
+type Kind = "title" | "hashtags" | "promo" | "campaign";
 
 type Body = {
   kind?: Kind;
@@ -16,6 +16,7 @@ type Body = {
   age?: string;
   promoterName?: string;
   fromPrice?: string;
+  channel?: string;
 };
 
 const MODEL = process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6";
@@ -52,6 +53,11 @@ function localCopy(b: Body): string {
       ]
         .slice(0, 8)
         .join(" ");
+    case "campaign":
+      return (
+        `🔥 ${b.title || "האירוע הקרוב שלנו"} כבר כאן!${b.city ? ` ${b.city}` : ""}${b.date ? ` · ${b.date}` : ""}.\n` +
+        `כרטיסים אחרונים במחירי הזמנה מוקדמת — שריינו עכשיו לפני שאוזל. לינק בהודעה 👇`
+      );
     case "promo":
     default:
       return (
@@ -69,6 +75,8 @@ function buildPrompt(b: Body): string {
       return `${persona}\nהצע שם קצר, קליט ומגניב לאירוע (2-5 מילים, אפשר שילוב אנגלית). בלי מירכאות. החזר שם אחד בלבד.\n\nפרטי האירוע:\n${facts(b)}`;
     case "hashtags":
       return `${persona}\nצור 6-8 האשטגים בעברית (ואם מתאים גם באנגלית) לקידום האירוע ברשתות. הפרד ברווחים, כל אחד מתחיל ב-#, בלי רווחים בתוך האשטג. החזר שורה אחת בלבד.\n\nפרטי האירוע:\n${facts(b)}`;
+    case "campaign":
+      return `${persona}\nכתוב הודעת קמפיין שיווקית קצרה לשליחה ב-${b.channel || "פוש"} ללקוחות קיימים. 1-2 שורות, אנרגטי, עם קריאה לפעולה ברורה לרכישת כרטיסים. אפשר 1-2 אימוג'י. ${b.channel === "SMS" ? "עד 160 תווים." : ""} החזר רק את הטקסט.\n\nפרטי האירוע:\n${facts(b)}`;
     case "promo":
     default:
       return `${persona}\nכתוב הודעת שיתוף קצרה בסגנון וואטסאפ שיחצן ישלח ללקוחות כדי למכור כרטיסים${b.promoterName ? ` (שם היחצן: ${b.promoterName})` : ""}. 2-3 שורות, אנרגטי, עם קריאה לפעולה ללחוץ על הלינק האישי. אפשר 1-2 אימוג'י.\n\nפרטי האירוע:\n${facts(b)}`;

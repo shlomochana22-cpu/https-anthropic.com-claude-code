@@ -4,39 +4,63 @@ import { useMemo, useState } from "react";
 import { Icon } from "@/components/Icon";
 import type { NexusEvent } from "@/lib/events";
 
-const AGE_BANDS = ["18-21", "22-25", "26-30", "31-35", "35+"];
 const GENDERS = ["נשים", "גברים"];
 const BIRTHDAY_DAYS = Array.from({ length: 15 }, (_, i) => i + 1); // 1..15
 
 export function CampaignStudio({ events }: { events: NexusEvent[] }) {
   const [channel, setChannel] = useState<"PUSH" | "SMS" | "WhatsApp">("PUSH");
   const [eventIds, setEventIds] = useState<string[]>([]);
-  const [ages, setAges] = useState<string[]>([]);
+  const [eventQuery, setEventQuery] = useState("");
+  const [ageAll, setAgeAll] = useState(true);
+  const [ageFrom, setAgeFrom] = useState(18);
+  const [ageTo, setAgeTo] = useState(35);
   const [genders, setGenders] = useState<string[]>([]);
   const [bdayOn, setBdayOn] = useState(false);
   const [bdayDays, setBdayDays] = useState(7);
   const [msg, setMsg] = useState("הערב: Nexus Underground חוזר. הציגו את כרטיס החבר לכניסה עד 00:00. לינק בביו.");
+  const [aiLoading, setAiLoading] = useState(false);
 
   const toggleIn = (arr: string[], set: (v: string[]) => void, v: string) =>
     set(arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);
+
+  const shownEvents = events.filter((e) => e.title.includes(eventQuery));
+  const allSelected = events.length > 0 && eventIds.length === events.length;
+  const selectAll = () => setEventIds(allSelected ? [] : events.map((e) => e.id));
 
   // Deterministic estimated reach so the UI reacts to the chosen filters.
   const reach = useMemo(() => {
     let r = 5000;
     if (eventIds.length) r = eventIds.length * 850;
-    if (ages.length) r = Math.round(r * (ages.length / AGE_BANDS.length));
+    if (!ageAll) {
+      const span = Math.max(1, ageTo - ageFrom);
+      r = Math.round(r * Math.min(1, span / 40));
+    }
     if (genders.length === 1) r = Math.round(r * 0.52);
     if (bdayOn) r = Math.min(r, bdayDays * 18);
     return Math.max(r, bdayOn ? 8 : 50);
-  }, [eventIds, ages, genders, bdayOn, bdayDays]);
+  }, [eventIds, ageAll, ageFrom, ageTo, genders, bdayOn, bdayDays]);
 
-  const activeFilters =
-    eventIds.length + ages.length + genders.length + (bdayOn ? 1 : 0);
+  const activeFilters = eventIds.length + (ageAll ? 0 : 1) + genders.length + (bdayOn ? 1 : 0);
 
-  const sendWhatsApp = () => {
-    const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
-    window.open(url, "_blank");
+  const writeAI = async () => {
+    setAiLoading(true);
+    try {
+      const ev = events.find((e) => e.id === eventIds[0]);
+      const res = await fetch("/api/ai/copy", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ kind: "campaign", title: ev?.title, genres: ev?.genre ? [ev.genre] : [], city: ev?.city, date: ev?.date, channel }),
+      });
+      const data = await res.json();
+      if (data?.text) setMsg(data.text);
+    } catch {
+      setMsg("🔥 כרטיסים אחרונים לאירוע הקרוב — שריינו עכשיו לפני שאוזל. לינק בהודעה 👇");
+    } finally {
+      setAiLoading(false);
+    }
   };
+
+  const sendWhatsApp = () => window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
 
   return (
     <main className="pt-10 md:pt-12 pb-32 px-margin-mobile md:px-margin-desktop max-w-2xl space-y-gutter">
@@ -52,11 +76,24 @@ export function CampaignStudio({ events }: { events: NexusEvent[] }) {
           <span className="text-label-sm text-on-surface-variant">{activeFilters} פילטרים פעילים</span>
         </div>
 
-        {/* By event attended */}
+        {/* By event attended — search + select all */}
         <div className="space-y-2">
-          <p className="text-label-sm text-on-surface-variant flex items-center gap-1.5"><Icon name="confirmation_number" className="text-[16px]" /> לקוחות שהגיעו מאירוע</p>
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-label-sm text-on-surface-variant flex items-center gap-1.5"><Icon name="confirmation_number" className="text-[16px]" /> לקוחות שהגיעו מאירוע</p>
+            {events.length > 0 && (
+              <button onClick={selectAll} className="text-label-sm text-primary-fixed hover:underline flex items-center gap-1">
+                <Icon name={allSelected ? "remove_done" : "done_all"} className="text-[16px]" /> {allSelected ? "נקה הכל" : "בחר הכל"}
+              </button>
+            )}
+          </div>
+          {events.length > 3 && (
+            <div className="relative">
+              <Icon name="search" className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant/60 text-[18px]" />
+              <input value={eventQuery} onChange={(e) => setEventQuery(e.target.value)} placeholder="חיפוש אירוע לפי שם…" className="w-full bg-surface-container-low border border-white/10 rounded-lg py-2 pr-9 pl-3 text-body-md text-on-surface focus:border-primary-fixed outline-none" />
+            </div>
+          )}
           <div className="flex flex-wrap gap-2">
-            {events.map((e) => {
+            {shownEvents.map((e) => {
               const on = eventIds.includes(e.id);
               return (
                 <button key={e.id} onClick={() => toggleIn(eventIds, setEventIds, e.id)} className={`px-3 py-1.5 rounded-full border text-label-sm transition-all flex items-center gap-1 ${on ? "border-primary-fixed bg-primary-container/15 text-primary-fixed font-bold" : "border-white/10 bg-white/5 text-on-surface-variant hover:border-primary-fixed/40"}`}>
@@ -64,21 +101,34 @@ export function CampaignStudio({ events }: { events: NexusEvent[] }) {
                 </button>
               );
             })}
-            {events.length === 0 && <span className="text-label-sm text-on-surface-variant/50">אין אירועים עדיין</span>}
+            {shownEvents.length === 0 && <span className="text-label-sm text-on-surface-variant/50">לא נמצאו אירועים</span>}
           </div>
         </div>
 
-        {/* By age */}
+        {/* By age — from/to or all */}
         <div className="space-y-2">
-          <p className="text-label-sm text-on-surface-variant flex items-center gap-1.5"><Icon name="cake" className="text-[16px]" /> טווח גילאים</p>
-          <div className="flex flex-wrap gap-2">
-            {AGE_BANDS.map((a) => {
-              const on = ages.includes(a);
-              return (
-                <button key={a} onClick={() => toggleIn(ages, setAges, a)} className={`px-4 py-1.5 rounded-full border text-label-sm transition-all ${on ? "border-secondary-fixed bg-secondary-fixed/15 text-secondary-fixed font-bold" : "border-white/10 bg-white/5 text-on-surface-variant hover:border-secondary-fixed/40"}`}>{a}</button>
-              );
-            })}
+          <div className="flex items-center justify-between">
+            <p className="text-label-sm text-on-surface-variant flex items-center gap-1.5"><Icon name="cake" className="text-[16px]" /> טווח גילאים</p>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <span className="text-label-sm text-on-surface-variant">כל הגילאים</span>
+              <button onClick={() => setAgeAll((v) => !v)} className={`w-11 h-6 rounded-full relative shrink-0 transition-colors ${ageAll ? "bg-primary-fixed" : "bg-surface-container-highest"}`} aria-label="כל הגילאים">
+                <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full transition-all ${ageAll ? "right-0.5" : "right-[22px]"}`} />
+              </button>
+            </label>
           </div>
+          {!ageAll && (
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                <span className="text-label-sm text-on-surface-variant">מגיל</span>
+                <input type="number" min={0} max={120} value={ageFrom} onChange={(e) => setAgeFrom(Number(e.target.value))} className="w-16 bg-surface-container-low border border-white/10 rounded-lg p-2 text-center text-primary focus:border-primary-fixed outline-none" />
+              </div>
+              <span className="text-on-surface-variant">—</span>
+              <div className="flex items-center gap-2">
+                <span className="text-label-sm text-on-surface-variant">עד גיל</span>
+                <input type="number" min={0} max={120} value={ageTo} onChange={(e) => setAgeTo(Number(e.target.value))} className="w-16 bg-surface-container-low border border-white/10 rounded-lg p-2 text-center text-primary focus:border-primary-fixed outline-none" />
+              </div>
+            </div>
+          )}
         </div>
 
         {/* By gender */}
@@ -105,7 +155,6 @@ export function CampaignStudio({ events }: { events: NexusEvent[] }) {
           {bdayOn && (
             <div className="space-y-2">
               <p className="text-label-sm text-primary-fixed">מי שיום ההולדת שלו בתוך <span className="font-bold">{bdayDays}</span> {bdayDays === 1 ? "יום" : "ימים"}</p>
-              {/* Tappable 1..15 day scale, 1 on the right (RTL) */}
               <div className="flex flex-row-reverse gap-1.5 overflow-x-auto pb-1">
                 {BIRTHDAY_DAYS.map((d) => (
                   <button
@@ -145,6 +194,12 @@ export function CampaignStudio({ events }: { events: NexusEvent[] }) {
             ))}
           </div>
         </div>
+
+        {/* AI writer */}
+        <button onClick={writeAI} disabled={aiLoading} className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-gradient-to-r from-primary-fixed/20 to-secondary-fixed/20 border border-primary-fixed/40 text-primary-fixed text-label-md hover:from-primary-fixed/30 hover:to-secondary-fixed/30 transition-all active:scale-95 disabled:opacity-60">
+          <Icon name="auto_awesome" className={aiLoading ? "animate-spin" : "animate-pulse"} fill /> {aiLoading ? "כותב…" : "כתוב הודעה עם AI"}
+        </button>
+
         <div className="relative">
           <textarea
             rows={5}
@@ -158,13 +213,10 @@ export function CampaignStudio({ events }: { events: NexusEvent[] }) {
           </span>
         </div>
         <div className="flex items-center gap-sm">
-          <button className="flex-1 flex items-center justify-center gap-2 py-sm bg-surface-container-highest rounded-lg text-label-md text-on-surface hover:bg-surface-variant transition-colors"><Icon name="image" className="text-[18px]" /> הוספת מדיה</button>
-          <button className="flex-1 flex items-center justify-center gap-2 py-sm bg-surface-container-highest rounded-lg text-label-md text-on-surface hover:bg-surface-variant transition-colors"><Icon name="link" className="text-[18px]" /> לינק חכם</button>
+          <button className="flex-1 flex items-center justify-center gap-2 py-2 bg-surface-container-highest rounded-lg text-label-sm text-on-surface hover:bg-surface-variant transition-colors"><Icon name="image" className="text-[16px]" /> מדיה</button>
+          <button className="flex-1 flex items-center justify-center gap-2 py-2 bg-surface-container-highest rounded-lg text-label-sm text-on-surface hover:bg-surface-variant transition-colors"><Icon name="link" className="text-[16px]" /> לינק חכם</button>
+          <button onClick={sendWhatsApp} className="flex-1 flex items-center justify-center gap-2 py-2 bg-[#25D366]/15 border border-[#25D366]/40 text-[#25D366] rounded-lg text-label-sm font-bold hover:bg-[#25D366]/25 transition-colors active:scale-95"><Icon name="chat" className="text-[16px]" fill /> וואטסאפ</button>
         </div>
-        {/* Send to WhatsApp */}
-        <button onClick={sendWhatsApp} className="w-full flex items-center justify-center gap-2 py-sm bg-[#25D366]/15 border border-[#25D366]/40 text-[#25D366] rounded-lg text-label-md font-bold hover:bg-[#25D366]/25 transition-colors active:scale-95">
-          <Icon name="chat" className="text-[18px]" fill /> שליחה לוואטסאפ
-        </button>
       </section>
 
       {/* Scheduling */}
@@ -186,8 +238,8 @@ export function CampaignStudio({ events }: { events: NexusEvent[] }) {
         </div>
       </section>
 
-      <button className="w-full bg-primary-fixed text-on-primary-fixed text-2xl py-md rounded-xl font-bold flex items-center justify-center gap-sm shadow-neon-primary active:scale-95 transition-transform">
-        <Icon name="bolt" fill /> שליחת קמפיין · {reach.toLocaleString()} נמענים
+      <button className="w-full bg-primary-fixed text-on-primary-fixed text-base py-3 rounded-xl font-bold flex items-center justify-center gap-2 shadow-neon-primary active:scale-95 transition-transform">
+        <Icon name="bolt" className="text-[18px]" fill /> שליחת קמפיין · {reach.toLocaleString()} נמענים
       </button>
 
       <div className="p-md bg-secondary-container/5 rounded-xl border border-secondary-container/10">
