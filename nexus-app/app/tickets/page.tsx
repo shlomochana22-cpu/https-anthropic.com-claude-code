@@ -6,9 +6,6 @@ import { BottomNav } from "@/components/BottomNav";
 import { Icon } from "@/components/Icon";
 import { getMyTickets, type MyTicket } from "@/lib/orders";
 
-const DEMO_QR =
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuAuooIxIo-zY2BwPOKjgVoJ_o0CWyab3PK9UtZNdAtOzT2_zv3BoYDtU7PyUzGroVFNV5DKspTT-CAIMxV9iuIhWlEhW2yM1vkl1ytvgdUu4Gcn0CDptNGMHwjMwRgdBymhekwDHtzI6Qiugi3A8yxBuwbMODvrHT10eis5kGVl-gWcu804wYJC9mVraZQF-YE_LfRb2Kh-xgJpnIevGW1uj-MCff9z3lvBfTqUE3CVF_cJgrqp0F7PpiqG3qctWLVD7ITqlE9DFg";
-
 function qrUrl(data: string) {
   return `https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=0&data=${encodeURIComponent(data)}`;
 }
@@ -18,12 +15,21 @@ const history = [
   { name: "Underground Session #4", date: "12 ביולי, 2024" },
 ];
 
+type StoredTicket = { id: string; eventTitle: string; date: string; time: string; tier: string; qty: number; code: string };
+
 export default function TicketsPage() {
   const [tickets, setTickets] = useState<MyTicket[] | null>(null);
+  const [local, setLocal] = useState<StoredTicket[]>([]);
   const [tab, setTab] = useState<"active" | "history">("active");
 
   useEffect(() => {
     getMyTickets().then(setTickets);
+    try {
+      const raw = localStorage.getItem("nexus_tickets");
+      if (raw) setLocal(JSON.parse(raw));
+    } catch {
+      /* ignore */
+    }
   }, []);
 
   const shareTicket = async (title: string) => {
@@ -84,33 +90,40 @@ export default function TicketsPage() {
                   </div>
                 ))}
               </div>
+            ) : local.length > 0 ? (
+              <div className="space-y-md">
+                {local.map((t) => (
+                  <div key={t.id} className="glass-card rounded-xl overflow-hidden p-6">
+                    <div className="flex justify-between items-start mb-md gap-3">
+                      <div>
+                        <span className="text-xs text-primary-fixed/60 uppercase tracking-widest block mb-1">LIVE TICKET</span>
+                        <h3 className="text-2xl text-primary">{t.eventTitle}</h3>
+                        <p className="text-on-surface-variant">{t.date}{t.time ? ` | ${t.time}` : ""}</p>
+                      </div>
+                      {t.tier && <div className="bg-primary-container/10 px-3 py-1 rounded-full border border-primary-container/20 shrink-0"><span className="text-xs text-primary-fixed">{t.tier}</span></div>}
+                    </div>
+                    <div className="bg-white p-4 rounded-lg flex items-center justify-center mb-md mx-auto w-fit">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img alt="QR" className="w-48 h-48" src={qrUrl(t.code)} />
+                    </div>
+                    <p className="text-center text-xs text-on-surface-variant font-mono mb-lg">קוד: {t.code}</p>
+                    <div className="grid grid-cols-2 gap-sm">
+                      <button onClick={() => shareTicket(t.eventTitle)} className="bg-primary-container text-on-primary-container py-3 rounded-lg font-semibold text-sm flex items-center justify-center gap-1 active:scale-95 transition-transform">
+                        <Icon name="share" className="text-[18px]" /> שיתוף
+                      </button>
+                      <a href="/resale" className="border-2 border-primary-container text-primary-container py-3 rounded-lg font-semibold text-sm flex items-center justify-center gap-1">
+                        <Icon name="sell" className="text-[18px]" /> מכירה חוזרת
+                      </a>
+                    </div>
+                  </div>
+                ))}
+              </div>
             ) : (
-              <div className="glass-card rounded-xl overflow-hidden p-6">
-                <div className="flex justify-between items-start mb-md">
-                  <div>
-                    <span className="text-xs text-primary-fixed/60 uppercase tracking-widest block mb-1">LIVE TICKET</span>
-                    <h3 className="text-2xl text-primary">Cyber City: The Warehouse</h3>
-                    <p className="text-on-surface-variant">חמישי, 24 באוקטובר | 23:00</p>
-                  </div>
-                  <div className="bg-primary-container/10 px-3 py-1 rounded-full border border-primary-container/20">
-                    <span className="text-xs text-primary-fixed">VIP</span>
-                  </div>
-                </div>
-                <div className="bg-white p-4 rounded-lg flex items-center justify-center mb-md mx-auto w-fit">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img alt="QR" className="w-48 h-48" src={DEMO_QR} />
-                </div>
-                <p className="text-center text-sm text-on-surface-variant mb-lg">
-                  {tickets === null ? "טוען כרטיסים..." : "נא לסרוק את הקוד בכניסה לאירוע"}
-                </p>
-                <div className="grid grid-cols-2 gap-sm">
-                  <button onClick={() => shareTicket("Cyber City: The Warehouse")} className="bg-primary-container text-on-primary-container py-3 rounded-lg font-semibold text-sm flex items-center justify-center gap-1 active:scale-95 transition-transform">
-                    <Icon name="share" className="text-[18px]" /> שיתוף
-                  </button>
-                  <a href="/resale" className="border-2 border-primary-container text-primary-container py-3 rounded-lg font-semibold text-sm flex items-center justify-center gap-1">
-                    <Icon name="sell" className="text-[18px]" /> מכירה חוזרת
-                  </a>
-                </div>
+              <div className="glass-card rounded-2xl p-8 text-center">
+                <Icon name="confirmation_number" className="text-on-surface-variant/40 text-5xl mb-3" />
+                <p className="text-on-surface mb-1">{tickets === null ? "טוען כרטיסים..." : "אין כרטיסים פעילים"}</p>
+                <p className="text-label-sm text-on-surface-variant mb-4">כרטיסים שתרכוש יופיעו כאן.</p>
+                <a href="/" className="inline-block bg-primary-fixed text-on-primary-fixed font-bold px-6 py-2.5 rounded-full">גלה אירועים</a>
               </div>
             )}
 

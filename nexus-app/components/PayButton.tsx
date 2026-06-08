@@ -35,7 +35,7 @@ export function PayButton({
       });
     const { orderId } = await createOrder(eventId, cart, subtotal, buyer);
     if (coupon) await bumpCouponUsage(coupon.id, coupon.used + 1);
-    router.push(`/confirmation?event=${eventId}&order=${orderId}`);
+    router.push(`/confirmation?event=${eventId}&order=${orderId}&items=${encodeURIComponent(items)}`);
   };
 
   return (

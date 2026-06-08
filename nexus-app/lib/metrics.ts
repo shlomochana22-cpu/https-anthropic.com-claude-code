@@ -48,7 +48,7 @@ export function eventMetrics(e: NexusEvent, real?: EventSales | null): EventMetr
     sold,
     avgPrice: avgPriceEst,
     revenue: sold * avgPriceEst,
-    orders: Math.max(1, Math.round(sold / 2.2)),
+    orders: sold > 0 ? Math.max(1, Math.round(sold / 2.2)) : 0,
     occupancy: e.occupancy,
     isReal: false,
   };

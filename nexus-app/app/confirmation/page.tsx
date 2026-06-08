@@ -3,19 +3,31 @@ import { Header } from "@/components/Header";
 import { Icon } from "@/components/Icon";
 import { Confetti } from "@/components/Confetti";
 import { AddToCalendarButton } from "@/components/AddToCalendarButton";
+import { SaveLastTicket } from "@/components/SaveLastTicket";
 import { getEventById } from "@/lib/queries";
 
 export default async function ConfirmationPage({
   searchParams,
 }: {
-  searchParams: { event?: string; order?: string };
+  searchParams: { event?: string; order?: string; items?: string };
 }) {
   const event = searchParams.event ? await getEventById(searchParams.event) : undefined;
   const orderId = searchParams.order;
 
+  // Build a readable ticket label from the cart (slug → tier name).
+  const cart = (searchParams.items ?? "").split(",").filter(Boolean).map((p) => {
+    const [slug, qty] = p.split(":");
+    return { slug, qty: Number(qty) || 0 };
+  });
+  const tierLabel = event
+    ? cart.filter((c) => c.qty > 0).map((c) => `${event.tiers.find((t) => t.id === c.slug)?.name ?? "כרטיס"} ×${c.qty}`).join(" · ")
+    : "";
+  const qty = cart.reduce((s, c) => s + c.qty, 0) || 1;
+
   return (
     <>
       <Confetti />
+      {orderId && <SaveLastTicket eventTitle={event?.title ?? "NEXUS EVENT"} date={event?.date ?? ""} time={event?.time ?? ""} tier={tierLabel} qty={qty} code={orderId} />}
       <Header back="/tickets" />
       <main className="pt-24 pb-32 px-margin-mobile max-w-lg mx-auto flex flex-col items-center">
         <div className="mb-8 flex flex-col items-center">
@@ -32,6 +44,7 @@ export default async function ConfirmationPage({
           <div className="p-6 border-b border-white/5 bg-surface-container flex justify-between items-start">
             <div>
               <h2 className="text-headline-md text-white mb-1">{event?.title ?? "NEXUS EVENT"}</h2>
+              {tierLabel && <p className="text-label-md text-primary-fixed mb-1">{tierLabel}</p>}
               <div className="flex items-center gap-2 text-primary-fixed">
                 <Icon name="calendar_today" className="text-[18px]" />
                 <span className="text-label-md">
