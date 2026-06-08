@@ -9,6 +9,7 @@ export default async function ProducerDashboard({
   searchParams: { created?: string };
 }) {
   const events = await getEvents();
+  const avgOccupancy = Math.round(events.reduce((s, e) => s + e.occupancy, 0) / (events.length || 1));
   return (
     <main className="pt-10 md:pt-12 pb-32 px-margin-mobile md:px-margin-desktop">
       {searchParams.created && (
@@ -20,37 +21,42 @@ export default async function ProducerDashboard({
           </p>
         </div>
       )}
-      <header className="mb-lg">
-        <h1 className="text-headline-xl text-primary-fixed mb-xs">שלום <ProducerGreeting /></h1>
-        <p className="text-body-lg text-on-surface-variant">הנה סקירה של הביצועים שלך להיום.</p>
+      <header className="mb-md">
+        <h1 className="text-headline-lg-mobile md:text-headline-lg text-primary-fixed mb-xs">שלום <ProducerGreeting /></h1>
+        <p className="text-body-md text-on-surface-variant">הנה סקירה של הביצועים שלך להיום.</p>
       </header>
 
-      {/* Stat cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-gutter mb-lg">
-        <Link href="/producer/stats" className="glass-card p-md rounded-xl shadow-neon-primary">
-          <div className="flex justify-between items-start mb-sm">
-            <Icon name="trending_up" className="text-primary-fixed-dim bg-primary-fixed-dim/10 p-2 rounded-lg" />
-            <span className="text-label-sm text-primary-fixed-dim bg-primary-fixed-dim/20 px-2 py-0.5 rounded-full">+12%</span>
+      {/* Stat cards — 4 compact cells in 2 rows */}
+      <div className="grid grid-cols-2 gap-sm mb-lg">
+        <Link href="/producer/stats" className="glass-card p-3 rounded-xl shadow-neon-primary">
+          <div className="flex justify-between items-center mb-1">
+            <Icon name="trending_up" className="text-primary-fixed-dim bg-primary-fixed-dim/10 p-1.5 rounded-lg text-[18px]" />
+            <span className="text-[10px] text-primary-fixed-dim bg-primary-fixed-dim/20 px-1.5 py-0.5 rounded-full">+12%</span>
           </div>
-          <p className="text-label-md text-on-surface-variant mb-xs">מכירות היום</p>
-          <p className="text-headline-lg text-primary">₪14,250</p>
+          <p className="text-label-sm text-on-surface-variant">מכירות היום</p>
+          <p className="text-headline-md text-primary">₪14,250</p>
         </Link>
-        <div className="glass-card p-md rounded-xl">
-          <Icon name="confirmation_number" className="text-secondary-fixed-dim bg-secondary-fixed-dim/10 p-2 rounded-lg mb-sm inline-block" />
-          <p className="text-label-md text-on-surface-variant mb-xs">סה"כ כרטיסים</p>
-          <p className="text-headline-lg text-primary">1,240</p>
+        <div className="glass-card p-3 rounded-xl">
+          <Icon name="confirmation_number" className="text-secondary-fixed-dim bg-secondary-fixed-dim/10 p-1.5 rounded-lg mb-1 inline-block text-[18px]" />
+          <p className="text-label-sm text-on-surface-variant">סה"כ כרטיסים</p>
+          <p className="text-headline-md text-primary">1,240</p>
         </div>
-        <Link href="/producer/wallet" className="glass-card p-md rounded-xl">
-          <Icon name="payments" className="text-tertiary-fixed-dim bg-tertiary-fixed-dim/10 p-2 rounded-lg mb-sm inline-block" />
-          <p className="text-label-md text-on-surface-variant mb-xs">הכנסות החודש</p>
-          <p className="text-headline-lg text-primary">₪84,300</p>
+        <Link href="/producer/wallet" className="glass-card p-3 rounded-xl">
+          <Icon name="payments" className="text-tertiary-fixed-dim bg-tertiary-fixed-dim/10 p-1.5 rounded-lg mb-1 inline-block text-[18px]" />
+          <p className="text-label-sm text-on-surface-variant">הכנסות החודש</p>
+          <p className="text-headline-md text-primary">₪84,300</p>
+        </Link>
+        <Link href="/producer/events" className="glass-card p-3 rounded-xl">
+          <Icon name="event_seat" className="text-primary-fixed bg-primary-fixed/10 p-1.5 rounded-lg mb-1 inline-block text-[18px]" />
+          <p className="text-label-sm text-on-surface-variant">תפוסה ממוצעת</p>
+          <p className="text-headline-md text-primary">{avgOccupancy}%</p>
         </Link>
       </div>
 
-      {/* Quick navigation — all producer tools */}
+      {/* Quick navigation — row list, max two per row */}
       <div className="mb-lg">
-        <h3 className="text-headline-md text-primary mb-md">ניהול מהיר</h3>
-        <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-gutter">
+        <h3 className="text-[18px] text-primary mb-sm">ניהול מהיר</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-sm">
           {[
             { href: "/producer/events", icon: "confirmation_number", label: "ניהול אירועים" },
             { href: "/producer/create", icon: "add_circle", label: "יצירת אירוע" },
@@ -65,9 +71,10 @@ export default async function ProducerDashboard({
             { href: "/producer/campaigns", icon: "ads_click", label: "קמפיינים" },
             { href: "/producer/customers", icon: "contacts", label: "מאגר לקוחות" },
           ].map((t) => (
-            <Link key={t.href} href={t.href} className="glass-card rounded-xl p-md flex flex-col items-center justify-center text-center gap-2 hover:bg-white/5 hover:border-primary-fixed/30 transition-all aspect-square">
-              <Icon name={t.icon} className="text-primary-fixed text-3xl" />
-              <span className="text-label-sm text-on-surface leading-tight">{t.label}</span>
+            <Link key={t.href} href={t.href} className="glass-card rounded-xl p-3 flex items-center gap-3 hover:bg-white/5 hover:border-primary-fixed/30 transition-all">
+              <Icon name={t.icon} className="text-primary-fixed text-2xl shrink-0" />
+              <span className="text-label-md text-on-surface">{t.label}</span>
+              <Icon name="chevron_left" className="text-on-surface-variant/40 mr-auto" />
             </Link>
           ))}
         </div>
@@ -112,10 +119,28 @@ export default async function ProducerDashboard({
             </div>
             <div className="flex justify-between text-[10px] text-on-surface-variant mt-2"><span>18-21</span><span>22-25</span><span>26-30</span><span>31-35</span><span>35+</span></div>
           </div>
-          <div className="glass-card p-md rounded-xl flex flex-col justify-center gap-md">
-            <p className="text-label-md text-on-surface-variant">מגדר</p>
-            <div className="flex items-center gap-md"><div className="w-full h-4 bg-surface-container-high rounded-full overflow-hidden"><div className="h-full bg-secondary-fixed w-[55%]" /></div><span className="text-label-md text-secondary-fixed min-w-[5rem]">נשים 55%</span></div>
-            <div className="flex items-center gap-md"><div className="w-full h-4 bg-surface-container-high rounded-full overflow-hidden"><div className="h-full bg-primary-fixed w-[45%]" /></div><span className="text-label-md text-primary-fixed min-w-[5rem]">גברים 45%</span></div>
+          <div className="glass-card p-md rounded-xl flex flex-col items-center gap-md">
+            <p className="text-label-md text-on-surface-variant self-start">מגדר</p>
+            <div className="relative w-36 h-36">
+              <svg className="w-full h-full -rotate-90" viewBox="0 0 120 120">
+                {(() => {
+                  const C = 2 * Math.PI * 48;
+                  return (
+                    <>
+                      <circle cx="60" cy="60" r="48" fill="transparent" className="text-secondary-fixed" stroke="currentColor" strokeWidth="20" strokeDasharray={`${0.55 * C} ${C}`} />
+                      <circle cx="60" cy="60" r="48" fill="transparent" className="text-primary-fixed" stroke="currentColor" strokeWidth="20" strokeDasharray={`${0.45 * C} ${C}`} strokeDashoffset={-0.55 * C} />
+                    </>
+                  );
+                })()}
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <Icon name="wc" className="text-on-surface-variant text-2xl" />
+              </div>
+            </div>
+            <div className="flex items-center gap-md text-label-sm">
+              <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-secondary-fixed" /> נשים 55%</span>
+              <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-primary-fixed" /> גברים 45%</span>
+            </div>
           </div>
         </div>
       </div>
