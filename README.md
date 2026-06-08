@@ -8,8 +8,10 @@
 
 ```
 README.md                     # הקובץ הזה
+seo-geo-plan.md               # תוכנית הקידום המלאה: ממצאי סריקה + roadmap מסודר
+claude-chrome-audit-mission.md # משימת סריקה טכנית מלאה ל-Claude בכרום (להריץ ראשונה)
+claude-chrome-prompt.md       # פרומפטים מוכנים ל-Claude בכרום, לביצוע התיקונים
 llms.txt                      # קובץ GEO לבוטים של AI, להעלות לשורש האתר
-claude-chrome-prompt.md       # פרומפטים מוכנים ל-Claude בכרום, לעבודה על האתר החי
 blog/                         # 10 מאמרים, נקיים ומוכנים לפרסום
   01-battery-prices-2026.md
   02-agm-vs-efb.md
