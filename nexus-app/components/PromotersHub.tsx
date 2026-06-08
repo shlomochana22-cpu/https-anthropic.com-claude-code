@@ -7,14 +7,17 @@ import { SafeImage } from "@/components/SafeImage";
 import { CopyLinkButton } from "@/components/CopyLinkButton";
 import type { NexusEvent } from "@/lib/events";
 
-type Promoter = { id: string; name: string; phone: string; img?: string; tickets: number; revenue: number; commissionPct: number; active: boolean; pending?: boolean; top?: boolean };
+type Promoter = { id: string; name: string; phone: string; img?: string; tickets: number; revenue: number; commissionPct: number; active: boolean; pending?: boolean; top?: boolean; line: string };
+
+// A producer runs several "lines" (event brands), each with its own promoter team.
+const LINES = ["Techno Underground", "Beach Vibes", "VIP Nights"];
 
 const initialTeam: Promoter[] = [
-  { id: "1", name: "נועה ארגמן", phone: "054-9988776", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBcZpBGodozfR-K6jQjy5ONySeDIlCPbdZIi1GtBo0KTpBzYa7FvKCaBjWN3gnB23tU53uDben_yfjouXC0CpljugpXA7DVdsfNMCWuwsZvuuf5lNKS3X3AdHSZ2eS0hI5kl6WuJOTQTK_3aySA8f7vtAS3Tic-i0Zt72BD3YggGPPtr79NCCN2D8b0Qpvm_MRZVEO3Ug5OGwGqbQlUD0AHu3hY6rIBAeAtm410EA_-d2g91HomHUGzDCOKBMVxfR3IEqpYQrEecQ", tickets: 248, revenue: 28900, commissionPct: 10, active: true, top: true },
-  { id: "2", name: "עידן כהן", phone: "052-1122334", tickets: 112, revenue: 12450, commissionPct: 10, active: true },
-  { id: "3", name: "רועי לוי", phone: "058-5544332", tickets: 84, revenue: 9120, commissionPct: 8, active: true },
-  { id: "4", name: "מאיה גרין", phone: "050-7788990", tickets: 142, revenue: 7400, commissionPct: 10, active: true },
-  { id: "5", name: "דניאל מזרחי", phone: "053-2211009", tickets: 0, revenue: 0, commissionPct: 10, active: false, pending: true },
+  { id: "1", name: "נועה ארגמן", phone: "054-9988776", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBcZpBGodozfR-K6jQjy5ONySeDIlCPbdZIi1GtBo0KTpBzYa7FvKCaBjWN3gnB23tU53uDben_yfjouXC0CpljugpXA7DVdsfNMCWuwsZvuuf5lNKS3X3AdHSZ2eS0hI5kl6WuJOTQTK_3aySA8f7vtAS3Tic-i0Zt72BD3YggGPPtr79NCCN2D8b0Qpvm_MRZVEO3Ug5OGwGqbQlUD0AHu3hY6rIBAeAtm410EA_-d2g91HomHUGzDCOKBMVxfR3IEqpYQrEecQ", tickets: 248, revenue: 28900, commissionPct: 10, active: true, top: true, line: "Techno Underground" },
+  { id: "2", name: "עידן כהן", phone: "052-1122334", tickets: 112, revenue: 12450, commissionPct: 10, active: true, line: "Techno Underground" },
+  { id: "3", name: "רועי לוי", phone: "058-5544332", tickets: 84, revenue: 9120, commissionPct: 8, active: true, line: "Beach Vibes" },
+  { id: "4", name: "מאיה גרין", phone: "050-7788990", tickets: 142, revenue: 7400, commissionPct: 10, active: true, line: "VIP Nights" },
+  { id: "5", name: "דניאל מזרחי", phone: "053-2211009", tickets: 0, revenue: 0, commissionPct: 10, active: false, pending: true, line: "Beach Vibes" },
 ];
 
 const podium = [
@@ -36,7 +39,8 @@ const initialComps: Competition[] = [
 const TABS = [
   { id: "overview", label: "סקירה" },
   { id: "team", label: "צוות" },
-  { id: "leaderboard", label: "לידרבורד" },
+  { id: "assign", label: "שיבוץ" },
+  { id: "leaderboard", label: "דירוג" },
   { id: "links", label: "לינקים" },
 ] as const;
 type TabId = (typeof TABS)[number]["id"];
@@ -66,11 +70,22 @@ export function PromotersHub({ events, initialTab = "overview" }: { events: Nexu
   const [cTarget, setCTarget] = useState("");
   const [cDays, setCDays] = useState("7");
 
+  // Lines & event assignment
+  const [lineFilter, setLineFilter] = useState<string>("all");
+  const [inviteLine, setInviteLine] = useState<string>(LINES[0]);
+  const [assignments, setAssignments] = useState<Record<string, string[]>>({});
+  const moveLine = (id: string, line: string) => setTeam((t) => t.map((p) => (p.id === id ? { ...p, line } : p)));
+  const assignToEvent = (eventId: string, pid: string) =>
+    setAssignments((a) => ({ ...a, [eventId]: (a[eventId] || []).includes(pid) ? a[eventId] : [...(a[eventId] || []), pid] }));
+  const unassignFromEvent = (eventId: string, pid: string) =>
+    setAssignments((a) => ({ ...a, [eventId]: (a[eventId] || []).filter((x) => x !== pid) }));
+  const rosterByLine = lineFilter === "all" ? team : team.filter((p) => p.line === lineFilter);
+
   const toggle = (id: string) => setTeam((t) => t.map((p) => (p.id === id ? { ...p, active: !p.active } : p)));
   const invite = () => {
     if (!first.trim() || !last.trim() || !phone.trim()) return;
     const name = `${first.trim()} ${last.trim()}`;
-    setTeam((t) => [...t, { id: String(Date.now()), name, phone: phone.trim(), tickets: 0, revenue: 0, commissionPct: 10, active: false, pending: true }]);
+    setTeam((t) => [...t, { id: String(Date.now()), name, phone: phone.trim(), tickets: 0, revenue: 0, commissionPct: 10, active: false, pending: true, line: inviteLine }]);
     setLastInvite({ name, link: `https://nexusevents.co.il/p/${encodeURIComponent(name)}` });
     setFirst(""); setLast(""); setPhone("");
   };
@@ -183,6 +198,12 @@ export function PromotersHub({ events, initialTab = "overview" }: { events: Nexu
               <input value={last} onChange={(e) => setLast(e.target.value)} placeholder="שם משפחה" className="bg-surface-container-low border border-white/10 rounded-lg px-4 py-3 text-on-surface focus:border-primary-fixed outline-none" />
               <input value={phone} onChange={(e) => setPhone(e.target.value)} type="tel" inputMode="tel" placeholder="טלפון" className="bg-surface-container-low border border-white/10 rounded-lg px-4 py-3 text-on-surface focus:border-primary-fixed outline-none" />
             </div>
+            <div className="flex items-center gap-2 mt-3">
+              <span className="text-label-sm text-on-surface-variant whitespace-nowrap">שייך לליין</span>
+              <select value={inviteLine} onChange={(e) => setInviteLine(e.target.value)} className="flex-1 bg-surface-container-low border border-white/10 rounded-lg px-3 py-2.5 text-on-surface focus:border-primary-fixed outline-none">
+                {LINES.map((l) => <option key={l} value={l}>{l}</option>)}
+              </select>
+            </div>
             <button onClick={invite} disabled={!first.trim() || !last.trim() || !phone.trim()} className="w-full mt-3 bg-primary-container text-on-primary-container font-bold px-6 py-3 rounded-lg flex items-center justify-center gap-2 active:scale-95 transition-all shadow-neon-primary disabled:opacity-40 disabled:shadow-none">
               <Icon name="person_add" /> שלח הזמנה
             </button>
@@ -251,6 +272,94 @@ export function PromotersHub({ events, initialTab = "overview" }: { events: Nexu
                   </div>
                 );
               })}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ───── Lines & event assignment ───── */}
+      {tab === "assign" && (
+        <section className="space-y-gutter">
+          {/* Line filter */}
+          <div className="glass-card p-md rounded-xl">
+            <p className="text-label-md text-on-surface-variant mb-2 flex items-center gap-1.5"><Icon name="filter_list" className="text-primary-fixed text-[18px]" /> סינון לפי ליין</p>
+            <div className="flex flex-wrap gap-2">
+              {["all", ...LINES].map((l) => {
+                const on = lineFilter === l;
+                return (
+                  <button key={l} onClick={() => setLineFilter(l)} className={`px-3 py-1.5 rounded-full border text-label-sm transition-all flex items-center gap-1 ${on ? "border-primary-fixed bg-primary-container/15 text-primary-fixed font-bold" : "border-white/10 bg-white/5 text-on-surface-variant hover:border-primary-fixed/40"}`}>
+                    {on && <Icon name="check" className="text-[14px]" />}{l === "all" ? "כל הליינים" : l}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Roster — move promoters between lines */}
+          <div className="glass-card p-md rounded-xl">
+            <h3 className="text-headline-md text-primary mb-md">הצוות {lineFilter !== "all" && <span className="text-on-surface-variant text-label-md">· {lineFilter}</span>}</h3>
+            <div className="space-y-2">
+              {rosterByLine.map((p) => (
+                <div key={p.id} className="flex items-center gap-3 p-2.5 rounded-lg bg-white/5 border border-white/5">
+                  <div className="w-9 h-9 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant shrink-0 overflow-hidden">
+                    {p.img ? <SafeImage className="w-full h-full object-cover" src={p.img} alt={p.name} /> : <Icon name="person" />}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-label-md text-white truncate">{p.name}</p>
+                    <p className="text-label-sm text-on-surface-variant">{p.tickets} כרטיסים</p>
+                  </div>
+                  <select value={p.line} onChange={(e) => moveLine(p.id, e.target.value)} className="bg-surface-container-low border border-white/10 rounded-lg px-2 py-1.5 text-label-sm text-primary focus:border-primary-fixed outline-none" aria-label="העבר לליין">
+                    {LINES.map((l) => <option key={l} value={l}>{l}</option>)}
+                  </select>
+                </div>
+              ))}
+              {rosterByLine.length === 0 && <p className="text-center text-on-surface-variant/60 py-4">אין יחצנים בליין זה</p>}
+            </div>
+          </div>
+
+          {/* Event assignment — tag promoters onto each event */}
+          <div>
+            <h3 className="text-headline-md text-primary mb-md">שיבוץ יחצנים לאירועים</h3>
+            <div className="space-y-md">
+              {events.map((e) => {
+                const assigned = assignments[e.id] || [];
+                const assignedPromoters = team.filter((p) => assigned.includes(p.id));
+                const available = rosterByLine.filter((p) => !assigned.includes(p.id));
+                return (
+                  <div key={e.id} className="glass-card rounded-xl p-md">
+                    <div className="flex items-center gap-3 mb-3">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img className="w-12 h-12 rounded-lg object-cover" src={e.image} alt={e.title} />
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-label-md text-primary truncate">{e.title}</h4>
+                        <p className="text-label-sm text-on-surface-variant">{e.venue} • {e.date} · {assignedPromoters.length} יחצנים</p>
+                      </div>
+                    </div>
+
+                    {/* Tagged promoters */}
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      {assignedPromoters.map((p) => (
+                        <span key={p.id} className="inline-flex items-center gap-1.5 pl-1.5 pr-3 py-1 rounded-full bg-primary-fixed/15 border border-primary-fixed/40 text-primary-fixed text-label-sm">
+                          {p.name}
+                          <button onClick={() => unassignFromEvent(e.id, p.id)} className="hover:text-error" aria-label="הסר"><Icon name="close" className="text-[15px] block" /></button>
+                        </span>
+                      ))}
+                      {assignedPromoters.length === 0 && <span className="text-label-sm text-on-surface-variant/50">אין יחצנים משובצים עדיין</span>}
+                    </div>
+
+                    {/* Add promoter */}
+                    <select
+                      value=""
+                      onChange={(ev) => { if (ev.target.value) assignToEvent(e.id, ev.target.value); }}
+                      className="w-full bg-surface-container-low border border-white/10 rounded-lg px-3 py-2.5 text-label-md text-on-surface focus:border-primary-fixed outline-none"
+                    >
+                      <option value="">＋ שבץ יחצן{lineFilter !== "all" ? ` מ-${lineFilter}` : ""}…</option>
+                      {available.map((p) => <option key={p.id} value={p.id}>{p.name} · {p.line}</option>)}
+                    </select>
+                  </div>
+                );
+              })}
+              {events.length === 0 && <p className="text-center text-on-surface-variant/60 py-8">אין אירועים עדיין</p>}
             </div>
           </div>
         </section>

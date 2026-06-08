@@ -1,7 +1,7 @@
 import { PromotersHub } from "@/components/PromotersHub";
 import { getEvents } from "@/lib/queries";
 
-const TABS = ["overview", "team", "leaderboard", "links"] as const;
+const TABS = ["overview", "team", "assign", "leaderboard", "links"] as const;
 type TabId = (typeof TABS)[number];
 
 export default async function PromotersHubPage({ searchParams }: { searchParams: { tab?: string } }) {
