@@ -4,6 +4,9 @@ import { ProducerGreeting } from "@/components/ProducerGreeting";
 import { getEvents, getEventSales } from "@/lib/queries";
 import { aggregateMetrics, shekel } from "@/lib/metrics";
 
+// Always reflect fresh sales — never serve a statically cached dashboard.
+export const dynamic = "force-dynamic";
+
 export default async function ProducerDashboard({
   searchParams,
 }: {

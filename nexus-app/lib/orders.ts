@@ -68,22 +68,40 @@ export async function createOrder(
   const userId = (await sb.auth.getUser()).data.user?.id ?? null;
 
   const fee = 15;
-  const { data: order, error } = await sb
-    .from("orders")
-    .insert({
-      user_id: userId,
-      event_id: eventId,
-      subtotal,
-      fee,
-      total: subtotal + fee,
-      buyer_name: buyer?.name?.trim() || null,
-      buyer_phone: buyer?.phone?.trim() || null,
-      buyer_email: buyer?.email?.trim() || null,
-      participants: (participants ?? []).filter((p) => p.name?.trim()),
-    })
-    .select("id")
-    .single();
-  if (error || !order) return { orderId: demoId, demo: true };
+  // Core columns exist since the initial schema; buyer_* / participants arrive
+  // in later migrations (0011/0012). Insert the full row first, but if one of
+  // those columns is missing on this DB, degrade gracefully so the SALE STILL
+  // PERSISTS (and the producer sees it) instead of silently returning a demo id.
+  const core = {
+    user_id: userId,
+    event_id: eventId,
+    subtotal,
+    fee,
+    total: subtotal + fee,
+  };
+  const buyerFields = {
+    buyer_name: buyer?.name?.trim() || null,
+    buyer_phone: buyer?.phone?.trim() || null,
+    buyer_email: buyer?.email?.trim() || null,
+  };
+  const attempts = [
+    { ...core, ...buyerFields, participants: (participants ?? []).filter((p) => p.name?.trim()) },
+    { ...core, ...buyerFields },
+    core,
+  ];
+
+  let order: { id: string } | null = null;
+  for (const payload of attempts) {
+    const { data, error } = await sb.from("orders").insert(payload).select("id").single();
+    if (data) {
+      order = data as { id: string };
+      break;
+    }
+    if (error) console.error("createOrder insert failed:", error.message);
+    // Retry with fewer columns only on a schema/column mismatch; otherwise stop.
+    if (!error || !/column|schema cache|participants|buyer_/i.test(error.message)) break;
+  }
+  if (!order) return { orderId: demoId, demo: true };
 
   // Resolve tier ids and create one ticket per seat.
   const { data: tiers } = await sb

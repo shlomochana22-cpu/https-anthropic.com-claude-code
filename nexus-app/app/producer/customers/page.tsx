@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Icon } from "@/components/Icon";
 import { getBuyers } from "@/lib/buyers";
+// Buyers are fetched live in the browser on mount (getBuyers), so real paying
+// customers always show without server caching concerns.
 
 type Customer = { name: string; age: number | string; gender: string; birth: string; last: string; status: string; tone: string; phone?: string };
 
