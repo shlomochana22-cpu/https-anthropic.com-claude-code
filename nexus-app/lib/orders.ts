@@ -60,15 +60,13 @@ export async function createOrder(
 
   if (!sb) return { orderId: demoId, demo: true };
 
-  const {
-    data: { user },
-  } = await sb.auth.getUser();
-  if (!user) return { orderId: demoId, demo: true };
+  // Persist even for guests (user_id null) so the producer sees the sale.
+  const userId = (await sb.auth.getUser()).data.user?.id ?? null;
 
   const fee = 15;
   const { data: order, error } = await sb
     .from("orders")
-    .insert({ user_id: user.id, event_id: eventId, subtotal, fee, total: subtotal + fee })
+    .insert({ user_id: userId, event_id: eventId, subtotal, fee, total: subtotal + fee })
     .select("id")
     .single();
   if (error || !order) return { orderId: demoId, demo: true };
@@ -87,7 +85,7 @@ export async function createOrder(
         order_id: order.id,
         event_id: eventId,
         tier_id: bySlug.get(i.tierSlug) ?? null,
-        user_id: user.id,
+        user_id: userId,
       }))
     );
   if (tickets.length) await sb.from("tickets").insert(tickets);
