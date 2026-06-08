@@ -31,7 +31,7 @@ create table if not exists public.guests (
   gender       text,
   entry_type   text not null default 'free' check (entry_type in ('free','discount')),
   qty          int  not null default 1,
-  code         text not null default upper(encode(gen_random_bytes(6),'hex')),
+  code         text not null default ('NX-' || upper(substr(md5(random()::text || clock_timestamp()::text), 1, 8))),
   source       text not null default 'link' check (source in ('manual','link')),
   status       text not null default 'registered' check (status in ('registered','scanned')),
   created_at   timestamptz not null default now()
@@ -84,7 +84,7 @@ begin
     return query select false, null::text, 'הלינק כבר נוצל'; return;
   end if;
 
-  v_code := 'NX-' || upper(encode(gen_random_bytes(4),'hex'));
+  v_code := 'NX-' || upper(substr(md5(random()::text || clock_timestamp()::text), 1, 8));
   insert into public.guests (event_id, invite_token, first_name, last_name, dob, gender, entry_type, qty, code, source)
     values (v_invite.event_id, p_token, p_first, p_last, p_dob, p_gender, v_invite.type, v_invite.qty, v_code, 'link');
   update public.invites set status = 'used', used_at = now() where token = p_token;
