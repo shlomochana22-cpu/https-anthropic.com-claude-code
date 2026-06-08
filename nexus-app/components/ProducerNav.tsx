@@ -29,6 +29,8 @@ const links = [
 export function ProducerSidebar() {
   const pathname = usePathname();
   const router = useRouter();
+  // Standalone producer login — no dashboard chrome.
+  if (pathname === "/producer/login") return null;
   return (
     <aside className="hidden md:flex fixed right-0 top-0 h-full w-[280px] z-40 bg-surface-container-high border-l border-white/5 shadow-2xl flex-col p-md">
       <Link href="/" className="mb-lg px-2 block">
@@ -65,6 +67,7 @@ export function ProducerSidebar() {
 /** Mobile bottom nav for the producer area. */
 export function ProducerBottomNav() {
   const pathname = usePathname();
+  if (pathname === "/producer/login") return null;
   const items = [
     { href: "/producer", icon: "dashboard", label: "דאשבורד" },
     { href: "/producer/events", icon: "confirmation_number", label: "אירועים" },
