@@ -2,18 +2,23 @@ import Link from "next/link";
 import { Icon } from "@/components/Icon";
 import { SafeImage } from "@/components/SafeImage";
 import type { NexusEvent } from "@/lib/events";
+import type { EventSales } from "@/lib/queries";
 
 function hash(s: string) { let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0; return h; }
 const shekel = (n: number) => `₪${n.toLocaleString("he-IL")}`;
 
-export function EventDashboard({ event: e }: { event: NexusEvent }) {
+export function EventDashboard({ event: e, sales }: { event: NexusEvent; sales?: EventSales | null }) {
   const seed = hash(e.id);
   const capacity = 600 + (seed % 1400);
-  const sold = Math.round((capacity * e.occupancy) / 100);
   const prices = e.tiers.map((t) => t.price).filter((p) => p > 0);
-  const avgPrice = prices.length ? Math.round(prices.reduce((a, b) => a + b, 0) / prices.length) : e.fromPrice;
-  const revenue = sold * avgPrice;
-  const orders = Math.max(1, Math.round(sold / 2.2));
+  const avgPriceEst = prices.length ? Math.round(prices.reduce((a, b) => a + b, 0) / prices.length) : e.fromPrice;
+
+  // Use real sales once the event has paid orders; otherwise an estimate.
+  const isReal = !!(sales && sales.revenue > 0);
+  const sold = isReal ? sales!.tickets : Math.round((capacity * e.occupancy) / 100);
+  const revenue = isReal ? sales!.revenue : sold * avgPriceEst;
+  const orders = isReal ? sales!.orders : Math.max(1, Math.round(sold / 2.2));
+  const avgPrice = isReal && sales!.tickets ? Math.round(sales!.revenue / sales!.tickets) : avgPriceEst;
   const fees = Math.round(revenue * 0.08);
   const net = revenue - fees;
   const womenPct = 38 + (seed % 25);
@@ -56,6 +61,9 @@ export function EventDashboard({ event: e }: { event: NexusEvent }) {
           <SafeImage className="w-full h-full object-cover" src={e.image} alt={e.title} />
           <div className="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent" />
           <span className="absolute top-3 right-3 bg-primary-fixed text-on-primary-fixed text-[10px] font-bold px-2 py-0.5 rounded uppercase">{e.badge ?? "פעיל"}</span>
+          <span className={`absolute top-3 left-3 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 ${isReal ? "bg-primary-fixed/20 text-primary-fixed border border-primary-fixed/40" : "bg-black/50 text-on-surface-variant border border-white/10"}`}>
+            <Icon name={isReal ? "verified" : "insights"} className="text-[12px]" fill={isReal} /> {isReal ? "מכירות אמיתיות" : "הערכה"}
+          </span>
           <div className="absolute bottom-3 right-4 left-4">
             <h1 className="text-headline-lg-mobile text-primary drop-shadow">{e.title}</h1>
             <p className="text-label-sm text-on-surface-variant flex items-center gap-1"><Icon name="location_on" className="text-sm" /> {e.venue}, {e.city} • {e.date} {e.time}</p>

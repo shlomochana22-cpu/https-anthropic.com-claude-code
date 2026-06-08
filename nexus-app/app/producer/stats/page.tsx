@@ -1,7 +1,7 @@
 import { StatsDashboard } from "@/components/StatsDashboard";
-import { getEvents } from "@/lib/queries";
+import { getEvents, getEventSales } from "@/lib/queries";
 
 export default async function StatsPage() {
-  const events = await getEvents();
-  return <StatsDashboard events={events} />;
+  const [events, salesByEvent] = await Promise.all([getEvents(), getEventSales()]);
+  return <StatsDashboard events={events} salesByEvent={salesByEvent} />;
 }

@@ -133,3 +133,21 @@ export async function getCoupons(): Promise<DBCoupon[]> {
   if (error || !data) return [];
   return data as DBCoupon[];
 }
+
+export type EventSales = { tickets: number; orders: number; revenue: number };
+
+/**
+ * Real sales aggregates per event from the event_sales() function (paid orders
+ * + tickets). Returns {} when no DB / function — dashboards then use estimates.
+ */
+export async function getEventSales(): Promise<Record<string, EventSales>> {
+  const sb = getSupabase();
+  if (!sb) return {};
+  const { data, error } = await sb.rpc("event_sales");
+  if (error || !data) return {};
+  const map: Record<string, EventSales> = {};
+  for (const r of data as { event_id: string; tickets: number; orders: number; revenue: number }[]) {
+    map[r.event_id] = { tickets: Number(r.tickets) || 0, orders: Number(r.orders) || 0, revenue: Number(r.revenue) || 0 };
+  }
+  return map;
+}

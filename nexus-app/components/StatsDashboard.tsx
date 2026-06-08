@@ -4,36 +4,40 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/Icon";
 import type { NexusEvent } from "@/lib/events";
+import type { EventSales } from "@/lib/queries";
 
 function hash(s: string) { let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0; return h; }
 
 type Metrics = { capacity: number; sold: number; avgPrice: number; revenue: number; orders: number };
-function metricsFor(e: NexusEvent): Metrics {
+function metricsFor(e: NexusEvent, real?: EventSales): Metrics {
   const seed = hash(e.id);
   const capacity = 600 + (seed % 1400);
-  const sold = Math.round((capacity * e.occupancy) / 100);
   const prices = e.tiers.map((t) => t.price).filter((p) => p > 0);
-  const avgPrice = prices.length ? Math.round(prices.reduce((a, b) => a + b, 0) / prices.length) : e.fromPrice;
-  return { capacity, sold, avgPrice, revenue: sold * avgPrice, orders: Math.max(1, Math.round(sold / 2.2)) };
+  const avgPriceEst = prices.length ? Math.round(prices.reduce((a, b) => a + b, 0) / prices.length) : e.fromPrice;
+  if (real && real.revenue > 0) {
+    return { capacity, sold: real.tickets, avgPrice: real.tickets ? Math.round(real.revenue / real.tickets) : avgPriceEst, revenue: real.revenue, orders: real.orders };
+  }
+  const sold = Math.round((capacity * e.occupancy) / 100);
+  return { capacity, sold, avgPrice: avgPriceEst, revenue: sold * avgPriceEst, orders: Math.max(1, Math.round(sold / 2.2)) };
 }
 const shekel = (n: number) => `₪${n.toLocaleString("he-IL")}`;
 
-export function StatsDashboard({ events }: { events: NexusEvent[] }) {
+export function StatsDashboard({ events, salesByEvent = {} }: { events: NexusEvent[]; salesByEvent?: Record<string, EventSales> }) {
   const [selectedId, setSelectedId] = useState("all");
   const sel = selectedId === "all" ? null : events.find((e) => e.id === selectedId);
 
-  const perEvent = useMemo(() => events.map((e) => ({ e, m: metricsFor(e) })), [events]);
+  const perEvent = useMemo(() => events.map((e) => ({ e, m: metricsFor(e, salesByEvent[e.id]) })), [events, salesByEvent]);
 
   const agg = useMemo(() => {
-    const src = sel ? [{ e: sel, m: metricsFor(sel) }] : perEvent;
+    const src = sel ? [{ e: sel, m: metricsFor(sel, salesByEvent[sel.id]) }] : perEvent;
     const a = src.reduce((acc, { m }) => ({ capacity: acc.capacity + m.capacity, sold: acc.sold + m.sold, revenue: acc.revenue + m.revenue, orders: acc.orders + m.orders }), { capacity: 0, sold: 0, revenue: 0, orders: 0 });
     return { ...a, avgPrice: a.sold ? Math.round(a.revenue / a.sold) : 0, occupancy: a.capacity ? Math.round((a.sold / a.capacity) * 100) : 0 };
-  }, [sel, perEvent]);
+  }, [sel, perEvent, salesByEvent]);
 
   // Ticket-tier breakdown for a single event.
   const tierBreakdown = useMemo(() => {
     if (!sel) return [];
-    const m = metricsFor(sel);
+    const m = metricsFor(sel, salesByEvent[sel.id]);
     const n = sel.tiers.length || 1;
     const sorted = [...sel.tiers].sort((a, b) => a.price - b.price);
     const weights = sel.tiers.map((t) => n - sorted.findIndex((x) => x === t));
@@ -44,7 +48,7 @@ export function StatsDashboard({ events }: { events: NexusEvent[] }) {
       const sold = Math.min(total, Math.round(m.sold * share));
       return { name: t.name, price: t.price, sold, total, revenue: sold * t.price, exclusive: t.exclusive };
     });
-  }, [sel]);
+  }, [sel, salesByEvent]);
 
   const maxRev = Math.max(1, ...perEvent.map(({ m }) => m.revenue));
 
