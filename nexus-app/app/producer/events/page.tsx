@@ -40,14 +40,17 @@ export default async function EventManagerPage() {
           return (
             <div key={e.id} className="glass-card rounded-2xl overflow-hidden border border-white/5 hover:border-primary-fixed/30 transition-colors">
               <div className="flex flex-col md:flex-row">
-                <div className="md:w-48 h-40 md:h-auto shrink-0 relative">
+                <Link href={`/producer/events/${e.id}`} className="md:w-48 h-40 md:h-auto shrink-0 relative block group">
                   <SafeImage className="w-full h-full object-cover" src={e.image} alt={e.title} />
                   <span className="absolute top-3 right-3 bg-primary-fixed text-on-primary-fixed text-[10px] font-bold px-2 py-0.5 rounded uppercase">{e.badge ?? "פעיל"}</span>
-                </div>
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
+                    <span className="opacity-0 group-hover:opacity-100 transition-opacity bg-primary-fixed text-on-primary-fixed text-[10px] font-bold px-2 py-1 rounded-full flex items-center gap-1"><Icon name="dashboard" className="text-[14px]" /> דאשבורד</span>
+                  </div>
+                </Link>
                 <div className="flex-1 p-md">
                   <div className="flex justify-between items-start gap-4">
                     <div>
-                      <h3 className="text-headline-md text-primary">{e.title}</h3>
+                      <Link href={`/producer/events/${e.id}`} className="text-headline-md text-primary hover:text-primary-fixed transition-colors">{e.title}</Link>
                       <p className="text-label-sm text-on-surface-variant mt-1 flex items-center gap-1">
                         <Icon name="location_on" className="text-sm" /> {e.venue}, {e.city} • {e.date} {e.time}
                       </p>
@@ -72,8 +75,8 @@ export default async function EventManagerPage() {
 
                   {/* Actions */}
                   <div className="mt-4 flex flex-wrap gap-2">
-                    <Link href="/producer/stats" className="flex items-center gap-1 bg-surface-container-high border border-white/10 text-primary px-3 py-2 rounded-lg text-label-sm hover:border-primary-fixed/40 transition-colors">
-                      <Icon name="analytics" className="text-[18px]" /> סטטיסטיקות
+                    <Link href={`/producer/events/${e.id}`} className="flex items-center gap-1 bg-primary-container text-on-primary-container px-3 py-2 rounded-lg text-label-sm font-bold active:scale-95 transition-transform">
+                      <Icon name="dashboard" className="text-[18px]" /> דאשבורד אירוע
                     </Link>
                     <Link href="/producer/guests" className="flex items-center gap-1 bg-surface-container-high border border-white/10 text-primary px-3 py-2 rounded-lg text-label-sm hover:border-primary-fixed/40 transition-colors">
                       <Icon name="group" className="text-[18px]" /> מוזמנים
