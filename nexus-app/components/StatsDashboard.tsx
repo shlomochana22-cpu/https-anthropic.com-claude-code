@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
 import { Icon } from "@/components/Icon";
 import type { NexusEvent } from "@/lib/events";
 import type { EventSales } from "@/lib/queries";
@@ -137,10 +136,10 @@ export function StatsDashboard({ events, salesByEvent = {}, guestsByEvent = {} }
           ) : (
             <div className="space-y-2">
               {[...perEvent].sort((a, b) => b.m.revenue - a.m.revenue).map(({ e, m }) => (
-                <Link key={e.id} href="#" onClick={(ev) => { ev.preventDefault(); setSelectedId(e.id); }} className="flex items-center gap-3 p-2.5 rounded-lg bg-white/5 border border-white/5 hover:border-primary-fixed/30 transition-colors">
+                <button key={e.id} onClick={() => setSelectedId(e.id)} className="w-full text-right flex items-center gap-3 p-2.5 rounded-lg bg-white/5 border border-white/5 hover:border-primary-fixed/30 transition-colors">
                   <div className="flex-1 min-w-0"><p className="text-label-md text-white truncate">{e.title}</p><p className="text-label-sm text-on-surface-variant">{m.sold.toLocaleString()} כרטיסים · {(guestsByEvent[e.id] || 0).toLocaleString()} מוזמנים · {e.occupancy}% תפוסה</p></div>
                   <span className="text-primary-fixed font-bold text-label-md">{shekel(m.revenue)}</span>
-                </Link>
+                </button>
               ))}
             </div>
           )}

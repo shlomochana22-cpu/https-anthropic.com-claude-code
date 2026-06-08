@@ -12,7 +12,9 @@ const reviews = [
 
 export default function RatingPage() {
   const [rating, setRating] = useState(0);
+  const [aspects, setAspects] = useState<Record<string, number>>({ "מערכת סאונד": 4, "אנרגיית קהל": 5, "ארגון": 3 });
   const [sent, setSent] = useState(false);
+  const setAspect = (label: string, value: number) => setAspects((a) => ({ ...a, [label]: value }));
 
   return (
     <>
@@ -45,15 +47,17 @@ export default function RatingPage() {
           </div>
           <div className="grid grid-cols-1 gap-sm pt-sm border-t border-white/5">
             {[
-              { label: "מערכת סאונד", icon: "volume_up", filled: 4 },
-              { label: "אנרגיית קהל", icon: "groups", filled: 5 },
-              { label: "ארגון", icon: "event_seat", filled: 3 },
+              { label: "מערכת סאונד", icon: "volume_up" },
+              { label: "אנרגיית קהל", icon: "groups" },
+              { label: "ארגון", icon: "event_seat" },
             ].map((m) => (
               <div key={m.label} className="flex items-center justify-between">
                 <span className="text-label-md text-on-surface-variant">{m.label}</span>
                 <div className="flex flex-row-reverse gap-1">
                   {[1, 2, 3, 4, 5].map((i) => (
-                    <Icon key={i} name={m.icon} className={`text-md cursor-pointer ${i <= m.filled ? "text-primary-fixed/70 hover:text-primary-fixed" : "text-on-surface-variant/20"}`} />
+                    <button key={i} onClick={() => setAspect(m.label, i)} className="active:scale-110 transition-transform" aria-label={`${m.label} ${i}`}>
+                      <Icon name={m.icon} className={`text-md ${i <= aspects[m.label] ? "text-primary-fixed/80 hover:text-primary-fixed" : "text-on-surface-variant/20 hover:text-on-surface-variant/40"}`} />
+                    </button>
                   ))}
                 </div>
               </div>

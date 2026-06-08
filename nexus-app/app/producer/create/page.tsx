@@ -151,6 +151,7 @@ export default function CreateEventPage() {
   const [step, setStep] = useState(0);
   const [saving, setSaving] = useState(false);
   const [publishError, setPublishError] = useState<string | null>(null);
+  const [draftSaved, setDraftSaved] = useState(false);
 
   // step 1
   const [title, setTitle] = useState("");
@@ -314,6 +315,13 @@ export default function CreateEventPage() {
     router.push(`/producer?created=${id}`);
   };
   const back = () => { if (step > 0) { setStep(step - 1); scrollTop(); } };
+  const saveDraft = () => {
+    try {
+      localStorage.setItem("nexus_event_draft", JSON.stringify({ title, category, genreList, date, time, age, ageVisible, city, location, description, tiers }));
+    } catch { /* ignore */ }
+    setDraftSaved(true);
+    setTimeout(() => setDraftSaved(false), 2500);
+  };
 
   return (
     <main className="pt-10 md:pt-12 pb-32 px-margin-mobile md:px-margin-desktop max-w-4xl">
@@ -735,7 +743,9 @@ export default function CreateEventPage() {
             {!saving && <Icon name="rocket_launch" className="text-[20px] group-hover:-translate-x-1 transition-transform" />}
           </button>
           <div className="flex gap-3">
-            <button className="flex-1 py-2.5 border border-white/20 text-on-surface-variant text-label-md rounded-lg hover:bg-white/5 transition-all active:scale-95">שמור כטיוטה</button>
+            <button onClick={saveDraft} className={`flex-1 py-2.5 border text-label-md rounded-lg transition-all active:scale-95 flex items-center justify-center gap-1 ${draftSaved ? "border-primary-fixed/40 text-primary-fixed" : "border-white/20 text-on-surface-variant hover:bg-white/5"}`}>
+              {draftSaved ? <><Icon name="check_circle" className="text-[18px]" fill /> נשמר כטיוטה</> : "שמור כטיוטה"}
+            </button>
             <button onClick={back} className="flex-1 py-2.5 text-on-surface-variant hover:text-primary text-label-md flex items-center justify-center gap-1">
               <Icon name="arrow_forward" className="text-[18px]" /> חזרה לכרטיסים
             </button>
