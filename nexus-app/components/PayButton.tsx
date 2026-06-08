@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Icon } from "./Icon";
-import { createOrder, type CartItem, type Buyer } from "@/lib/orders";
+import { createOrder, type CartItem, type Buyer, type Participant } from "@/lib/orders";
 import { bumpCouponUsage } from "@/lib/coupons";
 
 export function PayButton({
@@ -12,6 +12,7 @@ export function PayButton({
   subtotal,
   coupon = null,
   buyer,
+  participants,
   disabled = false,
 }: {
   eventId: string;
@@ -19,6 +20,7 @@ export function PayButton({
   subtotal: number;
   coupon?: { id: string; used: number } | null;
   buyer?: Buyer;
+  participants?: Participant[];
   disabled?: boolean;
 }) {
   const router = useRouter();
@@ -33,7 +35,7 @@ export function PayButton({
         const [tierSlug, qty] = p.split(":");
         return { tierSlug, qty: Number(qty) || 0 };
       });
-    const { orderId } = await createOrder(eventId, cart, subtotal, buyer);
+    const { orderId } = await createOrder(eventId, cart, subtotal, buyer, participants);
     if (coupon) await bumpCouponUsage(coupon.id, coupon.used + 1);
     router.push(`/confirmation?event=${eventId}&order=${orderId}&items=${encodeURIComponent(items)}`);
   };

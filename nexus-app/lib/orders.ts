@@ -45,17 +45,19 @@ export async function getMyTickets(): Promise<MyTicket[]> {
 
 export type CreatedOrder = { orderId: string; demo: boolean };
 export type Buyer = { name?: string; phone?: string; email?: string };
+export type Participant = { name: string; dob?: string; gender?: string; idnum?: string; phone?: string; email?: string; instagram?: string };
 
 /**
  * Creates an order + one ticket row per seat (for a signed-in user or a guest).
- * Buyer contact details are stored so the producer's customer DB is populated.
- * Falls back to a demo order id when Supabase is unavailable.
+ * Buyer + per-participant details are stored so the producer's customer DB is
+ * populated for every ticket holder. Falls back to a demo id when no DB.
  */
 export async function createOrder(
   eventId: string,
   items: CartItem[],
   subtotal: number,
-  buyer?: Buyer
+  buyer?: Buyer,
+  participants?: Participant[]
 ): Promise<CreatedOrder> {
   const sb = browserSupabase();
   const demoId = `NX-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
@@ -77,6 +79,7 @@ export async function createOrder(
       buyer_name: buyer?.name?.trim() || null,
       buyer_phone: buyer?.phone?.trim() || null,
       buyer_email: buyer?.email?.trim() || null,
+      participants: (participants ?? []).filter((p) => p.name?.trim()),
     })
     .select("id")
     .single();

@@ -198,19 +198,21 @@ export function EventDetail({ event }: { event: NexusEvent }) {
         <div className="bg-surface-container-lowest/90 backdrop-blur-2xl px-margin-mobile py-4 border-t border-white/5 shadow-[0_-8px_24px_rgba(0,0,0,0.5)]">
           <div className="flex items-center justify-between gap-md max-w-lg mx-auto">
             <div className="flex flex-col">
-              <span className="text-label-sm opacity-60">סה"כ לתשלום</span>
-              <span className="text-headline-md font-bold text-primary">₪{total}</span>
+              <span className="text-label-sm opacity-60">{count > 0 ? 'סה"כ לתשלום' : "מחיר החל מ-"}</span>
+              <span className="text-headline-md font-bold text-primary">₪{count > 0 ? total : Math.min(...event.tiers.filter((t) => !t.soldOut).map((t) => t.price), event.fromPrice)}</span>
             </div>
             <button
-              disabled={count === 0}
               onClick={() => {
-                const items = event.tiers
-                  .filter((t) => (qty[t.id] || 0) > 0)
-                  .map((t) => `${t.id}:${qty[t.id]}`)
-                  .join(",");
-                router.push(`/checkout?event=${event.id}&total=${total}&items=${items}`);
+                let items = event.tiers.filter((t) => (qty[t.id] || 0) > 0).map((t) => `${t.id}:${qty[t.id]}`).join(",");
+                let totalVal = total;
+                if (!items) {
+                  // Always-active: default to 1 of the cheapest available tier.
+                  const cheapest = [...event.tiers].filter((t) => !t.soldOut).sort((a, b) => a.price - b.price)[0] ?? event.tiers[0];
+                  if (cheapest) { items = `${cheapest.id}:1`; totalVal = cheapest.price; }
+                }
+                router.push(`/checkout?event=${event.id}&total=${totalVal}&items=${items}`);
               }}
-              className="flex-1 bg-primary-container text-on-primary-container h-14 rounded-xl text-[18px] flex items-center justify-center gap-2 shadow-neon-primary active:scale-95 transition-all disabled:opacity-40"
+              className="flex-1 bg-primary-container text-on-primary-container h-14 rounded-xl text-[18px] flex items-center justify-center gap-2 shadow-neon-primary active:scale-95 transition-all"
             >
               רכישה מהירה <Icon name="bolt" />
             </button>
