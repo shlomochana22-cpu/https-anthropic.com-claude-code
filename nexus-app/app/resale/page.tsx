@@ -13,3 +13,5 @@ export default async function ResalePage() {
     </>
   );
 }
+
+export const dynamic = "force-dynamic";

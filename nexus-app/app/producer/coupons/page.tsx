@@ -5,3 +5,5 @@ export default async function CouponsPage() {
   const dbCoupons = await getCoupons();
   return <CouponsBoard dbCoupons={dbCoupons} />;
 }
+
+export const dynamic = "force-dynamic";

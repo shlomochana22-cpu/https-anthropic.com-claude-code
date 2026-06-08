@@ -7,3 +7,5 @@ export default async function ProducerEventPage({ params }: { params: { id: stri
   if (!event) notFound();
   return <EventDashboard event={event} sales={sales[params.id] ?? null} guests={guestCounts[params.id] ?? 0} />;
 }
+
+export const dynamic = "force-dynamic";
