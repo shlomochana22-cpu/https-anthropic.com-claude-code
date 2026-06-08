@@ -5,6 +5,7 @@ import { Icon } from "@/components/Icon";
 import type { NexusEvent } from "@/lib/events";
 import type { DBGuest } from "@/lib/queries";
 import { createInvite, addGuest } from "@/lib/guests";
+import { PhoneInput } from "@/components/PhoneInput";
 
 const NAMES = [
   "איתי לוי", "דנה כהן", "נועם אברהם", "שירה פרץ", "יואב מזרחי", "טל ביטון",
@@ -221,7 +222,7 @@ export function GuestManager({ events, dbGuests = [] }: { events: NexusEvent[]; 
                   <input value={first} onChange={(e) => setFirst(e.target.value)} placeholder="שם פרטי" className="bg-surface-container-low border border-white/10 rounded-lg px-3 py-2.5 text-on-surface focus:border-primary-fixed outline-none" />
                   <input value={last} onChange={(e) => setLast(e.target.value)} placeholder="שם משפחה" className="bg-surface-container-low border border-white/10 rounded-lg px-3 py-2.5 text-on-surface focus:border-primary-fixed outline-none" />
                 </div>
-                <input value={phone} onChange={(e) => setPhone(e.target.value)} type="tel" inputMode="tel" placeholder="מספר טלפון" className="w-full bg-surface-container-low border border-white/10 rounded-lg px-3 py-2.5 text-on-surface focus:border-primary-fixed outline-none" dir="ltr" />
+                <PhoneInput value={phone} onChange={setPhone} />
                 <div>
                   <label className="text-label-sm text-on-surface-variant block mb-1">תאריך לידה</label>
                   <input value={dob} onChange={(e) => setDob(e.target.value)} type="date" className="w-full bg-surface-container-low border border-white/10 rounded-lg px-3 py-2.5 text-on-surface focus:border-primary-fixed outline-none [color-scheme:dark]" />

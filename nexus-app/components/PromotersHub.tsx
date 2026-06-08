@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Icon } from "@/components/Icon";
 import { SafeImage } from "@/components/SafeImage";
 import { CopyLinkButton } from "@/components/CopyLinkButton";
+import { PhoneInput } from "@/components/PhoneInput";
 import type { NexusEvent } from "@/lib/events";
 
 type Promoter = { id: string; name: string; phone: string; img?: string; tickets: number; revenue: number; commissionPct: number; active: boolean; pending?: boolean; top?: boolean; line: string };
@@ -196,7 +197,7 @@ export function PromotersHub({ events, initialTab = "overview" }: { events: Nexu
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <input value={first} onChange={(e) => setFirst(e.target.value)} placeholder="שם פרטי" className="bg-surface-container-low border border-white/10 rounded-lg px-4 py-3 text-on-surface focus:border-primary-fixed outline-none" />
               <input value={last} onChange={(e) => setLast(e.target.value)} placeholder="שם משפחה" className="bg-surface-container-low border border-white/10 rounded-lg px-4 py-3 text-on-surface focus:border-primary-fixed outline-none" />
-              <input value={phone} onChange={(e) => setPhone(e.target.value)} type="tel" inputMode="tel" placeholder="טלפון" className="bg-surface-container-low border border-white/10 rounded-lg px-4 py-3 text-on-surface focus:border-primary-fixed outline-none" />
+              <PhoneInput value={phone} onChange={setPhone} placeholder="טלפון" />
             </div>
             <div className="flex items-center gap-2 mt-3">
               <span className="text-label-sm text-on-surface-variant whitespace-nowrap">שייך לליין</span>

@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/Icon";
 import { redeemInvite } from "@/lib/guests";
+import { PhoneInput } from "@/components/PhoneInput";
 
 /**
  * Public one-time guest registration. The customer fills their details and
@@ -77,7 +78,7 @@ export function InviteRegister({ token, eventTitle, qty, type }: { token: string
           <input value={first} onChange={(e) => setFirst(e.target.value)} placeholder="שם פרטי" className="bg-surface-container-low border border-white/10 rounded-lg px-4 py-3 text-on-surface focus:border-primary-fixed outline-none" />
           <input value={last} onChange={(e) => setLast(e.target.value)} placeholder="שם משפחה" className="bg-surface-container-low border border-white/10 rounded-lg px-4 py-3 text-on-surface focus:border-primary-fixed outline-none" />
         </div>
-        <input value={phone} onChange={(e) => setPhone(e.target.value)} type="tel" inputMode="tel" placeholder="מספר טלפון" className="w-full bg-surface-container-low border border-white/10 rounded-lg px-4 py-3 text-on-surface focus:border-primary-fixed outline-none" dir="ltr" />
+        <PhoneInput value={phone} onChange={setPhone} />
         <div>
           <label className="text-label-sm text-on-surface-variant block mb-1">תאריך לידה</label>
           <input value={dob} onChange={(e) => setDob(e.target.value)} type="date" className="w-full bg-surface-container-low border border-white/10 rounded-lg px-4 py-3 text-on-surface focus:border-primary-fixed outline-none [color-scheme:dark]" />
