@@ -15,6 +15,20 @@ export default function ScannerPage() {
   const [code, setCode] = useState("");
   const [result, setResult] = useState<ScanResult | null>(null);
   const [busy, setBusy] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [token] = useState(() => Math.random().toString(36).slice(2, 10));
+
+  const origin = typeof window !== "undefined" ? window.location.origin : "https://nexusevents.co.il";
+  const scannerLink = `${origin}/producer/scanner?door=${token}`;
+  const copyLink = () => { navigator.clipboard?.writeText(scannerLink); setCopied(true); setTimeout(() => setCopied(false), 1500); };
+  const shareLink = async () => {
+    if (typeof navigator !== "undefined" && navigator.share) {
+      try { await navigator.share({ title: "NEXUS Scanner", text: "קישור לסריקת כרטיסים בכניסה", url: scannerLink }); } catch { /* user cancelled */ }
+    } else {
+      copyLink();
+    }
+  };
 
   async function scan(input: string) {
     setBusy(true);
@@ -76,6 +90,30 @@ export default function ScannerPage() {
           >
             <Icon name="bolt" /> סריקת דמו
           </button>
+
+          {/* Share scanner link with door staff */}
+          <button
+            onClick={() => setShareOpen((v) => !v)}
+            className="mt-3 w-full py-3 rounded-xl border border-primary-fixed/40 text-primary-fixed flex items-center justify-center gap-2 hover:bg-primary-fixed/10 transition-colors"
+          >
+            <Icon name="ios_share" /> שתף קישור לסלקציה
+          </button>
+          {shareOpen && (
+            <div className="mt-3 glass-card p-3 rounded-xl border border-primary-fixed/20 space-y-2 text-right">
+              <p className="text-label-sm text-on-surface-variant flex items-center gap-1">
+                <Icon name="qr_code_scanner" className="text-[16px] text-primary-fixed" /> תנו את הקישור לצוות הסלקציה — הוא נפתח בדפדפן לסריקת כרטיסים.
+              </p>
+              <div className="flex items-center gap-2">
+                <input readOnly value={scannerLink} dir="ltr" className="flex-1 bg-surface-container-low border border-white/10 rounded-lg px-3 py-2 text-label-sm text-on-surface-variant font-mono outline-none" />
+                <button onClick={copyLink} className="shrink-0 w-9 h-9 rounded-lg bg-surface-container-high border border-white/10 flex items-center justify-center text-primary active:scale-95" aria-label="העתק">
+                  <Icon name={copied ? "check" : "content_copy"} className={`text-[18px] ${copied ? "text-primary-fixed" : ""}`} />
+                </button>
+              </div>
+              <button onClick={shareLink} className="w-full py-2.5 bg-primary-fixed text-on-primary-fixed font-bold rounded-lg flex items-center justify-center gap-2 active:scale-95 transition-transform">
+                <Icon name="share" className="text-[18px]" /> שיתוף הקישור
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
