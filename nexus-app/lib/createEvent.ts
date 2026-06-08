@@ -28,10 +28,11 @@ const DEFAULT_COVERS = [
 ];
 
 function slugify(s: string) {
+  // ASCII-safe slug so event ids are always URL-safe (Hebrew titles → "event-xxxx").
   const base = s
     .trim()
     .toLowerCase()
-    .replace(/[^\w֐-׿]+/g, "-")
+    .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "")
     .slice(0, 40);
   return `${base || "event"}-${Math.random().toString(36).slice(2, 6)}`;

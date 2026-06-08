@@ -79,9 +79,13 @@ export async function getEvents(): Promise<NexusEvent[]> {
 export async function getEventById(id: string): Promise<NexusEvent | undefined> {
   const sb = getSupabase();
   if (!sb) return mockEvents.find((e) => e.id === id);
-  const { data, error } = await sb.from("events").select(SELECT).eq("id", id).single();
-  if (error || !data) return mockEvents.find((e) => e.id === id);
-  return rowToEvent(data as EventRow);
+  const { data } = await sb.from("events").select(SELECT).eq("id", id).maybeSingle();
+  if (data) return rowToEvent(data as EventRow);
+  // Fallback: scan all events with normalized comparison. Handles ids the exact
+  // `.eq` match can miss (e.g. Hebrew slugs / Unicode normalization differences).
+  const norm = (s: string) => s.normalize("NFC");
+  const all = await getEvents();
+  return all.find((e) => norm(e.id) === norm(id)) ?? mockEvents.find((e) => e.id === id);
 }
 
 export type DBGuest = {
