@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Icon } from "@/components/Icon";
 
 type Coupon = { code: string; value: string; off: string; used: number; cap: number; expires: string; active: boolean };
@@ -18,6 +18,8 @@ export default function CouponsPage() {
   const [amount, setAmount] = useState("");
   const [cap, setCap] = useState("");
   const [expires, setExpires] = useState("");
+  const [justCreated, setJustCreated] = useState<string | null>(null);
+  const listRef = useRef<HTMLDivElement>(null);
 
   const create = () => {
     const c = code.trim().toUpperCase();
@@ -28,6 +30,9 @@ export default function CouponsPage() {
       ...list,
     ]);
     setCode(""); setAmount(""); setCap(""); setExpires("");
+    setJustCreated(c);
+    setTimeout(() => setJustCreated(null), 3500);
+    setTimeout(() => listRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
   };
   const toggle = (code: string) => setCoupons((l) => l.map((c) => (c.code === code ? { ...c, active: !c.active } : c)));
   const remove = (code: string) => setCoupons((l) => l.filter((c) => c.code !== code));
@@ -72,6 +77,11 @@ export default function CouponsPage() {
               <button onClick={create} disabled={!code.trim() || !amount.trim()} className="w-full mt-lg bg-primary-fixed text-black font-bold py-4 rounded-lg flex items-center justify-center gap-2 hover:brightness-110 active:scale-95 transition-all shadow-neon-primary disabled:opacity-40 disabled:shadow-none">
                 <Icon name="rocket_launch" /> צור קופון עכשיו
               </button>
+              {justCreated && (
+                <div className="flex items-center gap-2 p-3 rounded-lg bg-primary-fixed/10 border border-primary-fixed/30 text-primary-fixed text-label-md animate-pulse">
+                  <Icon name="check_circle" fill /> הקופון <span className="font-mono font-bold">{justCreated}</span> נוצר ונוסף לרשימה ✓
+                </div>
+              )}
             </div>
           </div>
 
@@ -85,7 +95,7 @@ export default function CouponsPage() {
           </div>
         </div>
 
-        <div className="lg:col-span-7 space-y-3">
+        <div ref={listRef} className="lg:col-span-7 space-y-3 scroll-mt-20">
           <div className="flex items-center justify-between px-2">
             <h3 className="text-2xl font-bold text-on-surface">קופונים פעילים</h3>
             <span className="bg-primary-fixed/10 text-primary-fixed px-3 py-1 rounded-full text-xs font-bold border border-primary-fixed/20">
