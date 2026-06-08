@@ -8,15 +8,17 @@ import type { NexusEvent } from "@/lib/events";
 import type { EventSales } from "@/lib/queries";
 import { eventMetrics, aggregateMetrics, shekel } from "@/lib/metrics";
 
-/** Parses a display date ("DD.MM" / "DD.MM.YY") and decides if the event has passed. */
+/** True only when the date has an explicit year that's already in the past.
+ *  Dates without a year (e.g. "24.08") or "בקרוב" are treated as active, so a
+ *  freshly created event never gets hidden in the 'ended' tab. */
 function isEnded(dateStr: string): boolean {
   if (!dateStr) return false;
-  const m = dateStr.match(/(\d{1,2})\.(\d{1,2})(?:\.(\d{2,4}))?/);
+  const m = dateStr.match(/(\d{1,2})[./-](\d{1,2})[./-](\d{2,4})/);
   if (!m) return false;
   const day = Number(m[1]);
   const mon = Number(m[2]);
-  let year = m[3] ? Number(m[3]) : new Date().getFullYear();
-  if (m[3] && m[3].length === 2) year += 2000;
+  let year = Number(m[3]);
+  if (m[3].length === 2) year += 2000;
   const d = new Date(year, mon - 1, day, 23, 59, 59);
   return d.getTime() < Date.now();
 }

@@ -71,7 +71,7 @@ const SELECT = "*, ticket_tiers(slug,name,description,price,sold_out,exclusive,s
 export async function getEvents(): Promise<NexusEvent[]> {
   const sb = getSupabase();
   if (!sb) return mockEvents;
-  const { data, error } = await sb.from("events").select(SELECT).order("created_at");
+  const { data, error } = await sb.from("events").select(SELECT).order("created_at", { ascending: false });
   if (error || !data) return mockEvents;
   return (data as EventRow[]).map(rowToEvent);
 }
