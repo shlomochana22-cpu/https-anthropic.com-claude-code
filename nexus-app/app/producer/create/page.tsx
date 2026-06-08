@@ -177,11 +177,19 @@ export default function CreateEventPage() {
 
   const [aiSource, setAiSource] = useState<"ai" | "local" | null>(null);
   const [aiAction, setAiAction] = useState<"write" | "rewrite" | "shorten" | "lengthen" | null>(null);
-  const [titleLoading, setTitleLoading] = useState(false);
   const [hashtags, setHashtags] = useState("");
   const [hashtagsLoading, setHashtagsLoading] = useState(false);
+  const [cover, setCover] = useState("");
 
-  const aiCopy = async (kind: "title" | "hashtags") => {
+  const onCoverFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => setCover(String(reader.result));
+    reader.readAsDataURL(file);
+  };
+
+  const aiCopy = async (kind: "hashtags") => {
     const res = await fetch("/api/ai/copy", {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -189,18 +197,6 @@ export default function CreateEventPage() {
     });
     const data = await res.json();
     return (data?.text as string) || "";
-  };
-
-  const suggestTitle = async () => {
-    setTitleLoading(true);
-    try {
-      const t = await aiCopy("title");
-      if (t) setTitle(t.replace(/^["'״]+|["'״]+$/g, "").trim());
-    } catch {
-      /* keep current title on failure */
-    } finally {
-      setTitleLoading(false);
-    }
   };
 
   const genHashtags = async () => {
@@ -280,8 +276,10 @@ export default function CreateEventPage() {
   const pct = Math.round(((step + 1) / 3) * 100);
   const fromPrice = Math.min(...tiers.map((t) => Number(t.price)).filter((n) => n > 0), Number.MAX_SAFE_INTEGER);
 
+  const scrollTop = () => { if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" }); };
+
   const next = async () => {
-    if (step < 2) return setStep(step + 1);
+    if (step < 2) { setStep(step + 1); scrollTop(); return; }
     if (!terms) return;
     setSaving(true);
     const { id } = await createEvent({
@@ -294,6 +292,7 @@ export default function CreateEventPage() {
       description,
       age,
       ageVisible,
+      image: cover || undefined,
       tiers: tiers.map((t) => ({
         name: t.name,
         price: Number(t.price) || 0,
@@ -306,7 +305,7 @@ export default function CreateEventPage() {
     });
     router.push(`/producer?created=${id}`);
   };
-  const back = () => step > 0 && setStep(step - 1);
+  const back = () => { if (step > 0) { setStep(step - 1); scrollTop(); } };
 
   return (
     <main className="pt-10 md:pt-12 pb-32 px-margin-mobile md:px-margin-desktop max-w-4xl">
@@ -327,25 +326,11 @@ export default function CreateEventPage() {
       {/* ─────────── STEP 1 ─────────── */}
       {step === 0 && (
         <div className="grid gap-gutter">
-          {/* Cover dropzone */}
-          <div className="relative h-48 w-full rounded-xl overflow-hidden glass-card border-dashed border-2 border-white/10 flex items-center justify-center cursor-pointer hover:border-primary-fixed/40 transition-all group">
-            <div className="flex flex-col items-center text-center p-6">
-              <Icon name="add_a_photo" className="text-primary-fixed text-4xl mb-2 group-hover:scale-110 transition-transform" />
-              <p className="text-label-md text-primary">הוסף תמונת קאבר לאירוע</p>
-              <p className="text-xs text-on-surface-variant mt-1">מומלץ: 1920x1080</p>
-            </div>
-          </div>
-
           {/* Identity */}
           <div className="glass-card p-md rounded-xl space-y-6">
             <h3 className="text-headline-md text-primary flex items-center gap-2"><Icon name="info" className="text-primary-fixed" /> פרטים כלליים</h3>
             <div className="flex flex-col gap-2">
-              <div className="flex items-center justify-between gap-2">
-                <label className="text-primary-fixed text-label-md uppercase tracking-wider">שם האירוע</label>
-                <button onClick={suggestTitle} disabled={titleLoading} className="flex items-center gap-1.5 text-secondary-fixed text-label-sm hover:text-secondary-fixed/80 transition-colors disabled:opacity-50">
-                  <Icon name="auto_awesome" className={titleLoading ? "animate-spin text-[16px]" : "text-[16px]"} fill /> {titleLoading ? "חושב…" : "הצע שם עם AI"}
-                </button>
-              </div>
+              <label className="text-primary-fixed text-label-md uppercase tracking-wider">שם האירוע</label>
               <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="לדוגמה: Midnight Echoes: Cyberpunk Rave" className="bg-surface-container-low border border-white/10 rounded-lg px-4 py-4 text-body-lg text-primary focus:border-primary-fixed outline-none" />
             </div>
             <div className="flex flex-col gap-3">
@@ -552,10 +537,21 @@ export default function CreateEventPage() {
               <h3 className="text-headline-md text-primary flex items-center gap-2"><Icon name="image" className="text-primary-fixed" /> ויזואליה של האירוע</h3>
               <div>
                 <p className="text-label-md text-on-surface-variant mb-2 uppercase tracking-tighter">קאבר לאירוע (16:9)</p>
-                <div className="h-40 w-full border-2 border-dashed border-white/20 rounded-xl flex flex-col items-center justify-center bg-white/5 hover:bg-white/10 transition-all cursor-pointer">
-                  <Icon name="add_a_photo" className="text-4xl text-primary-fixed mb-2" />
-                  <p className="text-body-md text-on-surface-variant">לחץ להעלאת תמונת קאבר</p>
-                </div>
+                <label className="block h-40 w-full border-2 border-dashed border-white/20 rounded-xl overflow-hidden bg-white/5 hover:bg-white/10 transition-all cursor-pointer">
+                  <input type="file" accept="image/*" onChange={onCoverFile} className="hidden" />
+                  {cover ? (
+                    <span className="relative block w-full h-full">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={cover} alt="קאבר האירוע" className="w-full h-full object-cover" />
+                      <span className="absolute bottom-2 right-2 bg-black/60 text-primary-fixed text-[11px] px-2 py-1 rounded-full flex items-center gap-1"><Icon name="check_circle" className="text-[14px]" fill /> הקאבר הועלה · החלף</span>
+                    </span>
+                  ) : (
+                    <span className="h-full flex flex-col items-center justify-center">
+                      <Icon name="add_a_photo" className="text-4xl text-primary-fixed mb-2" />
+                      <span className="text-body-md text-on-surface-variant">לחץ להעלאת תמונת קאבר</span>
+                    </span>
+                  )}
+                </label>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -669,9 +665,14 @@ export default function CreateEventPage() {
           <div className="xl:col-span-5 space-y-gutter">
             <div className="sticky top-24 space-y-gutter">
               <div className="bg-surface-container rounded-2xl overflow-hidden border border-white/10">
-                <div className="relative h-48 bg-surface-container-high flex items-center justify-center">
-                  <Icon name="image" className="text-on-surface-variant/30 text-5xl" />
-                  <div className="absolute top-4 left-4 flex gap-2">
+                <div className="relative h-48 bg-surface-container-high flex items-center justify-center overflow-hidden">
+                  {cover ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={cover} alt="קאבר" className="absolute inset-0 w-full h-full object-cover" />
+                  ) : (
+                    <Icon name="image" className="text-on-surface-variant/30 text-5xl" />
+                  )}
+                  <div className="absolute top-4 left-4 flex gap-2 z-10">
                     <span className="bg-primary-fixed text-on-primary-fixed text-label-md px-3 py-1 rounded-full uppercase">{genre}</span>
                     {visible && <span className="bg-on-tertiary-container text-white text-label-md px-3 py-1 rounded-full uppercase">Live</span>}
                   </div>
@@ -688,19 +689,6 @@ export default function CreateEventPage() {
                 </div>
               </div>
 
-              {/* Terms */}
-              <label className="flex items-start gap-3 p-4 bg-white/5 rounded-xl border border-white/10 cursor-pointer">
-                <input type="checkbox" checked={terms} onChange={(e) => setTerms(e.target.checked)} className="w-5 h-5 mt-0.5 rounded border-white/20 bg-surface-container-highest text-on-tertiary-container focus:ring-0" />
-                <span className="text-body-md text-on-surface-variant">אני מאשר כי פרטי האירוע נכונים ואני מסכים לתנאי השימוש למפיקים</span>
-              </label>
-
-              <button onClick={next} disabled={!terms || saving} className="w-full py-6 bg-primary-container text-on-primary-container text-headline-md rounded-2xl shadow-neon-primary active:scale-95 transition-all hover:brightness-110 flex items-center justify-center gap-3 disabled:opacity-40 disabled:shadow-none group">
-                {saving ? "מפרסם..." : "פרסם אירוע"}
-                {!saving && <Icon name="rocket_launch" className="group-hover:-translate-x-2 transition-transform" />}
-              </button>
-              <button className="w-full py-4 border border-white/20 text-on-surface-variant text-label-md rounded-2xl hover:bg-white/5 transition-all active:scale-95">
-                שמור כטיוטה
-              </button>
             </div>
           </div>
         </div>
@@ -708,19 +696,33 @@ export default function CreateEventPage() {
 
       {/* Footer nav (steps 1-2) */}
       {step < 2 && (
-        <div className="mt-lg flex gap-gutter">
-          <button onClick={next} className="flex-[2] md:flex-none md:w-64 bg-primary-fixed text-on-primary-fixed px-lg py-4 rounded-xl text-headline-md shadow-neon-primary hover:scale-[1.02] transition-all flex items-center justify-center gap-2 active:scale-95">
-            הבא: {steps[step + 1]} <Icon name="arrow_back" />
+        <div className="mt-lg flex gap-3">
+          <button onClick={next} className="flex-[2] md:flex-none md:w-56 bg-primary-fixed text-on-primary-fixed px-5 py-2.5 rounded-lg text-label-md font-bold shadow-neon-primary hover:scale-[1.02] transition-all flex items-center justify-center gap-2 active:scale-95">
+            הבא: {steps[step + 1]} <Icon name="arrow_back" className="text-[18px]" />
           </button>
           {step > 0 && (
-            <button onClick={back} className="flex-1 md:flex-none md:w-40 bg-surface-container-high text-primary border border-white/10 px-lg py-4 rounded-xl text-label-md hover:bg-surface-container-highest transition-all active:scale-95">חזרה</button>
+            <button onClick={back} className="flex-1 md:flex-none md:w-32 bg-surface-container-high text-primary border border-white/10 px-5 py-2.5 rounded-lg text-label-md hover:bg-surface-container-highest transition-all active:scale-95">חזרה</button>
           )}
         </div>
       )}
       {step === 2 && (
-        <button onClick={back} className="mt-lg text-on-surface-variant hover:text-primary text-label-md flex items-center gap-1">
-          <Icon name="arrow_forward" /> חזרה לכרטיסים
-        </button>
+        <div className="mt-lg space-y-3">
+          {/* Terms */}
+          <label className="flex items-start gap-3 p-4 bg-white/5 rounded-xl border border-white/10 cursor-pointer">
+            <input type="checkbox" checked={terms} onChange={(e) => setTerms(e.target.checked)} className="w-5 h-5 mt-0.5 rounded border-white/20 bg-surface-container-highest text-on-tertiary-container focus:ring-0" />
+            <span className="text-body-md text-on-surface-variant">אני מאשר כי פרטי האירוע נכונים ואני מסכים לתנאי השימוש למפיקים</span>
+          </label>
+          <button onClick={next} disabled={!terms || saving} className="w-full py-4 bg-primary-container text-on-primary-container text-label-md font-bold rounded-xl shadow-neon-primary active:scale-95 transition-all hover:brightness-110 flex items-center justify-center gap-2 disabled:opacity-40 disabled:shadow-none group">
+            {saving ? "מפרסם..." : "פרסם אירוע"}
+            {!saving && <Icon name="rocket_launch" className="text-[20px] group-hover:-translate-x-1 transition-transform" />}
+          </button>
+          <div className="flex gap-3">
+            <button className="flex-1 py-2.5 border border-white/20 text-on-surface-variant text-label-md rounded-lg hover:bg-white/5 transition-all active:scale-95">שמור כטיוטה</button>
+            <button onClick={back} className="flex-1 py-2.5 text-on-surface-variant hover:text-primary text-label-md flex items-center justify-center gap-1">
+              <Icon name="arrow_forward" className="text-[18px]" /> חזרה לכרטיסים
+            </button>
+          </div>
+        </div>
       )}
     </main>
   );
