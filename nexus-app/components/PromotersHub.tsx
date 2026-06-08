@@ -16,6 +16,15 @@ const ranking = [
   { rank: 5, name: "דניאל מזרחי", tickets: 118, amount: "₪6,250" },
 ];
 
+// Promoters' sales breakdown (read-only — money actions live only in the wallet).
+const promoters = [
+  { name: "נועה ארגמן", tickets: 248, revenue: 28900 },
+  { name: "עידן כהן", tickets: 112, revenue: 12450 },
+  { name: "מאיה גרין", tickets: 142, revenue: 7400 },
+  { name: "רועי לוי", tickets: 84, revenue: 9120 },
+  { name: "דניאל מזרחי", tickets: 118, revenue: 6250 },
+];
+
 type Competition = { title: string; prize: string; ends: string; progress: number; note: string };
 const initialComps: Competition[] = [
   { title: "אלוף יולי", prize: "₪2,000 בונוס", ends: "12 ימים", progress: 72, note: "אתה במקום 3" },
@@ -31,6 +40,7 @@ const TABS = [
 export function PromotersHub({ events }: { events: NexusEvent[] }) {
   const [tab, setTab] = useState<(typeof TABS)[number]["id"]>("overview");
   const [comps, setComps] = useState<Competition[]>(initialComps);
+  const [linkPromoter, setLinkPromoter] = useState(promoters[0].name);
 
   // Create-challenge form (the new feature tying dashboard + leaderboard together)
   const [cTitle, setCTitle] = useState("");
@@ -94,22 +104,31 @@ export function PromotersHub({ events }: { events: NexusEvent[] }) {
             ))}
           </div>
 
-          <div className="glass-card p-md rounded-xl border-primary-fixed-dim/20">
-            <div className="flex justify-between items-start">
-              <div>
-                <h2 className="text-label-md text-on-surface-variant uppercase tracking-wider mb-1">יתרה לתשלום</h2>
-                <div className="text-headline-xl text-primary neon-glow">₪12,850</div>
-              </div>
-              <Link href="/producer/wallet" className="bg-primary-fixed-dim text-on-primary-fixed px-md py-sm rounded-full text-label-md active:scale-95 transition-transform shadow-neon-primary">
-                משיכה
+          {/* Promoters' sales breakdown (read-only) */}
+          <div className="glass-card p-md rounded-xl">
+            <div className="flex items-center justify-between mb-md">
+              <h3 className="text-headline-md text-primary">פירוט מכירות יחצנים</h3>
+              <Link href="/producer/wallet" className="text-label-sm text-primary-fixed flex items-center gap-1 hover:underline">
+                <Icon name="account_balance_wallet" className="text-[16px]" /> פעולות כסף בארנק
               </Link>
             </div>
-          </div>
-
-          <div className="glass-card rounded-2xl p-5 text-center border-primary-fixed-dim/30">
-            <p className="text-label-md text-on-surface-variant mb-1">הדירוג שלי השבוע</p>
-            <p className="text-5xl font-extrabold text-primary-fixed-dim neon-glow">#12</p>
-            <p className="text-label-sm text-on-surface-variant mt-1">מתוך 86 יחצנים פעילים · חסרים 5 כרטיסים למקום ה-11</p>
+            <div className="space-y-2">
+              {[...promoters].sort((a, b) => b.revenue - a.revenue).map((p, i) => (
+                <div key={p.name} className="flex items-center gap-3 p-2.5 rounded-lg bg-white/5 border border-white/5">
+                  <span className="w-6 text-center text-on-surface-variant font-bold">{i + 1}</span>
+                  <div className="w-9 h-9 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant shrink-0"><Icon name="person" /></div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-label-md text-white truncate">{p.name}</p>
+                    <p className="text-label-sm text-on-surface-variant">{p.tickets} כרטיסים</p>
+                  </div>
+                  <span className="text-label-md text-primary-fixed-dim font-bold">₪{p.revenue.toLocaleString()}</span>
+                </div>
+              ))}
+            </div>
+            <div className="flex items-center justify-between mt-md pt-md border-t border-white/5">
+              <span className="text-label-md text-on-surface-variant">סך מכירות היחצנים</span>
+              <span className="text-headline-md text-primary">₪{promoters.reduce((s, p) => s + p.revenue, 0).toLocaleString()}</span>
+            </div>
           </div>
         </section>
       )}
@@ -199,6 +218,22 @@ export function PromotersHub({ events }: { events: NexusEvent[] }) {
       {tab === "links" && (
         <section className="space-y-gutter">
           <h3 className="text-headline-md text-primary">לינקים אישיים לכל אירוע</h3>
+
+          {/* Choose which promoter the link is issued for */}
+          <div className="glass-card p-md rounded-xl">
+            <p className="text-label-md text-on-surface-variant mb-2 flex items-center gap-1.5"><Icon name="person_pin" className="text-primary-fixed text-[18px]" /> בחר יחצן להפקת הלינק</p>
+            <div className="flex flex-wrap gap-2">
+              {promoters.map((p) => {
+                const on = linkPromoter === p.name;
+                return (
+                  <button key={p.name} onClick={() => setLinkPromoter(p.name)} className={`px-3 py-1.5 rounded-full border text-label-sm transition-all flex items-center gap-1 ${on ? "border-primary-fixed bg-primary-container/15 text-primary-fixed font-bold" : "border-white/10 bg-white/5 text-on-surface-variant hover:border-primary-fixed/40"}`}>
+                    {on && <Icon name="check" className="text-[14px]" />}{p.name}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           {events.map((e) => (
             <div key={e.id} className="glass-card rounded-xl overflow-hidden">
               <div className="h-28 w-full relative">
@@ -217,7 +252,7 @@ export function PromotersHub({ events }: { events: NexusEvent[] }) {
                     <div className="text-[10px] text-on-surface-variant">עמלה שנצברה</div>
                   </div>
                 </div>
-                <CopyLinkButton eventId={e.id} />
+                <CopyLinkButton eventId={e.id} promoter={linkPromoter} />
               </div>
             </div>
           ))}
