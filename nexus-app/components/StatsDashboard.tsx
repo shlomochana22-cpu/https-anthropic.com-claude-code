@@ -5,22 +5,7 @@ import Link from "next/link";
 import { Icon } from "@/components/Icon";
 import type { NexusEvent } from "@/lib/events";
 import type { EventSales } from "@/lib/queries";
-
-function hash(s: string) { let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0; return h; }
-
-type Metrics = { capacity: number; sold: number; avgPrice: number; revenue: number; orders: number };
-function metricsFor(e: NexusEvent, real?: EventSales): Metrics {
-  const seed = hash(e.id);
-  const capacity = 600 + (seed % 1400);
-  const prices = e.tiers.map((t) => t.price).filter((p) => p > 0);
-  const avgPriceEst = prices.length ? Math.round(prices.reduce((a, b) => a + b, 0) / prices.length) : e.fromPrice;
-  if (real && real.revenue > 0) {
-    return { capacity, sold: real.tickets, avgPrice: real.tickets ? Math.round(real.revenue / real.tickets) : avgPriceEst, revenue: real.revenue, orders: real.orders };
-  }
-  const sold = Math.round((capacity * e.occupancy) / 100);
-  return { capacity, sold, avgPrice: avgPriceEst, revenue: sold * avgPriceEst, orders: Math.max(1, Math.round(sold / 2.2)) };
-}
-const shekel = (n: number) => `₪${n.toLocaleString("he-IL")}`;
+import { eventMetrics as metricsFor, shekel } from "@/lib/metrics";
 
 export function StatsDashboard({ events, salesByEvent = {} }: { events: NexusEvent[]; salesByEvent?: Record<string, EventSales> }) {
   const [selectedId, setSelectedId] = useState("all");

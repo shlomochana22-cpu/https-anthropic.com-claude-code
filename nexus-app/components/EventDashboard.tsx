@@ -3,25 +3,13 @@ import { Icon } from "@/components/Icon";
 import { SafeImage } from "@/components/SafeImage";
 import type { NexusEvent } from "@/lib/events";
 import type { EventSales } from "@/lib/queries";
-
-function hash(s: string) { let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0; return h; }
-const shekel = (n: number) => `₪${n.toLocaleString("he-IL")}`;
+import { eventMetrics, shekel } from "@/lib/metrics";
 
 export function EventDashboard({ event: e, sales }: { event: NexusEvent; sales?: EventSales | null }) {
-  const seed = hash(e.id);
-  const capacity = 600 + (seed % 1400);
-  const prices = e.tiers.map((t) => t.price).filter((p) => p > 0);
-  const avgPriceEst = prices.length ? Math.round(prices.reduce((a, b) => a + b, 0) / prices.length) : e.fromPrice;
-
-  // Use real sales once the event has paid orders; otherwise an estimate.
-  const isReal = !!(sales && sales.revenue > 0);
-  const sold = isReal ? sales!.tickets : Math.round((capacity * e.occupancy) / 100);
-  const revenue = isReal ? sales!.revenue : sold * avgPriceEst;
-  const orders = isReal ? sales!.orders : Math.max(1, Math.round(sold / 2.2));
-  const avgPrice = isReal && sales!.tickets ? Math.round(sales!.revenue / sales!.tickets) : avgPriceEst;
+  const { capacity, sold, revenue, orders, avgPrice, isReal } = eventMetrics(e, sales);
   const fees = Math.round(revenue * 0.08);
   const net = revenue - fees;
-  const womenPct = 38 + (seed % 25);
+  const womenPct = 38 + (capacity % 25);
   const menPct = 100 - womenPct;
 
   // Ticket-tier breakdown

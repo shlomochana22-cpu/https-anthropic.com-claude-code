@@ -1,15 +1,16 @@
 import Link from "next/link";
 import { Icon } from "@/components/Icon";
 import { ProducerGreeting } from "@/components/ProducerGreeting";
-import { getEvents } from "@/lib/queries";
+import { getEvents, getEventSales } from "@/lib/queries";
+import { aggregateMetrics, shekel } from "@/lib/metrics";
 
 export default async function ProducerDashboard({
   searchParams,
 }: {
   searchParams: { created?: string };
 }) {
-  const events = await getEvents();
-  const avgOccupancy = Math.round(events.reduce((s, e) => s + e.occupancy, 0) / (events.length || 1));
+  const [events, salesByEvent] = await Promise.all([getEvents(), getEventSales()]);
+  const agg = aggregateMetrics(events, salesByEvent);
   return (
     <main className="pt-10 md:pt-12 pb-32 px-margin-mobile md:px-margin-desktop">
       {searchParams.created && (
@@ -26,30 +27,30 @@ export default async function ProducerDashboard({
         <p className="text-body-md text-on-surface-variant">הנה סקירה של הביצועים שלך להיום.</p>
       </header>
 
-      {/* Stat cards — 4 compact cells in 2 rows */}
+      {/* Stat cards — 4 compact cells, synced with the stats/events dashboards */}
       <div className="grid grid-cols-2 gap-sm mb-lg">
         <Link href="/producer/stats" className="glass-card p-3 rounded-xl shadow-neon-primary">
           <div className="flex justify-between items-center mb-1">
-            <Icon name="trending_up" className="text-primary-fixed-dim bg-primary-fixed-dim/10 p-1.5 rounded-lg text-[18px]" />
-            <span className="text-[10px] text-primary-fixed-dim bg-primary-fixed-dim/20 px-1.5 py-0.5 rounded-full">+12%</span>
+            <Icon name="payments" className="text-primary-fixed-dim bg-primary-fixed-dim/10 p-1.5 rounded-lg text-[18px]" />
+            <span className="text-[10px] text-primary-fixed-dim bg-primary-fixed-dim/20 px-1.5 py-0.5 rounded-full">{agg.anyReal ? "LIVE" : "הערכה"}</span>
           </div>
-          <p className="text-label-sm text-on-surface-variant">מכירות היום</p>
-          <p className="text-headline-md text-primary">₪14,250</p>
+          <p className="text-label-sm text-on-surface-variant">סך הכנסות</p>
+          <p className="text-headline-md text-primary">{shekel(agg.revenue)}</p>
         </Link>
-        <div className="glass-card p-3 rounded-xl">
+        <Link href="/producer/events" className="glass-card p-3 rounded-xl">
           <Icon name="confirmation_number" className="text-secondary-fixed-dim bg-secondary-fixed-dim/10 p-1.5 rounded-lg mb-1 inline-block text-[18px]" />
-          <p className="text-label-sm text-on-surface-variant">סה"כ כרטיסים</p>
-          <p className="text-headline-md text-primary">1,240</p>
-        </div>
-        <Link href="/producer/wallet" className="glass-card p-3 rounded-xl">
-          <Icon name="payments" className="text-tertiary-fixed-dim bg-tertiary-fixed-dim/10 p-1.5 rounded-lg mb-1 inline-block text-[18px]" />
-          <p className="text-label-sm text-on-surface-variant">הכנסות החודש</p>
-          <p className="text-headline-md text-primary">₪84,300</p>
+          <p className="text-label-sm text-on-surface-variant">כרטיסים שנמכרו</p>
+          <p className="text-headline-md text-primary">{agg.sold.toLocaleString()}</p>
+        </Link>
+        <Link href="/producer/stats" className="glass-card p-3 rounded-xl">
+          <Icon name="receipt_long" className="text-tertiary-fixed-dim bg-tertiary-fixed-dim/10 p-1.5 rounded-lg mb-1 inline-block text-[18px]" />
+          <p className="text-label-sm text-on-surface-variant">הזמנות</p>
+          <p className="text-headline-md text-primary">{agg.orders.toLocaleString()}</p>
         </Link>
         <Link href="/producer/events" className="glass-card p-3 rounded-xl">
           <Icon name="event_seat" className="text-primary-fixed bg-primary-fixed/10 p-1.5 rounded-lg mb-1 inline-block text-[18px]" />
           <p className="text-label-sm text-on-surface-variant">תפוסה ממוצעת</p>
-          <p className="text-headline-md text-primary">{avgOccupancy}%</p>
+          <p className="text-headline-md text-primary">{agg.occupancy}%</p>
         </Link>
       </div>
 

@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { Icon } from "@/components/Icon";
 import { SafeImage } from "@/components/SafeImage";
-import { getEvents } from "@/lib/queries";
+import { getEvents, getEventSales } from "@/lib/queries";
+import { eventMetrics, aggregateMetrics, shekel } from "@/lib/metrics";
 
 export default async function EventManagerPage() {
-  const events = await getEvents();
+  const [events, salesByEvent] = await Promise.all([getEvents(), getEventSales()]);
+  const agg = aggregateMetrics(events, salesByEvent);
 
   return (
     <main className="pt-10 md:pt-12 pb-32 px-margin-mobile md:px-margin-desktop">
@@ -18,13 +20,13 @@ export default async function EventManagerPage() {
         </Link>
       </div>
 
-      {/* Summary stats */}
+      {/* Summary stats — synced with the dashboard & stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-gutter mb-lg">
         {[
           { label: "אירועים פעילים", value: String(events.length), tone: "text-primary-fixed" },
-          { label: "כרטיסים שנמכרו", value: "1,240", tone: "text-secondary-fixed" },
-          { label: "הכנסה כוללת", value: "₪84,300", tone: "text-primary-fixed" },
-          { label: "תפוסה ממוצעת", value: `${Math.round(events.reduce((s, e) => s + e.occupancy, 0) / (events.length || 1))}%`, tone: "text-tertiary-fixed-dim" },
+          { label: "כרטיסים שנמכרו", value: agg.sold.toLocaleString(), tone: "text-secondary-fixed" },
+          { label: "הכנסה כוללת", value: shekel(agg.revenue), tone: "text-primary-fixed" },
+          { label: "תפוסה ממוצעת", value: `${agg.occupancy}%`, tone: "text-tertiary-fixed-dim" },
         ].map((s) => (
           <div key={s.label} className="glass-card p-md rounded-xl flex flex-col justify-between">
             <span className="text-label-sm text-on-surface-variant">{s.label}</span>
@@ -36,7 +38,8 @@ export default async function EventManagerPage() {
       {/* Event cards */}
       <div className="space-y-md">
         {events.map((e) => {
-          const revenue = Math.round((e.fromPrice * e.occupancy * 12) / 10) * 10;
+          const m = eventMetrics(e, salesByEvent[e.id]);
+          const revenue = m.revenue;
           return (
             <div key={e.id} className="glass-card rounded-2xl overflow-hidden border border-white/5 hover:border-primary-fixed/30 transition-colors">
               <div className="flex flex-col md:flex-row">
