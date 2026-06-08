@@ -134,6 +134,17 @@ export async function getCoupons(): Promise<DBCoupon[]> {
   return data as DBCoupon[];
 }
 
+/** Invited-guest counts per event (free/discounted entry). {} when no DB. */
+export async function getGuestCounts(): Promise<Record<string, number>> {
+  const sb = getSupabase();
+  if (!sb) return {};
+  const { data, error } = await sb.from("guests").select("event_id");
+  if (error || !data) return {};
+  const map: Record<string, number> = {};
+  for (const r of data as { event_id: string }[]) map[r.event_id] = (map[r.event_id] || 0) + 1;
+  return map;
+}
+
 export type EventSales = { tickets: number; orders: number; revenue: number };
 
 /**

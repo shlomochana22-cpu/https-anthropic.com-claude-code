@@ -5,7 +5,7 @@ import type { NexusEvent } from "@/lib/events";
 import type { EventSales } from "@/lib/queries";
 import { eventMetrics, shekel } from "@/lib/metrics";
 
-export function EventDashboard({ event: e, sales }: { event: NexusEvent; sales?: EventSales | null }) {
+export function EventDashboard({ event: e, sales, guests = 0 }: { event: NexusEvent; sales?: EventSales | null; guests?: number }) {
   const { capacity, sold, revenue, orders, avgPrice, isReal } = eventMetrics(e, sales);
   const fees = Math.round(revenue * 0.08);
   const net = revenue - fees;
@@ -28,10 +28,11 @@ export function EventDashboard({ event: e, sales }: { event: NexusEvent; sales?:
     { label: "הכנסות", value: shekel(revenue), icon: "payments", tone: "text-primary-fixed" },
     { label: "כרטיסים שנמכרו", value: sold.toLocaleString(), icon: "confirmation_number", tone: "text-secondary-fixed" },
     { label: "הזמנות", value: orders.toLocaleString(), icon: "receipt_long", tone: "text-tertiary-fixed-dim" },
+    { label: "מוזמנים", value: guests.toLocaleString(), icon: "card_giftcard", tone: "text-secondary-fixed" },
     { label: "תפוסה", value: `${e.occupancy}%`, icon: "event_seat", tone: "text-primary-fixed" },
   ];
   const actions = [
-    { href: "/producer/guests", icon: "group", label: "מוזמנים" },
+    { href: "/producer/guests", icon: "group", label: guests ? `מוזמנים · ${guests}` : "מוזמנים" },
     { href: "/producer/scanner", icon: "qr_code_scanner", label: "סריקה" },
     { href: `/events/${e.id}`, icon: "visibility", label: "תצוגת לקוח" },
     { href: "/producer/stats", icon: "analytics", label: "סטטיסטיקות מלאות" },
@@ -60,7 +61,7 @@ export function EventDashboard({ event: e, sales }: { event: NexusEvent; sales?:
       </div>
 
       {/* KPI grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-gutter">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-gutter">
         {kpis.map((k) => (
           <div key={k.label} className="glass-card rounded-xl p-md">
             <Icon name={k.icon} className={`${k.tone} mb-2`} />

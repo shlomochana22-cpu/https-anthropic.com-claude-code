@@ -7,7 +7,7 @@ import type { NexusEvent } from "@/lib/events";
 import type { EventSales } from "@/lib/queries";
 import { eventMetrics as metricsFor, shekel } from "@/lib/metrics";
 
-export function StatsDashboard({ events, salesByEvent = {} }: { events: NexusEvent[]; salesByEvent?: Record<string, EventSales> }) {
+export function StatsDashboard({ events, salesByEvent = {}, guestsByEvent = {} }: { events: NexusEvent[]; salesByEvent?: Record<string, EventSales>; guestsByEvent?: Record<string, number> }) {
   const [selectedId, setSelectedId] = useState("all");
   const sel = selectedId === "all" ? null : events.find((e) => e.id === selectedId);
 
@@ -54,7 +54,7 @@ export function StatsDashboard({ events, salesByEvent = {} }: { events: NexusEve
           <span className="text-xs font-bold text-primary-fixed tracking-widest uppercase">Live Analytics</span>
         </div>
         <h2 className="text-3xl md:text-[32px] font-black text-white">סטטיסטיקה מפורטת</h2>
-        <p className="text-on-surface-variant mt-1">{sel ? <>ניתוח לאירוע: <span className="text-secondary-fixed">{sel.title}</span></> : <>ניתוח <span className="text-secondary-fixed">כל האירועים</span> · {events.length} הפקות</>}</p>
+        <p className="text-on-surface-variant mt-1">{sel ? <>ניתוח לאירוע: <span className="text-secondary-fixed">{sel.title}</span> · {(guestsByEvent[sel.id] || 0).toLocaleString()} מוזמנים</> : <>ניתוח <span className="text-secondary-fixed">כל האירועים</span> · {events.length} הפקות · {Object.values(guestsByEvent).reduce((a, b) => a + b, 0).toLocaleString()} מוזמנים</>}</p>
       </div>
 
       {/* Event filter */}
@@ -138,7 +138,7 @@ export function StatsDashboard({ events, salesByEvent = {} }: { events: NexusEve
             <div className="space-y-2">
               {[...perEvent].sort((a, b) => b.m.revenue - a.m.revenue).map(({ e, m }) => (
                 <Link key={e.id} href="#" onClick={(ev) => { ev.preventDefault(); setSelectedId(e.id); }} className="flex items-center gap-3 p-2.5 rounded-lg bg-white/5 border border-white/5 hover:border-primary-fixed/30 transition-colors">
-                  <div className="flex-1 min-w-0"><p className="text-label-md text-white truncate">{e.title}</p><p className="text-label-sm text-on-surface-variant">{m.sold.toLocaleString()} כרטיסים · {e.occupancy}% תפוסה</p></div>
+                  <div className="flex-1 min-w-0"><p className="text-label-md text-white truncate">{e.title}</p><p className="text-label-sm text-on-surface-variant">{m.sold.toLocaleString()} כרטיסים · {(guestsByEvent[e.id] || 0).toLocaleString()} מוזמנים · {e.occupancy}% תפוסה</p></div>
                   <span className="text-primary-fixed font-bold text-label-md">{shekel(m.revenue)}</span>
                 </Link>
               ))}
