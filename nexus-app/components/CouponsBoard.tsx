@@ -34,11 +34,16 @@ export function CouponsBoard({ dbCoupons }: { dbCoupons: DBCoupon[] }) {
   const [expires, setExpires] = useState("");
   const [justCreated, setJustCreated] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
   const create = async () => {
     const c = code.trim().toUpperCase();
-    if (!c || !amount.trim()) return;
+    if (!c || !amount.trim()) {
+      setError("יש למלא קוד קופון וגם סכום/אחוז הנחה");
+      return;
+    }
+    setError(null);
     setSaving(true);
     const { id } = await createCoupon({
       code: c,
@@ -81,7 +86,7 @@ export function CouponsBoard({ dbCoupons }: { dbCoupons: DBCoupon[] }) {
             <div className="space-y-4">
               <div className="space-y-1">
                 <label className="text-sm font-bold text-primary-fixed uppercase tracking-wider block mr-1">קוד קופון</label>
-                <input value={code} onChange={(e) => setCode(e.target.value)} placeholder="SUMMER2024" className="w-full bg-surface-container-lowest border border-white/10 rounded-lg p-3 text-on-surface outline-none focus:border-primary-fixed font-mono uppercase transition-colors" />
+                <input value={code} onChange={(e) => { setCode(e.target.value); setError(null); }} placeholder="SUMMER2024" className={`w-full bg-surface-container-lowest border rounded-lg p-3 text-on-surface outline-none focus:border-primary-fixed font-mono uppercase transition-colors ${error && !code.trim() ? "border-error" : "border-white/10"}`} />
               </div>
               <div className="space-y-1">
                 <label className="text-sm font-bold text-primary-fixed uppercase tracking-wider block mr-1">סוג הנחה</label>
@@ -93,7 +98,7 @@ export function CouponsBoard({ dbCoupons }: { dbCoupons: DBCoupon[] }) {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <label className="text-sm font-bold text-primary-fixed uppercase tracking-wider block mr-1">{kind === "percent" ? "אחוז הנחה" : "סכום הנחה ₪"}</label>
-                  <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder={kind === "percent" ? "15" : "50"} className="w-full bg-surface-container-lowest border border-white/10 rounded-lg p-3 text-on-surface outline-none focus:border-primary-fixed transition-colors" />
+                  <input type="number" value={amount} onChange={(e) => { setAmount(e.target.value); setError(null); }} placeholder={kind === "percent" ? "15" : "50"} className={`w-full bg-surface-container-lowest border rounded-lg p-3 text-on-surface outline-none focus:border-primary-fixed transition-colors ${error && !amount.trim() ? "border-error" : "border-white/10"}`} />
                 </div>
                 <div className="space-y-1">
                   <label className="text-sm font-bold text-primary-fixed uppercase tracking-wider block mr-1">מגבלת שימוש</label>
@@ -104,9 +109,14 @@ export function CouponsBoard({ dbCoupons }: { dbCoupons: DBCoupon[] }) {
                 <label className="text-sm font-bold text-primary-fixed uppercase tracking-wider block mr-1">תאריך תפוגה</label>
                 <input type="date" value={expires} onChange={(e) => setExpires(e.target.value)} className="w-full bg-surface-container-lowest border border-white/10 rounded-lg p-3 text-on-surface outline-none focus:border-primary-fixed transition-colors [color-scheme:dark]" />
               </div>
-              <button onClick={create} disabled={!code.trim() || !amount.trim() || saving} className="w-full mt-lg bg-primary-fixed text-black font-bold py-4 rounded-lg flex items-center justify-center gap-2 hover:brightness-110 active:scale-95 transition-all shadow-neon-primary disabled:opacity-40 disabled:shadow-none">
+              <button onClick={create} disabled={saving} className="w-full mt-lg bg-primary-fixed text-black font-bold py-4 rounded-lg flex items-center justify-center gap-2 hover:brightness-110 active:scale-95 transition-all shadow-neon-primary disabled:opacity-60">
                 <Icon name="rocket_launch" /> {saving ? "שומר..." : "צור קופון עכשיו"}
               </button>
+              {error && (
+                <div className="flex items-center gap-2 p-3 rounded-lg bg-error/10 border border-error/30 text-error text-label-md">
+                  <Icon name="error" fill /> {error}
+                </div>
+              )}
               {justCreated && (
                 <div className="flex items-center gap-2 p-3 rounded-lg bg-primary-fixed/10 border border-primary-fixed/30 text-primary-fixed text-label-md">
                   <Icon name="check_circle" fill /> הקופון <span className="font-mono font-bold">{justCreated}</span> נשמר ונוסף לרשימה ✓

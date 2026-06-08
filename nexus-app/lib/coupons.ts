@@ -15,13 +15,17 @@ export async function createCoupon(input: {
   const localId = `local-${Date.now()}`;
   const sb = browserSupabase();
   if (!sb) return { id: localId, demo: true };
-  const { data, error } = await sb
-    .from("coupons")
-    .insert({ code: input.code, kind: input.kind, amount: input.amount, cap: input.cap, expires: input.expires })
-    .select("id")
-    .single();
-  if (error || !data) return { id: localId, demo: true };
-  return { id: data.id as string, demo: false };
+  try {
+    const { data, error } = await sb
+      .from("coupons")
+      .insert({ code: input.code, kind: input.kind, amount: input.amount, cap: input.cap, expires: input.expires })
+      .select("id")
+      .single();
+    if (error || !data) return { id: localId, demo: true };
+    return { id: data.id as string, demo: false };
+  } catch {
+    return { id: localId, demo: true };
+  }
 }
 
 export async function setCouponActive(id: string, active: boolean): Promise<void> {
