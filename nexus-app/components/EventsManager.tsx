@@ -106,8 +106,17 @@ export function EventsManager({ events, salesByEvent = {} }: { events: NexusEven
                       <span className="inline-block mt-2 text-[10px] bg-secondary-fixed/10 text-secondary-fixed px-2 py-0.5 rounded border border-secondary-fixed/20">{e.genre}</span>
                     </div>
                     <div className="text-left shrink-0">
-                      <p className="text-headline-md text-primary-fixed">{shekel(m.revenue)}</p>
-                      <p className="text-[10px] text-on-surface-variant">סך הכנסה</p>
+                      {m.revenue > 0 ? (
+                        <>
+                          <p className="text-headline-md text-primary-fixed">{shekel(m.revenue)}</p>
+                          <p className="text-[10px] text-on-surface-variant">סך הכנסה</p>
+                        </>
+                      ) : (
+                        <>
+                          <p className="text-headline-md text-primary-fixed">₪{e.fromPrice}</p>
+                          <p className="text-[10px] text-on-surface-variant">מחיר כרטיס מ-</p>
+                        </>
+                      )}
                     </div>
                   </div>
 
