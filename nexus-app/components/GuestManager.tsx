@@ -11,15 +11,16 @@ const NAMES = [
 const STATUSES = ["Approved", "Scanned", "Pending"] as const;
 const TONES: Record<string, string> = { Approved: "primary", Scanned: "cyan", Pending: "error" };
 
-// Deterministic per-event guest derivation so each event shows its own list.
-function guestsFor(event: NexusEvent) {
+type Guest = { initial: string; name: string; phone: string; status: string; tone: string };
+
+function guestsFor(event: NexusEvent): Guest[] {
   const seed = event.id.length + Math.round(event.occupancy);
   const count = 6 + (seed % 6);
   return Array.from({ length: count }, (_, i) => {
     const name = NAMES[(seed + i) % NAMES.length];
     const status = STATUSES[(seed + i) % STATUSES.length];
     const tier = i % 4 === 0 ? "מוזמן VIP" : i % 3 === 0 ? "מוזמן הפקה" : "רשימה רגילה";
-    const phone = `05${(2 + (i % 6))}-${String(1000000 + ((seed * 7919 + i * 31) % 8999999)).slice(0, 7)}`;
+    const phone = `05${2 + (i % 6)}-${String(1000000 + ((seed * 7919 + i * 31) % 8999999)).slice(0, 7)}`;
     return { initial: name[0], name, phone: `${phone} • ${tier}`, status, tone: TONES[status] };
   });
 }
@@ -27,23 +28,60 @@ function guestsFor(event: NexusEvent) {
 export function GuestManager({ events }: { events: NexusEvent[] }) {
   const [activeId, setActiveId] = useState(events[0]?.id ?? "");
   const [query, setQuery] = useState("");
+  const [added, setAdded] = useState<Record<string, Guest[]>>({});
   const event = events.find((e) => e.id === activeId) ?? events[0];
 
-  const guests = useMemo(() => (event ? guestsFor(event) : []), [event]);
+  // Add-guest modal
+  const [modal, setModal] = useState(false);
+  const [mode, setMode] = useState<"manual" | "link">("manual");
+  const [first, setFirst] = useState("");
+  const [last, setLast] = useState("");
+  const [dob, setDob] = useState("");
+  const [gender, setGender] = useState("נקבה");
+  const [entryType, setEntryType] = useState<"free" | "discount">("free");
+  const [qty, setQty] = useState(1);
+  const [generated, setGenerated] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  const origin = typeof window !== "undefined" ? window.location.origin : "https://nexusevents.co.il";
+
+  const guests = useMemo(() => (event ? [...(added[activeId] || []), ...guestsFor(event)] : []), [event, added, activeId]);
   const filtered = guests.filter((g) => g.name.includes(query) || g.phone.includes(query));
 
-  const stats = useMemo(() => {
-    const total = guests.length;
-    const approved = guests.filter((g) => g.status === "Approved").length;
-    const scanned = guests.filter((g) => g.status === "Scanned").length;
-    const pending = guests.filter((g) => g.status === "Pending").length;
-    return [
-      { label: "סך הכל מוזמנים", value: String(total), tone: "text-white" },
-      { label: "אושרו", value: String(approved), tone: "text-primary-fixed" },
-      { label: "נסרקו בקופה", value: String(scanned), tone: "text-secondary-fixed" },
-      { label: "ממתינים", value: String(pending), tone: "text-error" },
-    ];
-  }, [guests]);
+  const stats = useMemo(() => [
+    { label: "סך הכל מוזמנים", value: String(guests.length), tone: "text-white" },
+    { label: "אושרו", value: String(guests.filter((g) => g.status === "Approved").length), tone: "text-primary-fixed" },
+    { label: "נסרקו בקופה", value: String(guests.filter((g) => g.status === "Scanned").length), tone: "text-secondary-fixed" },
+    { label: "ממתינים", value: String(guests.filter((g) => g.status === "Pending").length), tone: "text-error" },
+  ], [guests]);
+
+  const openModal = () => { setModal(true); setMode("manual"); setFirst(""); setLast(""); setDob(""); setGender("נקבה"); setEntryType("free"); setQty(1); setGenerated(""); };
+
+  const addManual = () => {
+    if (!first.trim() || !last.trim()) return;
+    const name = `${first.trim()} ${last.trim()}`;
+    const entry = entryType === "free" ? "כניסה חינם" : "כניסה מוזלת";
+    const g: Guest = {
+      initial: name[0],
+      name,
+      phone: `${gender}${dob ? " • " + dob : ""} · ${entry}${qty > 1 ? ` ×${qty}` : ""}`,
+      status: entryType === "free" ? "חינם" : "מוזל",
+      tone: entryType === "free" ? "primary" : "cyan",
+    };
+    setAdded((a) => ({ ...a, [activeId]: [g, ...(a[activeId] || [])] }));
+    setModal(false);
+  };
+
+  const genLink = () => {
+    const tok = Math.random().toString(36).slice(2, 10);
+    setGenerated(`${origin}/invite/${tok}?event=${activeId}&qty=${qty}&type=${entryType}`);
+  };
+  const copyLink = () => { navigator.clipboard?.writeText(generated); setCopied(true); setTimeout(() => setCopied(false), 1500); };
+  const shareLink = async () => {
+    if (typeof navigator !== "undefined" && navigator.share) {
+      try { await navigator.share({ title: "הזמנה ל-NEXUS", text: "מלא/י פרטים וקבל/י כרטיס", url: generated }); } catch { /* cancelled */ }
+    } else copyLink();
+  };
 
   if (!event) {
     return (
@@ -57,18 +95,14 @@ export function GuestManager({ events }: { events: NexusEvent[] }) {
   return (
     <main className="pt-10 md:pt-12 pb-32 px-margin-mobile md:px-margin-desktop">
       <h2 className="text-headline-lg-mobile text-primary-fixed mb-1">ניהול רשימות מוזמנים</h2>
-      <p className="text-on-surface-variant/80 mb-md">בחרו אירוע כדי לנהל את רשימת המוזמנים שלו · {events.length} אירועים</p>
+      <p className="text-on-surface-variant/80 mb-md">הזמנות לכניסה חינם או מוזלת · בחרו אירוע · {events.length} אירועים</p>
 
-      {/* Event selector — all the producer's events */}
+      {/* Event selector */}
       <div className="flex gap-2 overflow-x-auto pb-2 mb-lg">
         {events.map((e) => {
           const on = e.id === activeId;
           return (
-            <button
-              key={e.id}
-              onClick={() => setActiveId(e.id)}
-              className={`shrink-0 px-4 py-2.5 rounded-xl border text-right transition-all ${on ? "border-primary-fixed bg-primary-container/15" : "border-white/10 bg-white/5 hover:border-primary-fixed/40"}`}
-            >
+            <button key={e.id} onClick={() => setActiveId(e.id)} className={`shrink-0 px-4 py-2.5 rounded-xl border text-right transition-all ${on ? "border-primary-fixed bg-primary-container/15" : "border-white/10 bg-white/5 hover:border-primary-fixed/40"}`}>
               <p className={`text-label-md ${on ? "text-primary-fixed font-bold" : "text-on-surface"}`}>{e.title}</p>
               <p className="text-[10px] text-on-surface-variant">{e.date} • {e.occupancy}% נמכר</p>
             </button>
@@ -94,11 +128,7 @@ export function GuestManager({ events }: { events: NexusEvent[] }) {
         {filtered.map((g, i) => (
           <div key={`${g.name}-${i}`} className={`glass-card p-md rounded-xl flex items-center justify-between ${g.tone === "error" ? "border-error/20" : ""}`}>
             <div className="flex items-center gap-md">
-              <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-2xl ${
-                g.tone === "error" ? "bg-error-container/40 text-error" : "bg-gradient-to-br from-primary-fixed to-secondary-fixed text-on-primary-fixed"
-              }`}>
-                {g.initial}
-              </div>
+              <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-2xl ${g.tone === "error" ? "bg-error-container/40 text-error" : "bg-gradient-to-br from-primary-fixed to-secondary-fixed text-on-primary-fixed"}`}>{g.initial}</div>
               <div className="flex flex-col">
                 <span className="text-label-md text-white">{g.name}</span>
                 <span className="text-label-sm text-on-surface-variant">{g.phone}</span>
@@ -117,9 +147,91 @@ export function GuestManager({ events }: { events: NexusEvent[] }) {
         {filtered.length === 0 && <p className="text-center text-on-surface-variant/60 py-8">לא נמצאו מוזמנים תואמים</p>}
       </div>
 
-      <button className="fixed bottom-24 left-6 md:bottom-8 w-16 h-16 bg-primary-fixed text-on-primary-fixed rounded-full shadow-neon-primary flex items-center justify-center active:scale-90 transition-all z-50">
+      <button onClick={openModal} className="fixed bottom-24 left-6 md:bottom-8 w-16 h-16 bg-primary-fixed text-on-primary-fixed rounded-full shadow-neon-primary flex items-center justify-center active:scale-90 transition-all z-50">
         <Icon name="person_add" className="text-[32px]" />
       </button>
+
+      {/* Add-guest modal */}
+      {modal && (
+        <div className="fixed inset-0 z-[80] flex items-end sm:items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setModal(false)} />
+          <div className="relative glass-card w-full max-w-md rounded-2xl p-5 border border-primary-fixed/20 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-base font-bold text-primary">הוספת מוזמן · {event.title}</h3>
+              <button onClick={() => setModal(false)} className="text-on-surface-variant hover:text-on-surface"><Icon name="close" /></button>
+            </div>
+
+            {/* Mode switch */}
+            <div className="flex gap-2 mb-4 p-1 bg-surface-container rounded-xl">
+              <button onClick={() => setMode("manual")} className={`flex-1 py-2 rounded-lg text-label-md transition-all ${mode === "manual" ? "bg-primary-fixed text-on-primary-fixed font-bold" : "text-on-surface-variant"}`}>מילוי ידני</button>
+              <button onClick={() => setMode("link")} className={`flex-1 py-2 rounded-lg text-label-md transition-all ${mode === "link" ? "bg-primary-fixed text-on-primary-fixed font-bold" : "text-on-surface-variant"}`}>יצירת לינק</button>
+            </div>
+
+            {/* Shared: entry type + quantity */}
+            <div className="space-y-3 mb-3">
+              <div>
+                <label className="text-label-sm text-on-surface-variant block mb-1">סוג כניסה</label>
+                <div className="flex gap-2">
+                  <button onClick={() => setEntryType("free")} className={`flex-1 py-2 rounded-lg border text-label-md transition-all ${entryType === "free" ? "border-primary-fixed bg-primary-container/15 text-primary-fixed font-bold" : "border-white/10 bg-white/5 text-on-surface-variant"}`}>כניסה חינם</button>
+                  <button onClick={() => setEntryType("discount")} className={`flex-1 py-2 rounded-lg border text-label-md transition-all ${entryType === "discount" ? "border-secondary-fixed bg-secondary-fixed/15 text-secondary-fixed font-bold" : "border-white/10 bg-white/5 text-on-surface-variant"}`}>כניסה מוזלת</button>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <label className="text-label-sm text-on-surface-variant">כמות כרטיסים</label>
+                <div className="flex items-center gap-3">
+                  <button onClick={() => setQty((q) => Math.max(1, q - 1))} className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center active:scale-90"><Icon name="remove" className="text-[18px]" /></button>
+                  <span className="w-6 text-center font-bold text-lg text-primary">{qty}</span>
+                  <button onClick={() => setQty((q) => q + 1)} className="w-8 h-8 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center active:scale-90"><Icon name="add" className="text-[18px]" /></button>
+                </div>
+              </div>
+            </div>
+
+            {mode === "manual" ? (
+              <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <input value={first} onChange={(e) => setFirst(e.target.value)} placeholder="שם פרטי" className="bg-surface-container-low border border-white/10 rounded-lg px-3 py-2.5 text-on-surface focus:border-primary-fixed outline-none" />
+                  <input value={last} onChange={(e) => setLast(e.target.value)} placeholder="שם משפחה" className="bg-surface-container-low border border-white/10 rounded-lg px-3 py-2.5 text-on-surface focus:border-primary-fixed outline-none" />
+                </div>
+                <div>
+                  <label className="text-label-sm text-on-surface-variant block mb-1">תאריך לידה</label>
+                  <input value={dob} onChange={(e) => setDob(e.target.value)} type="date" className="w-full bg-surface-container-low border border-white/10 rounded-lg px-3 py-2.5 text-on-surface focus:border-primary-fixed outline-none [color-scheme:dark]" />
+                </div>
+                <div>
+                  <label className="text-label-sm text-on-surface-variant block mb-1">מין</label>
+                  <div className="flex gap-2">
+                    {["נקבה", "זכר", "אחר"].map((g) => (
+                      <button key={g} onClick={() => setGender(g)} className={`flex-1 py-2 rounded-lg border text-label-md transition-all ${gender === g ? "border-primary-fixed bg-primary-container/15 text-primary-fixed font-bold" : "border-white/10 bg-white/5 text-on-surface-variant"}`}>{g}</button>
+                    ))}
+                  </div>
+                </div>
+                <button onClick={addManual} disabled={!first.trim() || !last.trim()} className="w-full mt-1 bg-primary-fixed text-on-primary-fixed font-bold py-3 rounded-lg flex items-center justify-center gap-2 shadow-neon-primary active:scale-95 transition-all disabled:opacity-40 disabled:shadow-none">
+                  <Icon name="person_add" /> הוסף לרשימת המוזמנים
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {!generated ? (
+                  <>
+                    <p className="text-label-sm text-on-surface-variant/70 flex items-center gap-1"><Icon name="link" className="text-[16px]" /> צרו לינק חד-פעמי — הלקוח ממלא פרטים ומקבל {qty > 1 ? `${qty} כרטיסים` : "כרטיס"}. לאחר שימוש הלינק מתבטל.</p>
+                    <button onClick={genLink} className="w-full bg-primary-fixed text-on-primary-fixed font-bold py-3 rounded-lg flex items-center justify-center gap-2 shadow-neon-primary active:scale-95 transition-all">
+                      <Icon name="add_link" /> צור לינק רישום
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <div className="flex items-center gap-2">
+                      <input readOnly value={generated} dir="ltr" className="flex-1 bg-surface-container-low border border-white/10 rounded-lg px-3 py-2 text-label-sm text-on-surface-variant font-mono outline-none" />
+                      <button onClick={copyLink} className="shrink-0 w-9 h-9 rounded-lg bg-surface-container-high border border-white/10 flex items-center justify-center text-primary active:scale-95"><Icon name={copied ? "check" : "content_copy"} className={`text-[18px] ${copied ? "text-primary-fixed" : ""}`} /></button>
+                    </div>
+                    <p className="text-[11px] text-on-surface-variant/60 flex items-center gap-1"><Icon name="info" className="text-[14px]" /> לינק חד-פעמי · {entryType === "free" ? "כניסה חינם" : "כניסה מוזלת"} · {qty} כרטיס{qty > 1 ? "ים" : ""}</p>
+                    <button onClick={shareLink} className="w-full bg-primary-fixed text-on-primary-fixed font-bold py-3 rounded-lg flex items-center justify-center gap-2 active:scale-95 transition-transform"><Icon name="share" className="text-[18px]" /> שלח ללקוח</button>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </main>
   );
 }
