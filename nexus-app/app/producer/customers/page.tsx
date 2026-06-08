@@ -1,17 +1,40 @@
+"use client";
+
+import { useMemo, useState } from "react";
 import { Icon } from "@/components/Icon";
 
-const rows = [
+type Customer = { name: string; age: number; gender: string; birth: string; last: string; status: string; tone: string };
+
+const rows: Customer[] = [
   { name: "נירה שמואלי", age: 28, gender: "נקבה", birth: "15/08/1995", last: "12/05/2024", status: "פעיל מאוד", tone: "primary" },
   { name: "אבי כהן", age: 31, gender: "זכר", birth: "02/11/1992", last: "28/04/2024", status: "VIP", tone: "cyan" },
   { name: "מיה לוין", age: 24, gender: "נקבה", birth: "21/01/2000", last: "10/05/2024", status: "חדש", tone: "muted" },
+  { name: "דניאל אזולאי", age: 27, gender: "זכר", birth: "09/03/1997", last: "01/05/2024", status: "פעיל מאוד", tone: "primary" },
+  { name: "שני ברק", age: 22, gender: "נקבה", birth: "30/06/2002", last: "18/04/2024", status: "חדש", tone: "muted" },
+  { name: "יוסי פרץ", age: 35, gender: "זכר", birth: "12/12/1988", last: "05/05/2024", status: "VIP", tone: "cyan" },
 ];
 
 export default function CustomersPage() {
+  const [query, setQuery] = useState("");
+  const filtered = useMemo(() => rows.filter((r) => r.name.includes(query) || r.status.includes(query)), [query]);
+
+  const exportCsv = () => {
+    const header = ["שם", "גיל", "מגדר", "תאריך לידה", "אירוע אחרון", "סטטוס"];
+    const lines = [header, ...filtered.map((r) => [r.name, r.age, r.gender, r.birth, r.last, r.status])];
+    const csv = "﻿" + lines.map((l) => l.join(",")).join("\n"); // BOM for Hebrew in Excel
+    const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8;" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "nexus-customers.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <main className="pt-10 md:pt-12 pb-32 px-margin-mobile md:px-margin-desktop">
       <div className="flex items-center justify-between mb-lg flex-wrap gap-4">
         <h2 className="text-headline-md font-bold text-primary-fixed">מאגר לקוחות</h2>
-        <button className="flex items-center gap-2 px-4 py-2 bg-primary-container text-on-primary-container rounded-lg font-bold text-sm hover:opacity-90 active:scale-95 transition-all shadow-neon-primary">
+        <button onClick={exportCsv} className="flex items-center gap-2 px-4 py-2 bg-primary-container text-on-primary-container rounded-lg font-bold text-sm hover:opacity-90 active:scale-95 transition-all shadow-neon-primary">
           <Icon name="download" className="text-lg" /> ייצוא לאקסל
         </button>
       </div>
@@ -20,7 +43,7 @@ export default function CustomersPage() {
         <div className="md:col-span-3 glass-card rounded-2xl p-md flex items-center">
           <div className="relative w-full">
             <Icon name="search" className="absolute right-4 top-1/2 -translate-y-1/2 text-primary-fixed" />
-            <input className="w-full bg-surface-container-low border border-white/10 rounded-xl py-4 pr-12 pl-4 text-on-surface outline-none focus:border-primary-fixed transition-colors" placeholder="חיפוש לפי שם, טלפון או אימייל..." />
+            <input value={query} onChange={(e) => setQuery(e.target.value)} className="w-full bg-surface-container-low border border-white/10 rounded-xl py-4 pr-12 pl-4 text-on-surface outline-none focus:border-primary-fixed transition-colors" placeholder="חיפוש לפי שם או סטטוס..." />
           </div>
         </div>
         <div className="glass-card rounded-2xl p-md flex flex-col items-center justify-center border-primary-fixed/20">
@@ -44,7 +67,7 @@ export default function CustomersPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
-              {rows.map((r) => (
+              {filtered.map((r) => (
                 <tr key={r.name} className="hover:bg-white/5 transition-colors group">
                   <td className="px-md py-4">
                     <div className="flex items-center gap-3">
@@ -73,6 +96,9 @@ export default function CustomersPage() {
                   </td>
                 </tr>
               ))}
+              {filtered.length === 0 && (
+                <tr><td colSpan={7} className="px-md py-8 text-center text-on-surface-variant/60">לא נמצאו לקוחות תואמים</td></tr>
+              )}
             </tbody>
           </table>
         </div>

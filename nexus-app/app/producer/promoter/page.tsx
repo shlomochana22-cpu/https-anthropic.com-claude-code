@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Icon } from "@/components/Icon";
+import { CopyLinkButton } from "@/components/CopyLinkButton";
 import { getEvents } from "@/lib/queries";
 
 export default async function PromoterPage() {
@@ -75,9 +76,7 @@ export default async function PromoterPage() {
                     <div className="text-[10px] text-on-surface-variant">עמלה שנצברה</div>
                   </div>
                 </div>
-                <button className="w-full bg-surface-container-high border border-white/10 text-primary py-sm rounded-lg text-label-md flex items-center justify-center gap-2 active:scale-95 transition-transform">
-                  <Icon name="content_copy" className="text-[18px]" /> העתק לינק
-                </button>
+                <CopyLinkButton eventId={e.id} />
               </div>
             </div>
           ))}

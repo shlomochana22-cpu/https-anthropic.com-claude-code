@@ -1,12 +1,37 @@
+"use client";
+
+import { useState } from "react";
 import { Icon } from "@/components/Icon";
 
-const coupons = [
+type Coupon = { code: string; value: string; off: string; used: number; cap: number; expires: string; active: boolean };
+
+const initial: Coupon[] = [
   { code: "NEXUS20", value: "20%", off: "OFF", used: 142, cap: 500, expires: "24.08.2024", active: true },
   { code: "VIP_ONLY", value: "₪50", off: "FLAT", used: 48, cap: 100, expires: "30.12.2024", active: true },
   { code: "EARLYBIRD", value: "10%", off: "OFF", used: 200, cap: 200, expires: "01.07.2024", active: false },
 ];
 
 export default function CouponsPage() {
+  const [coupons, setCoupons] = useState<Coupon[]>(initial);
+  const [code, setCode] = useState("");
+  const [kind, setKind] = useState<"percent" | "flat">("percent");
+  const [amount, setAmount] = useState("");
+  const [cap, setCap] = useState("");
+  const [expires, setExpires] = useState("");
+
+  const create = () => {
+    const c = code.trim().toUpperCase();
+    if (!c || !amount.trim()) return;
+    const value = kind === "percent" ? `${amount}%` : `₪${amount}`;
+    setCoupons((list) => [
+      { code: c, value, off: kind === "percent" ? "OFF" : "FLAT", used: 0, cap: Number(cap) || 9999, expires: expires ? expires.split("-").reverse().join(".") : "ללא הגבלה", active: true },
+      ...list,
+    ]);
+    setCode(""); setAmount(""); setCap(""); setExpires("");
+  };
+  const toggle = (code: string) => setCoupons((l) => l.map((c) => (c.code === code ? { ...c, active: !c.active } : c)));
+  const remove = (code: string) => setCoupons((l) => l.filter((c) => c.code !== code));
+
   return (
     <main className="pt-10 md:pt-12 pb-32 px-margin-mobile md:px-margin-desktop">
       <header className="mb-lg">
@@ -15,29 +40,36 @@ export default function CouponsPage() {
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
-        <div className="lg:col-span-5">
+        <div className="lg:col-span-5 space-y-gutter">
           <div className="glass-card p-md rounded-xl">
             <h3 className="text-2xl font-bold mb-md text-on-surface flex items-center gap-2"><Icon name="add_circle" className="text-primary-fixed" /> יצירת קופון חדש</h3>
             <div className="space-y-4">
               <div className="space-y-1">
                 <label className="text-sm font-bold text-primary-fixed uppercase tracking-wider block mr-1">קוד קופון</label>
-                <input placeholder="SUMMER2024" className="w-full bg-surface-container-lowest border border-white/10 rounded-lg p-3 text-on-surface outline-none focus:border-primary-fixed font-mono uppercase transition-colors" />
+                <input value={code} onChange={(e) => setCode(e.target.value)} placeholder="SUMMER2024" className="w-full bg-surface-container-lowest border border-white/10 rounded-lg p-3 text-on-surface outline-none focus:border-primary-fixed font-mono uppercase transition-colors" />
+              </div>
+              <div className="space-y-1">
+                <label className="text-sm font-bold text-primary-fixed uppercase tracking-wider block mr-1">סוג הנחה</label>
+                <div className="flex gap-2">
+                  <button onClick={() => setKind("percent")} className={`flex-1 py-2.5 rounded-lg border text-label-md transition-all ${kind === "percent" ? "border-primary-fixed bg-primary-container/15 text-primary-fixed font-bold" : "border-white/10 bg-white/5 text-on-surface-variant"}`}>אחוז %</button>
+                  <button onClick={() => setKind("flat")} className={`flex-1 py-2.5 rounded-lg border text-label-md transition-all ${kind === "flat" ? "border-primary-fixed bg-primary-container/15 text-primary-fixed font-bold" : "border-white/10 bg-white/5 text-on-surface-variant"}`}>סכום ₪</button>
+                </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-sm font-bold text-primary-fixed uppercase tracking-wider block mr-1">אחוז הנחה</label>
-                  <input type="number" placeholder="15" className="w-full bg-surface-container-lowest border border-white/10 rounded-lg p-3 text-on-surface outline-none focus:border-primary-fixed transition-colors" />
+                  <label className="text-sm font-bold text-primary-fixed uppercase tracking-wider block mr-1">{kind === "percent" ? "אחוז הנחה" : "סכום הנחה ₪"}</label>
+                  <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder={kind === "percent" ? "15" : "50"} className="w-full bg-surface-container-lowest border border-white/10 rounded-lg p-3 text-on-surface outline-none focus:border-primary-fixed transition-colors" />
                 </div>
                 <div className="space-y-1">
                   <label className="text-sm font-bold text-primary-fixed uppercase tracking-wider block mr-1">מגבלת שימוש</label>
-                  <input type="number" placeholder="ללא הגבלה" className="w-full bg-surface-container-lowest border border-white/10 rounded-lg p-3 text-on-surface outline-none focus:border-primary-fixed transition-colors" />
+                  <input type="number" value={cap} onChange={(e) => setCap(e.target.value)} placeholder="ללא הגבלה" className="w-full bg-surface-container-lowest border border-white/10 rounded-lg p-3 text-on-surface outline-none focus:border-primary-fixed transition-colors" />
                 </div>
               </div>
               <div className="space-y-1">
                 <label className="text-sm font-bold text-primary-fixed uppercase tracking-wider block mr-1">תאריך תפוגה</label>
-                <input type="date" className="w-full bg-surface-container-lowest border border-white/10 rounded-lg p-3 text-on-surface outline-none focus:border-primary-fixed transition-colors [color-scheme:dark]" />
+                <input type="date" value={expires} onChange={(e) => setExpires(e.target.value)} className="w-full bg-surface-container-lowest border border-white/10 rounded-lg p-3 text-on-surface outline-none focus:border-primary-fixed transition-colors [color-scheme:dark]" />
               </div>
-              <button className="w-full mt-lg bg-primary-fixed text-black font-bold py-4 rounded-lg flex items-center justify-center gap-2 hover:brightness-110 active:scale-95 transition-all shadow-neon-primary">
+              <button onClick={create} disabled={!code.trim() || !amount.trim()} className="w-full mt-lg bg-primary-fixed text-black font-bold py-4 rounded-lg flex items-center justify-center gap-2 hover:brightness-110 active:scale-95 transition-all shadow-neon-primary disabled:opacity-40 disabled:shadow-none">
                 <Icon name="rocket_launch" /> צור קופון עכשיו
               </button>
             </div>
@@ -82,17 +114,18 @@ export default function CouponsPage() {
                 <span className="text-on-surface font-bold">{c.used}</span>
                 <span className="text-on-surface-variant/40 text-xs"> / {c.cap}</span>
                 <div className="w-20 h-1 bg-surface-container-highest rounded-full mt-1 overflow-hidden">
-                  <div className={`h-full ${c.active ? "bg-primary-fixed" : "bg-error"}`} style={{ width: `${(c.used / c.cap) * 100}%` }} />
+                  <div className={`h-full ${c.active ? "bg-primary-fixed" : "bg-error"}`} style={{ width: `${Math.min(100, (c.used / c.cap) * 100)}%` }} />
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <span className={`w-11 h-6 rounded-full relative shrink-0 ${c.active ? "bg-primary-fixed" : "bg-surface-container-highest"}`}>
+                <button onClick={() => toggle(c.code)} className={`w-11 h-6 rounded-full relative shrink-0 transition-colors ${c.active ? "bg-primary-fixed" : "bg-surface-container-highest"}`} aria-label="הפעל/כבה">
                   <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full transition-all ${c.active ? "right-0.5" : "right-[22px]"}`} />
-                </span>
-                <button className="text-on-surface-variant hover:text-error transition-colors"><Icon name="delete_outline" /></button>
+                </button>
+                <button onClick={() => remove(c.code)} className="text-on-surface-variant hover:text-error transition-colors"><Icon name="delete_outline" /></button>
               </div>
             </div>
           ))}
+          {coupons.length === 0 && <p className="text-center text-on-surface-variant/60 py-8">אין קופונים — צור את הראשון משמאל</p>}
         </div>
       </div>
     </main>
