@@ -3,6 +3,8 @@
 import { useMemo, useState } from "react";
 import { Icon } from "@/components/Icon";
 import type { NexusEvent } from "@/lib/events";
+import type { DBGuest } from "@/lib/queries";
+import { createInvite, addGuest } from "@/lib/guests";
 
 const NAMES = [
   "איתי לוי", "דנה כהן", "נועם אברהם", "שירה פרץ", "יואב מזרחי", "טל ביטון",
@@ -25,11 +27,29 @@ function guestsFor(event: NexusEvent): Guest[] {
   });
 }
 
-export function GuestManager({ events }: { events: NexusEvent[] }) {
+function dbGuestToDisplay(g: DBGuest): Guest {
+  const name = `${g.first_name} ${g.last_name}`.trim();
+  const entry = g.entry_type === "free" ? "כניסה חינם" : "כניסה מוזלת";
+  return {
+    initial: name[0] || "?",
+    name,
+    phone: `${g.gender ?? ""}${g.dob ? " • " + g.dob : ""} · ${entry}${g.qty > 1 ? ` ×${g.qty}` : ""} · ${g.source === "link" ? "לינק" : "ידני"}`,
+    status: g.status === "scanned" ? "Scanned" : g.entry_type === "free" ? "חינם" : "מוזל",
+    tone: g.status === "scanned" ? "cyan" : g.entry_type === "free" ? "primary" : "cyan",
+  };
+}
+
+export function GuestManager({ events, dbGuests = [] }: { events: NexusEvent[]; dbGuests?: DBGuest[] }) {
   const [activeId, setActiveId] = useState(events[0]?.id ?? "");
   const [query, setQuery] = useState("");
   const [added, setAdded] = useState<Record<string, Guest[]>>({});
   const event = events.find((e) => e.id === activeId) ?? events[0];
+
+  const dbByEvent = useMemo(() => {
+    const map: Record<string, Guest[]> = {};
+    for (const g of dbGuests) (map[g.event_id] ||= []).push(dbGuestToDisplay(g));
+    return map;
+  }, [dbGuests]);
 
   // Add-guest modal
   const [modal, setModal] = useState(false);
@@ -45,7 +65,10 @@ export function GuestManager({ events }: { events: NexusEvent[] }) {
 
   const origin = typeof window !== "undefined" ? window.location.origin : "https://nexusevents.co.il";
 
-  const guests = useMemo(() => (event ? [...(added[activeId] || []), ...guestsFor(event)] : []), [event, added, activeId]);
+  const guests = useMemo(
+    () => (event ? [...(added[activeId] || []), ...(dbByEvent[activeId] || []), ...guestsFor(event)] : []),
+    [event, added, dbByEvent, activeId]
+  );
   const filtered = guests.filter((g) => g.name.includes(query) || g.phone.includes(query));
 
   const stats = useMemo(() => [
@@ -69,12 +92,17 @@ export function GuestManager({ events }: { events: NexusEvent[] }) {
       tone: entryType === "free" ? "primary" : "cyan",
     };
     setAdded((a) => ({ ...a, [activeId]: [g, ...(a[activeId] || [])] }));
+    // persist (no-op in demo / when DB isn't configured)
+    void addGuest({ eventId: activeId, firstName: first.trim(), lastName: last.trim(), dob, gender, entryType, qty });
     setModal(false);
   };
 
-  const genLink = () => {
-    const tok = Math.random().toString(36).slice(2, 10);
-    setGenerated(`${origin}/invite/${tok}?event=${activeId}&qty=${qty}&type=${entryType}`);
+  const [genBusy, setGenBusy] = useState(false);
+  const genLink = async () => {
+    setGenBusy(true);
+    const { token } = await createInvite(activeId, qty, entryType);
+    setGenerated(`${origin}/invite/${token}?event=${activeId}&qty=${qty}&type=${entryType}`);
+    setGenBusy(false);
   };
   const copyLink = () => { navigator.clipboard?.writeText(generated); setCopied(true); setTimeout(() => setCopied(false), 1500); };
   const shareLink = async () => {
@@ -213,8 +241,8 @@ export function GuestManager({ events }: { events: NexusEvent[] }) {
                 {!generated ? (
                   <>
                     <p className="text-label-sm text-on-surface-variant/70 flex items-center gap-1"><Icon name="link" className="text-[16px]" /> צרו לינק חד-פעמי — הלקוח ממלא פרטים ומקבל {qty > 1 ? `${qty} כרטיסים` : "כרטיס"}. לאחר שימוש הלינק מתבטל.</p>
-                    <button onClick={genLink} className="w-full bg-primary-fixed text-on-primary-fixed font-bold py-3 rounded-lg flex items-center justify-center gap-2 shadow-neon-primary active:scale-95 transition-all">
-                      <Icon name="add_link" /> צור לינק רישום
+                    <button onClick={genLink} disabled={genBusy} className="w-full bg-primary-fixed text-on-primary-fixed font-bold py-3 rounded-lg flex items-center justify-center gap-2 shadow-neon-primary active:scale-95 transition-all disabled:opacity-50">
+                      <Icon name="add_link" /> {genBusy ? "יוצר…" : "צור לינק רישום"}
                     </button>
                   </>
                 ) : (

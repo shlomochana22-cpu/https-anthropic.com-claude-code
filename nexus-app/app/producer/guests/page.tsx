@@ -1,7 +1,7 @@
 import { GuestManager } from "@/components/GuestManager";
-import { getEvents } from "@/lib/queries";
+import { getEvents, getGuests } from "@/lib/queries";
 
 export default async function GuestsPage() {
-  const events = await getEvents();
-  return <GuestManager events={events} />;
+  const [events, dbGuests] = await Promise.all([getEvents(), getGuests()]);
+  return <GuestManager events={events} dbGuests={dbGuests} />;
 }

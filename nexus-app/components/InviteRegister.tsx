@@ -3,19 +3,36 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/Icon";
+import { redeemInvite } from "@/lib/guests";
 
 /**
  * Public one-time guest registration. The customer fills their details and
- * receives a ticket. (One-time enforcement is finalised server-side once an
- * invites table exists; here it's a single submit per opened link.)
+ * receives a ticket. Redemption is atomic & single-use server-side via the
+ * redeem_invite() function (falls back to a local code with no DB).
  */
-export function InviteRegister({ eventTitle, qty, type }: { eventTitle: string; qty: number; type: "free" | "discount" }) {
+export function InviteRegister({ token, eventTitle, qty, type }: { token: string; eventTitle: string; qty: number; type: "free" | "discount" }) {
   const [first, setFirst] = useState("");
   const [last, setLast] = useState("");
   const [dob, setDob] = useState("");
   const [gender, setGender] = useState("נקבה");
   const [done, setDone] = useState(false);
-  const code = `NX-${Math.random().toString(36).slice(2, 6).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [code, setCode] = useState("");
+
+  const submit = async () => {
+    if (!first.trim() || !last.trim()) return;
+    setBusy(true);
+    setError(null);
+    const res = await redeemInvite(token, { firstName: first.trim(), lastName: last.trim(), dob, gender });
+    setBusy(false);
+    if (res.ok) {
+      setCode(res.code || `NX-${Math.random().toString(36).slice(2, 6).toUpperCase()}`);
+      setDone(true);
+    } else {
+      setError(res.message || "הלינק כבר נוצל או אינו תקין");
+    }
+  };
 
   const entryLabel = type === "free" ? "כניסה חינם" : "כניסה מוזלת";
 
@@ -71,8 +88,14 @@ export function InviteRegister({ eventTitle, qty, type }: { eventTitle: string; 
             ))}
           </div>
         </div>
-        <button onClick={() => first.trim() && last.trim() && setDone(true)} disabled={!first.trim() || !last.trim()} className="w-full bg-primary-fixed text-on-primary-fixed font-bold py-4 rounded-xl flex items-center justify-center gap-2 shadow-neon-primary active:scale-95 transition-all disabled:opacity-40 disabled:shadow-none">
-          <Icon name="confirmation_number" /> קבל את הכרטיס שלי
+        {error && (
+          <div className="glass-card border border-error/40 rounded-xl p-3 flex items-center gap-2">
+            <Icon name="error" className="text-error" fill />
+            <p className="text-on-surface text-label-md">{error}</p>
+          </div>
+        )}
+        <button onClick={submit} disabled={!first.trim() || !last.trim() || busy} className="w-full bg-primary-fixed text-on-primary-fixed font-bold py-4 rounded-xl flex items-center justify-center gap-2 shadow-neon-primary active:scale-95 transition-all disabled:opacity-40 disabled:shadow-none">
+          <Icon name="confirmation_number" /> {busy ? "רושם…" : "קבל את הכרטיס שלי"}
         </button>
         <p className="text-[11px] text-on-surface-variant/50 text-center">בלחיצה אתם מאשרים את תנאי השימוש. הלינק תקף לרישום אחד בלבד.</p>
       </section>

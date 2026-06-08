@@ -83,3 +83,27 @@ export async function getEventById(id: string): Promise<NexusEvent | undefined> 
   if (error || !data) return mockEvents.find((e) => e.id === id);
   return rowToEvent(data as EventRow);
 }
+
+export type DBGuest = {
+  event_id: string;
+  first_name: string;
+  last_name: string;
+  dob: string | null;
+  gender: string | null;
+  entry_type: string;
+  qty: number;
+  status: string;
+  source: string;
+};
+
+/** Registered/invited guests (free/discounted entry). Empty when no DB. */
+export async function getGuests(): Promise<DBGuest[]> {
+  const sb = getSupabase();
+  if (!sb) return [];
+  const { data, error } = await sb
+    .from("guests")
+    .select("event_id,first_name,last_name,dob,gender,entry_type,qty,status,source")
+    .order("created_at", { ascending: false });
+  if (error || !data) return [];
+  return data as DBGuest[];
+}
