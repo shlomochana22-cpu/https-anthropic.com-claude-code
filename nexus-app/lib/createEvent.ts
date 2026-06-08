@@ -89,3 +89,34 @@ export async function createEvent(input: NewEventInput): Promise<CreateResult> {
 
   return { id, demo: false };
 }
+
+export type EventEditFields = {
+  title: string;
+  date: string;
+  time: string;
+  venue: string;
+  city: string;
+  genre: string;
+  occupancy: number;
+  description: string;
+};
+
+/** Updates an existing event's core fields in Supabase. */
+export async function updateEvent(id: string, fields: EventEditFields): Promise<{ ok: boolean; error?: string }> {
+  const sb = browserSupabase();
+  if (!sb) return { ok: true }; // demo
+  const { error } = await sb
+    .from("events")
+    .update({
+      title: fields.title,
+      date: fields.date,
+      time: fields.time,
+      venue: fields.venue,
+      city: fields.city,
+      genre: fields.genre,
+      occupancy: Math.max(0, Math.min(100, Math.round(fields.occupancy))),
+      description: fields.description,
+    })
+    .eq("id", id);
+  return { ok: !error, error: error?.message };
+}

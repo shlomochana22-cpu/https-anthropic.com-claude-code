@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Icon } from "@/components/Icon";
 import { SafeImage } from "@/components/SafeImage";
+import { EditEventButton } from "@/components/EditEventButton";
 import type { NexusEvent } from "@/lib/events";
 import type { EventSales } from "@/lib/queries";
 import { eventMetrics, shekel } from "@/lib/metrics";
@@ -42,7 +43,10 @@ export function EventDashboard({ event: e, sales, guests = 0 }: { event: NexusEv
 
   return (
     <main className="pt-10 md:pt-12 pb-32 px-margin-mobile md:px-margin-desktop space-y-md">
-      <Link href="/producer/events" className="inline-flex items-center gap-1 text-on-surface-variant hover:text-primary text-label-md"><Icon name="arrow_forward" className="text-[18px]" /> חזרה לאירועים</Link>
+      <div className="flex items-center justify-between gap-2">
+        <Link href="/producer/events" className="inline-flex items-center gap-1 text-on-surface-variant hover:text-primary text-label-md"><Icon name="arrow_forward" className="text-[18px]" /> חזרה לאירועים</Link>
+        <EditEventButton event={e} />
+      </div>
 
       {/* Hero */}
       <div className="glass-card rounded-2xl overflow-hidden border border-white/5">
