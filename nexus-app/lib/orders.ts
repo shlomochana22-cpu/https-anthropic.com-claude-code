@@ -43,9 +43,20 @@ export async function getMyTickets(): Promise<MyTicket[]> {
   });
 }
 
-export type CreatedOrder = { orderId: string; demo: boolean };
+export type CreatedOrder = { orderId: string; demo: boolean; error?: string };
 export type Buyer = { name?: string; phone?: string; email?: string };
 export type Participant = { name: string; dob?: string; gender?: string; idnum?: string; phone?: string; email?: string; instagram?: string };
+
+/** RFC4122 v4 id, generated client-side so we never need INSERT ... RETURNING. */
+function uuid(): string {
+  const c = globalThis.crypto;
+  if (c?.randomUUID) return c.randomUUID();
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (ch) => {
+    const r = (Math.random() * 16) | 0;
+    const v = ch === "x" ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
 
 /**
  * Creates an order + one ticket row per seat (for a signed-in user or a guest).
@@ -68,11 +79,14 @@ export async function createOrder(
   const userId = (await sb.auth.getUser()).data.user?.id ?? null;
 
   const fee = 15;
-  // Core columns exist since the initial schema; buyer_* / participants arrive
-  // in later migrations (0011/0012). Insert the full row first, but if one of
-  // those columns is missing on this DB, degrade gracefully so the SALE STILL
-  // PERSISTS (and the producer sees it) instead of silently returning a demo id.
+  // We generate the order id ourselves and DON'T use `.select()` (INSERT ...
+  // RETURNING). A guest row (user_id null) isn't readable under the owner-only
+  // SELECT RLS, so RETURNING would fail with 42501 and block the whole insert —
+  // even though the INSERT itself is allowed. Supplying the id avoids the
+  // read-back entirely and keeps guest orders private.
+  const orderId = uuid();
   const core = {
+    id: orderId,
     user_id: userId,
     event_id: eventId,
     subtotal,
@@ -84,26 +98,30 @@ export async function createOrder(
     buyer_phone: buyer?.phone?.trim() || null,
     buyer_email: buyer?.email?.trim() || null,
   };
+  // Insert the full row first, but if buyer_*/participants columns are missing
+  // on this DB, degrade gracefully so the SALE STILL PERSISTS for the producer.
   const attempts = [
     { ...core, ...buyerFields, participants: (participants ?? []).filter((p) => p.name?.trim()) },
     { ...core, ...buyerFields },
     core,
   ];
 
-  let order: { id: string } | null = null;
+  let persisted = false;
+  let lastError: string | undefined;
   for (const payload of attempts) {
-    const { data, error } = await sb.from("orders").insert(payload).select("id").single();
-    if (data) {
-      order = data as { id: string };
+    const { error } = await sb.from("orders").insert(payload);
+    if (!error) {
+      persisted = true;
       break;
     }
-    if (error) console.error("createOrder insert failed:", error.message);
+    lastError = error.message;
+    console.error("createOrder insert failed:", error.message);
     // Retry with fewer columns only on a schema/column mismatch; otherwise stop.
-    if (!error || !/column|schema cache|participants|buyer_/i.test(error.message)) break;
+    if (!/column|schema cache|participants|buyer_/i.test(error.message)) break;
   }
-  if (!order) return { orderId: demoId, demo: true };
+  if (!persisted) return { orderId: demoId, demo: true, error: lastError };
 
-  // Resolve tier ids and create one ticket per seat.
+  // Resolve tier ids and create one ticket per seat (no RETURNING needed).
   const { data: tiers } = await sb
     .from("ticket_tiers")
     .select("id, slug")
@@ -114,7 +132,7 @@ export async function createOrder(
     .filter((i) => i.qty > 0)
     .flatMap((i) =>
       Array.from({ length: i.qty }, () => ({
-        order_id: order.id,
+        order_id: orderId,
         event_id: eventId,
         tier_id: bySlug.get(i.tierSlug) ?? null,
         user_id: userId,
@@ -122,5 +140,5 @@ export async function createOrder(
     );
   if (tickets.length) await sb.from("tickets").insert(tickets);
 
-  return { orderId: order.id, demo: false };
+  return { orderId, demo: false };
 }
