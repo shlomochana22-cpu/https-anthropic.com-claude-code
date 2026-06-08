@@ -4,15 +4,18 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Icon } from "./Icon";
 import { createOrder, type CartItem } from "@/lib/orders";
+import { bumpCouponUsage } from "@/lib/coupons";
 
 export function PayButton({
   eventId,
   items,
   subtotal,
+  coupon = null,
 }: {
   eventId: string;
   items: string;
   subtotal: number;
+  coupon?: { id: string; used: number } | null;
 }) {
   const router = useRouter();
   const [state, setState] = useState<"idle" | "processing">("idle");
@@ -27,6 +30,7 @@ export function PayButton({
         return { tierSlug, qty: Number(qty) || 0 };
       });
     const { orderId } = await createOrder(eventId, cart, subtotal);
+    if (coupon) await bumpCouponUsage(coupon.id, coupon.used + 1);
     router.push(`/confirmation?event=${eventId}&order=${orderId}`);
   };
 

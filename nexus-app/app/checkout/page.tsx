@@ -1,7 +1,6 @@
 import { Header } from "@/components/Header";
-import { PayButton } from "@/components/PayButton";
+import { CheckoutSummary } from "@/components/CheckoutSummary";
 import { Countdown } from "@/components/Countdown";
-import { Icon } from "@/components/Icon";
 import { getEventById } from "@/lib/queries";
 
 export default async function CheckoutPage({
@@ -13,7 +12,6 @@ export default async function CheckoutPage({
   const subtotal = Number(searchParams.total ?? 0);
   const items = searchParams.items ?? "";
   const fee = 15;
-  const total = subtotal + fee;
 
   return (
     <>
@@ -35,35 +33,8 @@ export default async function CheckoutPage({
           </div>
         )}
 
-        <div className="glass-card p-6 rounded-2xl space-y-4 mb-md">
-          <div className="flex justify-between text-label-md text-on-surface-variant">
-            <span>סיכום ביניים</span>
-            <span>₪{subtotal}</span>
-          </div>
-          <div className="flex justify-between text-label-md text-on-surface-variant">
-            <span>דמי טיפול ואבטחה</span>
-            <span>₪{fee}</span>
-          </div>
-          <div className="h-px bg-white/10" />
-          <div className="flex justify-between items-center">
-            <span className="text-headline-md text-white">סה"כ לתשלום</span>
-            <span className="text-headline-md text-primary-fixed neon-text">₪{total}</span>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-3 p-4 bg-primary-fixed/5 rounded-xl border border-primary-fixed/20">
-          <Icon name="bolt" className="text-primary-fixed" />
-          <p className="text-label-sm text-on-surface-variant">
-            ברכישה זו תצברו <span className="text-primary-fixed font-bold">{Math.max(1, Math.round(total / 7))} נקודות NEXUS</span> להטבות עתידיות.
-          </p>
-        </div>
+        <CheckoutSummary eventId={event?.id ?? ""} subtotal={subtotal} fee={fee} items={items} />
       </main>
-
-      <div className="fixed bottom-0 left-0 w-full p-margin-mobile bg-gradient-to-t from-background via-background/95 to-transparent pt-8">
-        <div className="max-w-md mx-auto">
-          <PayButton eventId={event?.id ?? ""} items={items} subtotal={subtotal} />
-        </div>
-      </div>
     </>
   );
 }
