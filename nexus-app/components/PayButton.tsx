@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Icon } from "./Icon";
-import { createOrder, type CartItem } from "@/lib/orders";
+import { createOrder, type CartItem, type Buyer } from "@/lib/orders";
 import { bumpCouponUsage } from "@/lib/coupons";
 
 export function PayButton({
@@ -11,11 +11,15 @@ export function PayButton({
   items,
   subtotal,
   coupon = null,
+  buyer,
+  disabled = false,
 }: {
   eventId: string;
   items: string;
   subtotal: number;
   coupon?: { id: string; used: number } | null;
+  buyer?: Buyer;
+  disabled?: boolean;
 }) {
   const router = useRouter();
   const [state, setState] = useState<"idle" | "processing">("idle");
@@ -29,7 +33,7 @@ export function PayButton({
         const [tierSlug, qty] = p.split(":");
         return { tierSlug, qty: Number(qty) || 0 };
       });
-    const { orderId } = await createOrder(eventId, cart, subtotal);
+    const { orderId } = await createOrder(eventId, cart, subtotal, buyer);
     if (coupon) await bumpCouponUsage(coupon.id, coupon.used + 1);
     router.push(`/confirmation?event=${eventId}&order=${orderId}`);
   };
@@ -37,8 +41,8 @@ export function PayButton({
   return (
     <button
       onClick={pay}
-      disabled={state === "processing"}
-      className="w-full h-16 bg-primary-fixed text-on-primary-fixed text-headline-md font-bold rounded-xl flex items-center justify-center gap-3 active:scale-95 transition-all shadow-[0_0_30px_rgba(191,245,32,0.4)] disabled:opacity-70"
+      disabled={state === "processing" || disabled}
+      className="w-full h-16 bg-primary-fixed text-on-primary-fixed text-headline-md font-bold rounded-xl flex items-center justify-center gap-3 active:scale-95 transition-all shadow-[0_0_30px_rgba(191,245,32,0.4)] disabled:opacity-50"
     >
       {state === "processing" ? (
         <>

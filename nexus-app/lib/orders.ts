@@ -44,16 +44,18 @@ export async function getMyTickets(): Promise<MyTicket[]> {
 }
 
 export type CreatedOrder = { orderId: string; demo: boolean };
+export type Buyer = { name?: string; phone?: string; email?: string };
 
 /**
- * Creates an order + one ticket row per seat for the signed-in user.
- * Falls back to a demo order id when Supabase/auth is unavailable, so the
- * checkout flow always completes.
+ * Creates an order + one ticket row per seat (for a signed-in user or a guest).
+ * Buyer contact details are stored so the producer's customer DB is populated.
+ * Falls back to a demo order id when Supabase is unavailable.
  */
 export async function createOrder(
   eventId: string,
   items: CartItem[],
-  subtotal: number
+  subtotal: number,
+  buyer?: Buyer
 ): Promise<CreatedOrder> {
   const sb = browserSupabase();
   const demoId = `NX-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
@@ -66,7 +68,16 @@ export async function createOrder(
   const fee = 15;
   const { data: order, error } = await sb
     .from("orders")
-    .insert({ user_id: userId, event_id: eventId, subtotal, fee, total: subtotal + fee })
+    .insert({
+      user_id: userId,
+      event_id: eventId,
+      subtotal,
+      fee,
+      total: subtotal + fee,
+      buyer_name: buyer?.name?.trim() || null,
+      buyer_phone: buyer?.phone?.trim() || null,
+      buyer_email: buyer?.email?.trim() || null,
+    })
     .select("id")
     .single();
   if (error || !order) return { orderId: demoId, demo: true };

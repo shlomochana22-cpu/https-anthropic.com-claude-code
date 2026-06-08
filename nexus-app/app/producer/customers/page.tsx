@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Icon } from "@/components/Icon";
+import { getBuyers } from "@/lib/buyers";
 
-type Customer = { name: string; age: number | string; gender: string; birth: string; last: string; status: string; tone: string };
+type Customer = { name: string; age: number | string; gender: string; birth: string; last: string; status: string; tone: string; phone?: string };
 
 const seed: Customer[] = [
   { name: "נירה שמואלי", age: 28, gender: "נקבה", birth: "15/08/1995", last: "12/05/2024", status: "פעיל מאוד", tone: "primary" },
@@ -47,6 +48,14 @@ function daysToBirthday(birth: string): number | null {
 export default function CustomersPage() {
   const [query, setQuery] = useState("");
   const [imported, setImported] = useState<Customer[]>([]);
+  const [buyers, setBuyers] = useState<Customer[]>([]);
+
+  // Real paying customers (incl. guests) flow in from orders.
+  useEffect(() => {
+    getBuyers().then((rows) =>
+      setBuyers(rows.map((b) => ({ name: b.name, age: "—", gender: "—", birth: "—", last: "—", status: "רכש כרטיס", tone: "cyan", phone: b.phone || undefined })))
+    );
+  }, []);
 
   // Filters
   const [gender, setGender] = useState<"all" | "נקבה" | "זכר">("all");
@@ -57,7 +66,7 @@ export default function CustomersPage() {
   const [bdayFrom, setBdayFrom] = useState(0);
   const [bdayTo, setBdayTo] = useState(14);
 
-  const all = useMemo(() => [...imported, ...seed], [imported]);
+  const all = useMemo(() => [...buyers, ...imported, ...seed], [buyers, imported]);
   const filtered = useMemo(
     () =>
       all.filter((r) => {
@@ -88,8 +97,8 @@ export default function CustomersPage() {
   const [aiSource, setAiSource] = useState<"ai" | "local" | null>(null);
 
   const exportCsv = () => {
-    const header = ["שם", "גיל", "מגדר", "תאריך לידה", "אירוע אחרון", "סטטוס"];
-    const lines = [header, ...filtered.map((r) => [r.name, r.age, r.gender, r.birth, r.last, r.status])];
+    const header = ["שם", "טלפון", "גיל", "מגדר", "תאריך לידה", "אירוע אחרון", "סטטוס"];
+    const lines = [header, ...filtered.map((r) => [r.name, r.phone ?? "", r.age, r.gender, r.birth, r.last, r.status])];
     const csv = "﻿" + lines.map((l) => l.join(",")).join("\n");
     const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8;" }));
     const a = document.createElement("a");
@@ -160,7 +169,7 @@ export default function CustomersPage() {
         </div>
         <div className="glass-card rounded-2xl p-md flex flex-col items-center justify-center border-primary-fixed/20">
           <span className="text-on-surface-variant text-sm mb-1">סה"כ לקוחות</span>
-          <span className="text-4xl font-extrabold text-primary-fixed neon-glow">{(12482 + imported.length).toLocaleString()}</span>
+          <span className="text-4xl font-extrabold text-primary-fixed neon-glow">{(12482 + imported.length + buyers.length).toLocaleString()}</span>
         </div>
       </div>
 
@@ -234,7 +243,7 @@ export default function CustomersPage() {
             <tbody className="divide-y divide-white/5">
               {filtered.map((r, i) => (
                 <tr key={`${r.name}-${i}`} className="hover:bg-white/5 transition-colors group">
-                  <td className="px-md py-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center text-on-surface-variant border border-white/10"><Icon name="person" /></div><span className="font-bold text-on-surface">{r.name}</span></div></td>
+                  <td className="px-md py-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center text-on-surface-variant border border-white/10"><Icon name="person" /></div><div><span className="font-bold text-on-surface block">{r.name}</span>{r.phone && <span className="text-[11px] text-on-surface-variant font-mono" dir="ltr">{r.phone}</span>}</div></div></td>
                   <td className="px-md py-4 text-on-surface-variant">{r.age}</td>
                   <td className="px-md py-4 text-on-surface-variant">{r.gender}</td>
                   <td className="px-md py-4 text-on-surface-variant">{r.birth}</td>

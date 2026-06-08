@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Icon } from "./Icon";
 import { PayButton } from "./PayButton";
+import { PhoneInput } from "./PhoneInput";
 import { validateCoupon } from "@/lib/coupons";
 
 export function CheckoutSummary({ eventId, subtotal, fee, items }: { eventId: string; subtotal: number; fee: number; items: string }) {
@@ -10,6 +11,11 @@ export function CheckoutSummary({ eventId, subtotal, fee, items }: { eventId: st
   const [applied, setApplied] = useState<{ id: string; used: number; discount: number; label: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [checking, setChecking] = useState(false);
+
+  // Buyer details — flow into the producer's customer database.
+  const [buyerName, setBuyerName] = useState("");
+  const [buyerPhone, setBuyerPhone] = useState("");
+  const canPay = buyerName.trim().length > 1 && buyerPhone.trim().length > 0;
 
   const discount = applied?.discount ?? 0;
   const total = Math.max(0, subtotal + fee - discount);
@@ -70,6 +76,14 @@ export function CheckoutSummary({ eventId, subtotal, fee, items }: { eventId: st
         )}
       </div>
 
+      {/* Buyer details */}
+      <div className="glass-card p-md rounded-2xl mb-md space-y-3">
+        <h3 className="text-label-md text-primary-fixed uppercase tracking-wider flex items-center gap-1.5"><Icon name="person" className="text-[16px]" /> פרטי הרוכש</h3>
+        <input value={buyerName} onChange={(e) => setBuyerName(e.target.value)} placeholder="שם מלא" className="w-full bg-surface-container-low border border-white/10 rounded-lg px-3 py-2.5 text-on-surface focus:border-primary-fixed outline-none" />
+        <PhoneInput value={buyerPhone} onChange={setBuyerPhone} />
+        <p className="text-[10px] text-on-surface-variant/60">הפרטים משמשים להנפקת הכרטיס ולעדכונים על האירוע.</p>
+      </div>
+
       {/* Points */}
       <div className="flex items-center gap-3 p-4 bg-primary-fixed/5 rounded-xl border border-primary-fixed/20">
         <Icon name="bolt" className="text-primary-fixed" />
@@ -81,7 +95,15 @@ export function CheckoutSummary({ eventId, subtotal, fee, items }: { eventId: st
       {/* Sticky pay bar */}
       <div className="fixed bottom-0 left-0 w-full p-margin-mobile bg-gradient-to-t from-background via-background/95 to-transparent pt-8">
         <div className="max-w-md mx-auto">
-          <PayButton eventId={eventId} items={items} subtotal={subtotal - discount} coupon={applied ? { id: applied.id, used: applied.used } : null} />
+          {!canPay && <p className="text-center text-label-sm text-on-surface-variant mb-2">מלאו שם וטלפון להמשך</p>}
+          <PayButton
+            eventId={eventId}
+            items={items}
+            subtotal={subtotal - discount}
+            coupon={applied ? { id: applied.id, used: applied.used } : null}
+            buyer={{ name: buyerName, phone: buyerPhone }}
+            disabled={!canPay}
+          />
         </div>
       </div>
     </>
