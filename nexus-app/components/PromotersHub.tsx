@@ -21,9 +21,9 @@ const initialTeam: Promoter[] = [
 ];
 
 const podium = [
-  { rank: 2, name: "עידן כהן", amount: "₪12,450", h: "h-32", color: "border-on-tertiary-container" },
-  { rank: 1, name: "נועה ארגמן", amount: "₪28,900", h: "h-44", color: "border-primary-fixed-dim", big: true },
-  { rank: 3, name: "רועי לוי", amount: "₪9,120", h: "h-24", color: "border-secondary-fixed-dim" },
+  { rank: 2, name: "עידן כהן", amount: "₪12,450", tickets: 112, h: "h-24", color: "border-on-tertiary-container", fill: "bg-on-tertiary-container/25" },
+  { rank: 1, name: "נועה ארגמן", amount: "₪28,900", tickets: 248, h: "h-32", color: "border-primary-fixed-dim", fill: "bg-primary-fixed-dim/25", big: true },
+  { rank: 3, name: "רועי לוי", amount: "₪9,120", tickets: 84, h: "h-20", color: "border-secondary-fixed-dim", fill: "bg-secondary-fixed-dim/25" },
 ];
 const ranking = [
   { rank: 4, name: "מאיה גרין", tickets: 142, amount: "₪7,400" },
@@ -369,13 +369,16 @@ export function PromotersHub({ events, initialTab = "overview" }: { events: Nexu
       {tab === "leaderboard" && (
         <section className="space-y-lg">
           <div>
-            <div className="flex items-end justify-between gap-2 mb-8">
+            <div className="flex items-end justify-between gap-2 mb-6">
               {podium.map((p) => (
                 <div key={p.rank} className={`flex flex-col items-center ${p.big ? "flex-[1.2] -mb-2" : "flex-1"}`}>
-                  <div className={`relative mb-3 rounded-full overflow-hidden border-2 ${p.color} ${p.big ? "w-20 h-20" : "w-16 h-16"} bg-surface-container-highest`}><div className="w-full h-full flex items-center justify-center text-on-surface-variant"><Icon name="person" /></div></div>
-                  <span className={`text-label-md mb-1 truncate w-full text-center ${p.big ? "text-primary-fixed-dim font-bold" : "text-white"}`}>{p.name}</span>
-                  <span className="text-label-sm text-on-surface-variant mb-4">{p.amount}</span>
-                  <div className={`w-full ${p.h} glass-card rounded-t-xl border-t-2 ${p.color}`} />
+                  <div className={`relative mb-2 rounded-full overflow-hidden border-2 ${p.color} ${p.big ? "w-16 h-16" : "w-14 h-14"} bg-surface-container-highest`}><div className="w-full h-full flex items-center justify-center text-on-surface-variant"><Icon name="person" /></div></div>
+                  <span className={`text-label-md truncate w-full text-center ${p.big ? "text-primary-fixed-dim font-bold" : "text-white"}`}>{p.name}</span>
+                  <span className="text-label-sm text-on-surface-variant mb-2">{p.amount} · {p.tickets} כרט׳</span>
+                  <div className={`w-full ${p.h} rounded-t-xl border-t-2 ${p.color} ${p.fill} flex flex-col items-center justify-start pt-2 gap-0.5`}>
+                    <span className="text-[12px] font-bold text-white">#{p.rank}</span>
+                    <span className="text-[10px] text-on-surface-variant">{p.tickets} כרטיסים</span>
+                  </div>
                 </div>
               ))}
             </div>
