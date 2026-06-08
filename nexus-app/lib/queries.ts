@@ -110,3 +110,26 @@ export async function getGuests(): Promise<DBGuest[]> {
   if (error || !data) return [];
   return data as DBGuest[];
 }
+
+export type DBCoupon = {
+  id: string;
+  code: string;
+  kind: string;
+  amount: number;
+  cap: number | null;
+  used: number;
+  expires: string | null;
+  active: boolean;
+};
+
+/** Producer discount coupons. Empty when no DB (page falls back to demo seed). */
+export async function getCoupons(): Promise<DBCoupon[]> {
+  const sb = getSupabase();
+  if (!sb) return [];
+  const { data, error } = await sb
+    .from("coupons")
+    .select("id,code,kind,amount,cap,used,expires,active")
+    .order("created_at", { ascending: false });
+  if (error || !data) return [];
+  return data as DBCoupon[];
+}
