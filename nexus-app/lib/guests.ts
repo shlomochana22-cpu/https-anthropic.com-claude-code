@@ -22,6 +22,7 @@ export async function addGuest(input: {
   eventId: string;
   firstName: string;
   lastName: string;
+  phone?: string;
   dob?: string;
   gender?: string;
   entryType: InviteType;
@@ -33,6 +34,7 @@ export async function addGuest(input: {
     event_id: input.eventId,
     first_name: input.firstName,
     last_name: input.lastName,
+    phone: input.phone || null,
     dob: input.dob || null,
     gender: input.gender || null,
     entry_type: input.entryType,
@@ -45,7 +47,7 @@ export async function addGuest(input: {
 /** Customer: redeem a one-time invite link. Atomic & single-use server-side. */
 export async function redeemInvite(
   token: string,
-  input: { firstName: string; lastName: string; dob?: string; gender?: string }
+  input: { firstName: string; lastName: string; phone?: string; dob?: string; gender?: string }
 ): Promise<{ ok: boolean; code?: string; message?: string }> {
   const sb = browserSupabase();
   if (!sb) return { ok: true, code: randomCode() }; // demo mode (no DB configured)
@@ -53,6 +55,7 @@ export async function redeemInvite(
     p_token: token,
     p_first: input.firstName,
     p_last: input.lastName,
+    p_phone: input.phone || null,
     p_dob: input.dob || null,
     p_gender: input.gender || null,
   });

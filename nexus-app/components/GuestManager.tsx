@@ -33,7 +33,7 @@ function dbGuestToDisplay(g: DBGuest): Guest {
   return {
     initial: name[0] || "?",
     name,
-    phone: `${g.gender ?? ""}${g.dob ? " • " + g.dob : ""} · ${entry}${g.qty > 1 ? ` ×${g.qty}` : ""} · ${g.source === "link" ? "לינק" : "ידני"}`,
+    phone: `${g.phone ? g.phone + " • " : ""}${g.gender ?? ""}${g.dob ? " • " + g.dob : ""} · ${entry}${g.qty > 1 ? ` ×${g.qty}` : ""} · ${g.source === "link" ? "לינק" : "ידני"}`,
     status: g.status === "scanned" ? "Scanned" : g.entry_type === "free" ? "חינם" : "מוזל",
     tone: g.status === "scanned" ? "cyan" : g.entry_type === "free" ? "primary" : "cyan",
   };
@@ -56,6 +56,7 @@ export function GuestManager({ events, dbGuests = [] }: { events: NexusEvent[]; 
   const [mode, setMode] = useState<"manual" | "link">("manual");
   const [first, setFirst] = useState("");
   const [last, setLast] = useState("");
+  const [phone, setPhone] = useState("");
   const [dob, setDob] = useState("");
   const [gender, setGender] = useState("נקבה");
   const [entryType, setEntryType] = useState<"free" | "discount">("free");
@@ -78,7 +79,7 @@ export function GuestManager({ events, dbGuests = [] }: { events: NexusEvent[]; 
     { label: "ממתינים", value: String(guests.filter((g) => g.status === "Pending").length), tone: "text-error" },
   ], [guests]);
 
-  const openModal = () => { setModal(true); setMode("manual"); setFirst(""); setLast(""); setDob(""); setGender("נקבה"); setEntryType("free"); setQty(1); setGenerated(""); };
+  const openModal = () => { setModal(true); setMode("manual"); setFirst(""); setLast(""); setPhone(""); setDob(""); setGender("נקבה"); setEntryType("free"); setQty(1); setGenerated(""); };
 
   const addManual = () => {
     if (!first.trim() || !last.trim()) return;
@@ -87,13 +88,13 @@ export function GuestManager({ events, dbGuests = [] }: { events: NexusEvent[]; 
     const g: Guest = {
       initial: name[0],
       name,
-      phone: `${gender}${dob ? " • " + dob : ""} · ${entry}${qty > 1 ? ` ×${qty}` : ""}`,
+      phone: `${phone.trim() ? phone.trim() + " • " : ""}${gender}${dob ? " • " + dob : ""} · ${entry}${qty > 1 ? ` ×${qty}` : ""}`,
       status: entryType === "free" ? "חינם" : "מוזל",
       tone: entryType === "free" ? "primary" : "cyan",
     };
     setAdded((a) => ({ ...a, [activeId]: [g, ...(a[activeId] || [])] }));
     // persist (no-op in demo / when DB isn't configured)
-    void addGuest({ eventId: activeId, firstName: first.trim(), lastName: last.trim(), dob, gender, entryType, qty });
+    void addGuest({ eventId: activeId, firstName: first.trim(), lastName: last.trim(), phone: phone.trim(), dob, gender, entryType, qty });
     setModal(false);
   };
 
@@ -220,6 +221,7 @@ export function GuestManager({ events, dbGuests = [] }: { events: NexusEvent[]; 
                   <input value={first} onChange={(e) => setFirst(e.target.value)} placeholder="שם פרטי" className="bg-surface-container-low border border-white/10 rounded-lg px-3 py-2.5 text-on-surface focus:border-primary-fixed outline-none" />
                   <input value={last} onChange={(e) => setLast(e.target.value)} placeholder="שם משפחה" className="bg-surface-container-low border border-white/10 rounded-lg px-3 py-2.5 text-on-surface focus:border-primary-fixed outline-none" />
                 </div>
+                <input value={phone} onChange={(e) => setPhone(e.target.value)} type="tel" inputMode="tel" placeholder="מספר טלפון" className="w-full bg-surface-container-low border border-white/10 rounded-lg px-3 py-2.5 text-on-surface focus:border-primary-fixed outline-none" dir="ltr" />
                 <div>
                   <label className="text-label-sm text-on-surface-variant block mb-1">תאריך לידה</label>
                   <input value={dob} onChange={(e) => setDob(e.target.value)} type="date" className="w-full bg-surface-container-low border border-white/10 rounded-lg px-3 py-2.5 text-on-surface focus:border-primary-fixed outline-none [color-scheme:dark]" />

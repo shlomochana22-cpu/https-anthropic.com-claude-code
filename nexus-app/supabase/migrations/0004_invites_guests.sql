@@ -27,6 +27,7 @@ create table if not exists public.guests (
   invite_token text references public.invites(token),
   first_name   text not null,
   last_name    text not null,
+  phone        text,
   dob          date,
   gender       text,
   entry_type   text not null default 'free' check (entry_type in ('free','discount')),

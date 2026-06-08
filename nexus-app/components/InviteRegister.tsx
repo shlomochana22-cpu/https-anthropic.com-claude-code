@@ -13,6 +13,7 @@ import { redeemInvite } from "@/lib/guests";
 export function InviteRegister({ token, eventTitle, qty, type }: { token: string; eventTitle: string; qty: number; type: "free" | "discount" }) {
   const [first, setFirst] = useState("");
   const [last, setLast] = useState("");
+  const [phone, setPhone] = useState("");
   const [dob, setDob] = useState("");
   const [gender, setGender] = useState("נקבה");
   const [done, setDone] = useState(false);
@@ -24,7 +25,7 @@ export function InviteRegister({ token, eventTitle, qty, type }: { token: string
     if (!first.trim() || !last.trim()) return;
     setBusy(true);
     setError(null);
-    const res = await redeemInvite(token, { firstName: first.trim(), lastName: last.trim(), dob, gender });
+    const res = await redeemInvite(token, { firstName: first.trim(), lastName: last.trim(), phone: phone.trim(), dob, gender });
     setBusy(false);
     if (res.ok) {
       setCode(res.code || `NX-${Math.random().toString(36).slice(2, 6).toUpperCase()}`);
@@ -76,6 +77,7 @@ export function InviteRegister({ token, eventTitle, qty, type }: { token: string
           <input value={first} onChange={(e) => setFirst(e.target.value)} placeholder="שם פרטי" className="bg-surface-container-low border border-white/10 rounded-lg px-4 py-3 text-on-surface focus:border-primary-fixed outline-none" />
           <input value={last} onChange={(e) => setLast(e.target.value)} placeholder="שם משפחה" className="bg-surface-container-low border border-white/10 rounded-lg px-4 py-3 text-on-surface focus:border-primary-fixed outline-none" />
         </div>
+        <input value={phone} onChange={(e) => setPhone(e.target.value)} type="tel" inputMode="tel" placeholder="מספר טלפון" className="w-full bg-surface-container-low border border-white/10 rounded-lg px-4 py-3 text-on-surface focus:border-primary-fixed outline-none" dir="ltr" />
         <div>
           <label className="text-label-sm text-on-surface-variant block mb-1">תאריך לידה</label>
           <input value={dob} onChange={(e) => setDob(e.target.value)} type="date" className="w-full bg-surface-container-low border border-white/10 rounded-lg px-4 py-3 text-on-surface focus:border-primary-fixed outline-none [color-scheme:dark]" />
