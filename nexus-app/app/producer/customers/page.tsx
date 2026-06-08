@@ -31,11 +31,52 @@ function parseTable(text: string): { headers: string[]; rows: string[][] } | nul
   return { headers: cells[0], rows: cells.slice(1) };
 }
 
+// Days until a customer's next birthday from a "DD/MM/YYYY" (or .,- separated) string.
+function daysToBirthday(birth: string): number | null {
+  const m = birth.match(/(\d{1,2})[./-](\d{1,2})/);
+  if (!m) return null;
+  const day = Number(m[1]);
+  const mon = Number(m[2]) - 1;
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  let next = new Date(now.getFullYear(), mon, day);
+  if (next < today) next = new Date(now.getFullYear() + 1, mon, day);
+  return Math.round((next.getTime() - today.getTime()) / 86400000);
+}
+
 export default function CustomersPage() {
   const [query, setQuery] = useState("");
   const [imported, setImported] = useState<Customer[]>([]);
+
+  // Filters
+  const [gender, setGender] = useState<"all" | "נקבה" | "זכר">("all");
+  const [ageAll, setAgeAll] = useState(true);
+  const [ageMin, setAgeMin] = useState(18);
+  const [ageMax, setAgeMax] = useState(60);
+  const [bdayOn, setBdayOn] = useState(false);
+  const [bdayFrom, setBdayFrom] = useState(0);
+  const [bdayTo, setBdayTo] = useState(14);
+
   const all = useMemo(() => [...imported, ...seed], [imported]);
-  const filtered = useMemo(() => all.filter((r) => r.name.includes(query) || r.status.includes(query)), [all, query]);
+  const filtered = useMemo(
+    () =>
+      all.filter((r) => {
+        if (query && !(r.name.includes(query) || r.status.includes(query))) return false;
+        if (gender !== "all" && r.gender !== gender) return false;
+        if (!ageAll) {
+          const age = Number(r.age);
+          if (!Number.isFinite(age) || age < ageMin || age > ageMax) return false;
+        }
+        if (bdayOn) {
+          const d = daysToBirthday(r.birth);
+          if (d == null || d < bdayFrom || d > bdayTo) return false;
+        }
+        return true;
+      }),
+    [all, query, gender, ageAll, ageMin, ageMax, bdayOn, bdayFrom, bdayTo]
+  );
+  const clearFilters = () => { setGender("all"); setAgeAll(true); setBdayOn(false); setQuery(""); };
+  const filtersActive = gender !== "all" || !ageAll || bdayOn || !!query;
 
   // Import flow
   const [open, setOpen] = useState(false);
@@ -120,6 +161,65 @@ export default function CustomersPage() {
         <div className="glass-card rounded-2xl p-md flex flex-col items-center justify-center border-primary-fixed/20">
           <span className="text-on-surface-variant text-sm mb-1">סה"כ לקוחות</span>
           <span className="text-4xl font-extrabold text-primary-fixed neon-glow">{(12482 + imported.length).toLocaleString()}</span>
+        </div>
+      </div>
+
+      {/* Filters */}
+      <div className="glass-card rounded-2xl p-md mb-lg space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-label-md text-primary-fixed uppercase tracking-wider flex items-center gap-1.5"><Icon name="filter_list" className="text-[18px]" /> סינון</h3>
+          {filtersActive && <button onClick={clearFilters} className="text-label-sm text-on-surface-variant hover:text-error flex items-center gap-1"><Icon name="close" className="text-[15px]" /> נקה</button>}
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Gender */}
+          <div className="space-y-2">
+            <p className="text-label-sm text-on-surface-variant flex items-center gap-1.5"><Icon name="wc" className="text-[16px]" /> מגדר</p>
+            <div className="flex gap-2">
+              {([{ k: "all", l: "הכל" }, { k: "נקבה", l: "נשים" }, { k: "זכר", l: "גברים" }] as const).map((g) => (
+                <button key={g.k} onClick={() => setGender(g.k)} className={`flex-1 py-2 rounded-lg border text-label-sm transition-all ${gender === g.k ? "border-primary-fixed bg-primary-container/15 text-primary-fixed font-bold" : "border-white/10 bg-white/5 text-on-surface-variant hover:border-primary-fixed/40"}`}>{g.l}</button>
+              ))}
+            </div>
+          </div>
+
+          {/* Age range */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <p className="text-label-sm text-on-surface-variant flex items-center gap-1.5"><Icon name="cake" className="text-[16px]" /> טווח גילאים</p>
+              <label className="flex items-center gap-1.5 cursor-pointer">
+                <span className="text-label-sm text-on-surface-variant">הכל</span>
+                <button onClick={() => setAgeAll((v) => !v)} className={`w-9 h-5 rounded-full relative shrink-0 transition-colors ${ageAll ? "bg-primary-fixed" : "bg-surface-container-highest"}`} aria-label="כל הגילאים"><span className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition-all ${ageAll ? "right-0.5" : "right-[18px]"}`} /></button>
+              </label>
+            </div>
+            <div className={`flex items-center gap-2 ${ageAll ? "opacity-40 pointer-events-none" : ""}`}>
+              <span className="text-label-sm text-on-surface-variant">מגיל</span>
+              <input type="number" min={0} max={120} value={ageMin} onChange={(e) => setAgeMin(Number(e.target.value))} className="w-14 bg-surface-container-low border border-white/10 rounded-lg p-2 text-center text-primary focus:border-primary-fixed outline-none" />
+              <span className="text-on-surface-variant">—</span>
+              <span className="text-label-sm text-on-surface-variant">עד</span>
+              <input type="number" min={0} max={120} value={ageMax} onChange={(e) => setAgeMax(Number(e.target.value))} className="w-14 bg-surface-container-low border border-white/10 rounded-lg p-2 text-center text-primary focus:border-primary-fixed outline-none" />
+            </div>
+          </div>
+
+          {/* Upcoming birthday */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <p className="text-label-sm text-on-surface-variant flex items-center gap-1.5"><Icon name="celebration" className="text-[16px]" /> יום הולדת קרוב</p>
+              <button onClick={() => setBdayOn((v) => !v)} className={`w-9 h-5 rounded-full relative shrink-0 transition-colors ${bdayOn ? "bg-primary-fixed" : "bg-surface-container-highest"}`} aria-label="יום הולדת קרוב"><span className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition-all ${bdayOn ? "right-0.5" : "right-[18px]"}`} /></button>
+            </div>
+            <div className={`flex items-center gap-2 ${bdayOn ? "" : "opacity-40 pointer-events-none"}`}>
+              <span className="text-label-sm text-on-surface-variant">מיום</span>
+              <input type="number" min={0} max={365} value={bdayFrom} onChange={(e) => setBdayFrom(Number(e.target.value))} className="w-14 bg-surface-container-low border border-white/10 rounded-lg p-2 text-center text-primary focus:border-primary-fixed outline-none" />
+              <span className="text-on-surface-variant">—</span>
+              <span className="text-label-sm text-on-surface-variant">עד</span>
+              <input type="number" min={0} max={365} value={bdayTo} onChange={(e) => setBdayTo(Number(e.target.value))} className="w-14 bg-surface-container-low border border-white/10 rounded-lg p-2 text-center text-primary focus:border-primary-fixed outline-none" />
+              <span className="text-label-sm text-on-surface-variant">ימים</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between pt-1 border-t border-white/5">
+          <span className="text-label-sm text-on-surface-variant">{filtered.length.toLocaleString()} לקוחות תואמים</span>
+          <button onClick={exportCsv} className="flex items-center gap-1.5 text-label-sm text-primary-fixed hover:underline"><Icon name="download" className="text-[16px]" /> ייצוא התוצאות לאקסל</button>
         </div>
       </div>
 
