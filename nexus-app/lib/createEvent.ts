@@ -18,7 +18,7 @@ export type NewEventInput = {
   tiers: NewTier[];
 };
 
-export type CreateResult = { id: string; demo: boolean };
+export type CreateResult = { id: string; demo: boolean; error?: string };
 
 // Fallback covers (until real image upload via Storage) so created events
 // never render a broken image in the feed.
@@ -46,7 +46,8 @@ export async function createEvent(input: NewEventInput): Promise<CreateResult> {
   const sb = browserSupabase();
   if (!sb) return { id, demo: true };
 
-  const fromPrice = Math.min(...input.tiers.map((t) => t.price).filter((n) => n > 0), 0) || input.tiers[0]?.price || 0;
+  const prices = input.tiers.map((t) => t.price).filter((n) => n > 0);
+  const fromPrice = prices.length ? Math.min(...prices) : input.tiers[0]?.price || 0;
 
   const { error } = await sb.from("events").insert({
     id,
@@ -64,7 +65,8 @@ export async function createEvent(input: NewEventInput): Promise<CreateResult> {
     age: input.age ?? null,
     age_visible: input.ageVisible ?? true,
   });
-  if (error) return { id, demo: true };
+  // Real failure (e.g. missing INSERT policy / columns) — surface it, don't fake success.
+  if (error) return { id, demo: false, error: error.message };
 
   const tierRows = input.tiers
     .filter((t) => t.name && t.price > 0)
@@ -79,7 +81,10 @@ export async function createEvent(input: NewEventInput): Promise<CreateResult> {
       sort_order: i,
       benefits: t.benefits ?? [],
     }));
-  if (tierRows.length) await sb.from("ticket_tiers").insert(tierRows);
+  if (tierRows.length) {
+    const { error: tierError } = await sb.from("ticket_tiers").insert(tierRows);
+    if (tierError) return { id, demo: false, error: tierError.message };
+  }
 
   return { id, demo: false };
 }

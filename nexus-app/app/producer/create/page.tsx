@@ -150,6 +150,7 @@ export default function CreateEventPage() {
   const router = useRouter();
   const [step, setStep] = useState(0);
   const [saving, setSaving] = useState(false);
+  const [publishError, setPublishError] = useState<string | null>(null);
 
   // step 1
   const [title, setTitle] = useState("");
@@ -282,7 +283,8 @@ export default function CreateEventPage() {
     if (step < 2) { setStep(step + 1); scrollTop(); return; }
     if (!terms) return;
     setSaving(true);
-    const { id } = await createEvent({
+    setPublishError(null);
+    const { id, error } = await createEvent({
       title: title || "אירוע ללא שם",
       genre,
       city: city || location || "תל אביב",
@@ -303,12 +305,28 @@ export default function CreateEventPage() {
           : [],
       })),
     });
+    if (error) {
+      setSaving(false);
+      setPublishError(error);
+      scrollTop();
+      return;
+    }
     router.push(`/producer?created=${id}`);
   };
   const back = () => { if (step > 0) { setStep(step - 1); scrollTop(); } };
 
   return (
     <main className="pt-10 md:pt-12 pb-32 px-margin-mobile md:px-margin-desktop max-w-4xl">
+      {publishError && (
+        <div className="mb-md glass-card border border-error/40 rounded-xl p-4 flex items-start gap-3">
+          <Icon name="error" className="text-error mt-0.5" fill />
+          <div>
+            <p className="text-on-surface font-bold">הפרסום נכשל — האירוע לא נשמר</p>
+            <p className="text-on-surface-variant text-label-sm mt-1">{publishError}</p>
+            <p className="text-on-surface-variant/70 text-[11px] mt-1">אם זו שגיאת הרשאה/עמודה — יש להריץ את מיגרציית Supabase 0003 (ראה DEPLOY).</p>
+          </div>
+        </div>
+      )}
       {/* Progress */}
       <section className="mb-lg">
         <div className="flex justify-between items-end mb-2">
