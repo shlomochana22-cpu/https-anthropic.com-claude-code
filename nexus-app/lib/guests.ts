@@ -44,6 +44,20 @@ export async function addGuest(input: {
   return { demo: false, error: error?.message };
 }
 
+/** Producer: update a guest's status (DB enum is registered|scanned). */
+export async function updateGuestStatus(id: string, scanned: boolean): Promise<void> {
+  const sb = browserSupabase();
+  if (!sb) return;
+  await sb.from("guests").update({ status: scanned ? "scanned" : "registered" }).eq("id", id);
+}
+
+/** Producer: remove a guest. */
+export async function deleteGuest(id: string): Promise<void> {
+  const sb = browserSupabase();
+  if (!sb) return;
+  await sb.from("guests").delete().eq("id", id);
+}
+
 /** Customer: redeem a one-time invite link. Atomic & single-use server-side. */
 export async function redeemInvite(
   token: string,

@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { Icon } from "@/components/Icon";
 import type { NexusEvent } from "@/lib/events";
 import type { DBGuest } from "@/lib/queries";
-import { createInvite, addGuest } from "@/lib/guests";
+import { createInvite, addGuest, updateGuestStatus, deleteGuest } from "@/lib/guests";
 import { PhoneInput } from "@/components/PhoneInput";
 
 const NAMES = [
@@ -13,8 +13,13 @@ const NAMES = [
 ];
 const STATUSES = ["Approved", "Scanned", "Pending"] as const;
 const TONES: Record<string, string> = { Approved: "primary", Scanned: "cyan", Pending: "error" };
+const STATUS_CYCLE = [
+  { label: "מאושר", tone: "primary" },
+  { label: "נסרק", tone: "cyan" },
+  { label: "ממתין", tone: "error" },
+];
 
-type Guest = { initial: string; name: string; phone: string; status: string; tone: string };
+type Guest = { id: string; initial: string; name: string; phone: string; status: string; tone: string; tel?: string; code?: string; dbId?: string };
 
 function guestsFor(event: NexusEvent): Guest[] {
   const seed = event.id.length + Math.round(event.occupancy);
@@ -24,7 +29,7 @@ function guestsFor(event: NexusEvent): Guest[] {
     const status = STATUSES[(seed + i) % STATUSES.length];
     const tier = i % 4 === 0 ? "מוזמן VIP" : i % 3 === 0 ? "מוזמן הפקה" : "רשימה רגילה";
     const phone = `05${2 + (i % 6)}-${String(1000000 + ((seed * 7919 + i * 31) % 8999999)).slice(0, 7)}`;
-    return { initial: name[0], name, phone: `${phone} • ${tier}`, status, tone: TONES[status] };
+    return { id: `mock-${event.id}-${i}`, initial: name[0], name, phone: `${phone} • ${tier}`, status, tone: TONES[status], tel: phone };
   });
 }
 
@@ -32,11 +37,15 @@ function dbGuestToDisplay(g: DBGuest): Guest {
   const name = `${g.first_name} ${g.last_name}`.trim();
   const entry = g.entry_type === "free" ? "כניסה חינם" : "כניסה מוזלת";
   return {
+    id: `db-${g.id}`,
+    dbId: g.id,
     initial: name[0] || "?",
     name,
     phone: `${g.phone ? g.phone + " • " : ""}${g.gender ?? ""}${g.dob ? " • " + g.dob : ""} · ${entry}${g.qty > 1 ? ` ×${g.qty}` : ""} · ${g.source === "link" ? "לינק" : "ידני"}`,
     status: g.status === "scanned" ? "Scanned" : g.entry_type === "free" ? "חינם" : "מוזל",
     tone: g.status === "scanned" ? "cyan" : g.entry_type === "free" ? "primary" : "cyan",
+    tel: g.phone ?? undefined,
+    code: g.code ?? undefined,
   };
 }
 
@@ -67,11 +76,44 @@ export function GuestManager({ events, dbGuests = [] }: { events: NexusEvent[]; 
 
   const origin = typeof window !== "undefined" ? window.location.origin : "https://nexusevents.co.il";
 
+  // Row actions (kebab menu)
+  const [menuOpen, setMenuOpen] = useState<string | null>(null);
+  const [statusOverride, setStatusOverride] = useState<Record<string, { label: string; tone: string }>>({});
+  const [deleted, setDeleted] = useState<Set<string>>(new Set());
+
+  const changeStatus = (g: Guest) => {
+    const curr = statusOverride[g.id]?.label;
+    const idx = STATUS_CYCLE.findIndex((s) => s.label === curr);
+    const next = STATUS_CYCLE[(idx + 1) % STATUS_CYCLE.length];
+    setStatusOverride((o) => ({ ...o, [g.id]: next }));
+    if (g.dbId) void updateGuestStatus(g.dbId, next.label === "נסרק");
+  };
+  const removeGuest = (g: Guest) => {
+    setDeleted((d) => new Set(d).add(g.id));
+    if (g.dbId) void deleteGuest(g.dbId);
+  };
+  const waDigits = (tel?: string) => {
+    if (!tel) return "";
+    let d = tel.replace(/[^\d]/g, "");
+    if (d.startsWith("0")) d = "972" + d.slice(1);
+    return d;
+  };
+  const openWa = (g: Guest) => { const d = waDigits(g.tel); if (d) window.open(`https://wa.me/${d}`, "_blank"); };
+  const resendTicket = async (g: Guest) => {
+    const text = `🎟️ הכרטיס שלך ל${event?.title ?? "האירוע"}${g.code ? ` · קוד כניסה: ${g.code}` : ""}`;
+    if (typeof navigator !== "undefined" && navigator.share) {
+      try { await navigator.share({ title: "NEXUS", text }); } catch { /* cancelled */ }
+    } else { navigator.clipboard?.writeText(text); }
+  };
+
   const guests = useMemo(
     () => (event ? [...(added[activeId] || []), ...(dbByEvent[activeId] || []), ...guestsFor(event)] : []),
     [event, added, dbByEvent, activeId]
   );
-  const filtered = guests.filter((g) => g.name.includes(query) || g.phone.includes(query));
+  const filtered = guests
+    .filter((g) => !deleted.has(g.id))
+    .filter((g) => g.name.includes(query) || g.phone.includes(query))
+    .map((g) => (statusOverride[g.id] ? { ...g, status: statusOverride[g.id].label, tone: statusOverride[g.id].tone } : g));
 
   const stats = useMemo(() => [
     { label: "סך הכל מוזמנים", value: String(guests.length), tone: "text-white" },
@@ -87,11 +129,13 @@ export function GuestManager({ events, dbGuests = [] }: { events: NexusEvent[]; 
     const name = `${first.trim()} ${last.trim()}`;
     const entry = entryType === "free" ? "כניסה חינם" : "כניסה מוזלת";
     const g: Guest = {
+      id: `added-${Date.now()}`,
       initial: name[0],
       name,
       phone: `${phone.trim() ? phone.trim() + " • " : ""}${gender}${dob ? " • " + dob : ""} · ${entry}${qty > 1 ? ` ×${qty}` : ""}`,
       status: entryType === "free" ? "חינם" : "מוזל",
       tone: entryType === "free" ? "primary" : "cyan",
+      tel: phone.trim() || undefined,
     };
     setAdded((a) => ({ ...a, [activeId]: [g, ...(a[activeId] || [])] }));
     // persist (no-op in demo / when DB isn't configured)
@@ -154,9 +198,10 @@ export function GuestManager({ events, dbGuests = [] }: { events: NexusEvent[]; 
         <input value={query} onChange={(e) => setQuery(e.target.value)} className="w-full glass border border-white/10 rounded-xl py-3 pr-12 pl-4 text-on-surface focus:border-primary-fixed outline-none" placeholder="חיפוש לפי שם, טלפון או קוד..." />
       </div>
 
+      {menuOpen && <div className="fixed inset-0 z-[55]" onClick={() => setMenuOpen(null)} />}
       <div className="space-y-gutter">
-        {filtered.map((g, i) => (
-          <div key={`${g.name}-${i}`} className={`glass-card p-md rounded-xl flex items-center justify-between ${g.tone === "error" ? "border-error/20" : ""}`}>
+        {filtered.map((g) => (
+          <div key={g.id} className={`glass-card p-md rounded-xl flex items-center justify-between ${g.tone === "error" ? "border-error/20" : ""}`}>
             <div className="flex items-center gap-md">
               <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-2xl ${g.tone === "error" ? "bg-error-container/40 text-error" : "bg-gradient-to-br from-primary-fixed to-secondary-fixed text-on-primary-fixed"}`}>{g.initial}</div>
               <div className="flex flex-col">
@@ -170,7 +215,26 @@ export function GuestManager({ events, dbGuests = [] }: { events: NexusEvent[]; 
                 : g.tone === "cyan" ? "bg-secondary-fixed/10 text-secondary-fixed border-secondary-fixed/30"
                 : "bg-error-container/20 text-error border-error/30"
               }`}>{g.status}</span>
-              <button className="text-on-surface-variant hover:text-white transition-colors"><Icon name="more_vert" /></button>
+              <div className="relative">
+                <button onClick={() => setMenuOpen(menuOpen === g.id ? null : g.id)} className="text-on-surface-variant hover:text-white transition-colors" aria-label="פעולות"><Icon name="more_vert" /></button>
+                {menuOpen === g.id && (
+                  <div className="absolute left-0 top-full mt-1 w-48 glass-card border border-white/10 rounded-xl py-1 z-[60] shadow-2xl">
+                    <button onClick={() => { changeStatus(g); setMenuOpen(null); }} className="w-full text-right px-3 py-2.5 flex items-center gap-2 text-label-md text-on-surface hover:bg-white/5 transition-colors">
+                      <Icon name="published_with_changes" className="text-[18px] text-primary-fixed" /> שינוי סטטוס
+                    </button>
+                    <button onClick={() => { openWa(g); setMenuOpen(null); }} disabled={!g.tel} className="w-full text-right px-3 py-2.5 flex items-center gap-2 text-label-md text-on-surface hover:bg-white/5 transition-colors disabled:opacity-40">
+                      <Icon name="chat" className="text-[18px] text-[#25D366]" fill /> וואטסאפ
+                    </button>
+                    <button onClick={() => { resendTicket(g); setMenuOpen(null); }} className="w-full text-right px-3 py-2.5 flex items-center gap-2 text-label-md text-on-surface hover:bg-white/5 transition-colors">
+                      <Icon name="send" className="text-[18px] text-secondary-fixed" /> שלח כרטיס מחדש
+                    </button>
+                    <div className="h-px bg-white/5 my-1" />
+                    <button onClick={() => { removeGuest(g); setMenuOpen(null); }} className="w-full text-right px-3 py-2.5 flex items-center gap-2 text-label-md text-error hover:bg-error/10 transition-colors">
+                      <Icon name="delete" className="text-[18px]" /> מחיקה
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         ))}

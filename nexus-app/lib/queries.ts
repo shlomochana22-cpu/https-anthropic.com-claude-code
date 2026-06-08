@@ -85,6 +85,7 @@ export async function getEventById(id: string): Promise<NexusEvent | undefined> 
 }
 
 export type DBGuest = {
+  id: string;
   event_id: string;
   first_name: string;
   last_name: string;
@@ -95,6 +96,7 @@ export type DBGuest = {
   qty: number;
   status: string;
   source: string;
+  code: string | null;
 };
 
 /** Registered/invited guests (free/discounted entry). Empty when no DB. */
@@ -103,7 +105,7 @@ export async function getGuests(): Promise<DBGuest[]> {
   if (!sb) return [];
   const { data, error } = await sb
     .from("guests")
-    .select("event_id,first_name,last_name,phone,dob,gender,entry_type,qty,status,source")
+    .select("id,event_id,first_name,last_name,phone,dob,gender,entry_type,qty,status,source,code")
     .order("created_at", { ascending: false });
   if (error || !data) return [];
   return data as DBGuest[];
