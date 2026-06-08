@@ -20,6 +20,7 @@ export function CheckoutSummary({ eventId, subtotal: urlSubtotal, fee, items }: 
 
   const [participants, setParticipants] = useState<Participant[]>(Array.from({ length: initialQty }, emptyParticipant));
   const [open, setOpen] = useState(0);
+  const [instaHelp, setInstaHelp] = useState<number | null>(null);
 
   // Keep one participant form per ticket.
   useEffect(() => {
@@ -134,7 +135,22 @@ export function CheckoutSummary({ eventId, subtotal: urlSubtotal, fee, items }: 
                   <input value={p.idnum} onChange={(e) => setP(i, { idnum: e.target.value })} inputMode="numeric" placeholder="תעודת זהות (ת.ז)" className="w-full bg-surface-container-low border border-white/10 rounded-lg px-3 py-2.5 text-on-surface focus:border-primary-fixed outline-none" />
                   <PhoneInput value={p.phone ?? ""} onChange={(v) => setP(i, { phone: v })} />
                   <input value={p.email} onChange={(e) => setP(i, { email: e.target.value })} type="email" placeholder="אימייל" dir="ltr" className="w-full bg-surface-container-low border border-white/10 rounded-lg px-3 py-2.5 text-on-surface focus:border-primary-fixed outline-none" />
-                  <input value={p.instagram} onChange={(e) => setP(i, { instagram: e.target.value })} placeholder="אינסטגרם (@username)" dir="ltr" className="w-full bg-surface-container-low border border-white/10 rounded-lg px-3 py-2.5 text-on-surface focus:border-primary-fixed outline-none" />
+                  <div>
+                    <div className="relative">
+                      <input value={p.instagram} onChange={(e) => setP(i, { instagram: e.target.value })} placeholder="אינסטגרם (@username)" dir="ltr" className="w-full bg-surface-container-low border border-white/10 rounded-lg pl-10 pr-3 py-2.5 text-on-surface focus:border-primary-fixed outline-none" />
+                      <button type="button" onClick={() => setInstaHelp(instaHelp === i ? null : i)} className="absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary-fixed transition-colors" aria-label="איך להכניס קישור אינסטגרם">
+                        <Icon name="help" className="text-[20px]" />
+                      </button>
+                    </div>
+                    {instaHelp === i && (
+                      <div className="mt-2 p-3 rounded-lg bg-primary-fixed/5 border border-primary-fixed/20 text-on-surface-variant text-[12px] leading-relaxed space-y-1">
+                        <p className="text-primary-fixed font-bold flex items-center gap-1"><Icon name="info" className="text-[14px]" fill /> איך מכניסים את הקישור לאינסטגרם?</p>
+                        <p>1. פתחו את אפליקציית אינסטגרם ועברו לפרופיל שלכם.</p>
+                        <p>2. הקלידו את שם המשתמש עם @ — למשל <span className="text-primary-fixed" dir="ltr">@nexus</span>.</p>
+                        <p>3. לחלופין הדביקו את הקישור המלא: <span className="text-primary-fixed" dir="ltr">instagram.com/username</span> (בפרופיל → ⋯ → "העתקת קישור פרופיל").</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
             </div>
