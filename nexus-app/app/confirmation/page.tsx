@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Header } from "@/components/Header";
 import { Icon } from "@/components/Icon";
 import { Confetti } from "@/components/Confetti";
+import { AddToCalendarButton } from "@/components/AddToCalendarButton";
 import { getEventById } from "@/lib/queries";
 
 export default async function ConfirmationPage({
@@ -70,9 +71,7 @@ export default async function ConfirmationPage({
           >
             צפה בכרטיסים שלי <Icon name="confirmation_number" />
           </Link>
-          <button className="w-full py-4 glass-card text-white text-headline-md rounded-xl border border-white/20 active:scale-95 transition-all flex items-center justify-center gap-3">
-            <Icon name="account_balance_wallet" /> הוסף ל-Apple Wallet
-          </button>
+          <AddToCalendarButton title={event?.title ?? "NEXUS EVENT"} dateStr={event?.date} time={event?.time} venue={event?.venue} />
         </div>
       </main>
     </>

@@ -26,6 +26,15 @@ export default function TicketsPage() {
     getMyTickets().then(setTickets);
   }, []);
 
+  const shareTicket = async (title: string) => {
+    const url = typeof window !== "undefined" ? `${window.location.origin}/tickets` : "https://nexusevents.co.il/tickets";
+    if (typeof navigator !== "undefined" && navigator.share) {
+      try { await navigator.share({ title: "הכרטיס שלי ב-NEXUS", text: title, url }); } catch { /* cancelled */ }
+    } else {
+      navigator.clipboard?.writeText(url);
+    }
+  };
+
   const real = tickets && tickets.length > 0;
 
   return (
@@ -95,7 +104,7 @@ export default function TicketsPage() {
                   {tickets === null ? "טוען כרטיסים..." : "נא לסרוק את הקוד בכניסה לאירוע"}
                 </p>
                 <div className="grid grid-cols-2 gap-sm">
-                  <button className="bg-primary-container text-on-primary-container py-3 rounded-lg font-semibold text-sm flex items-center justify-center gap-1">
+                  <button onClick={() => shareTicket("Cyber City: The Warehouse")} className="bg-primary-container text-on-primary-container py-3 rounded-lg font-semibold text-sm flex items-center justify-center gap-1 active:scale-95 transition-transform">
                     <Icon name="share" className="text-[18px]" /> שיתוף
                   </button>
                   <a href="/resale" className="border-2 border-primary-container text-primary-container py-3 rounded-lg font-semibold text-sm flex items-center justify-center gap-1">
