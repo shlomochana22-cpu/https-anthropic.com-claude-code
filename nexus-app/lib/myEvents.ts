@@ -13,7 +13,10 @@ export async function getMyEvents(): Promise<NexusEvent[]> {
   const sb = browserSupabase();
   if (!sb) return [];
 
-  const { data: { user } } = await sb.auth.getUser();
+  // getSession reads the cached session (no network) — fast; the client keeps
+  // the token fresh in the background.
+  const { data: { session } } = await sb.auth.getSession();
+  const user = session?.user;
   if (!user) return [];
 
   // Resolve (or create) the producer profile id.
