@@ -42,6 +42,7 @@ export default function AdminPage() {
   const [note, setNote] = useState("");
   const [busy, setBusy] = useState(false);
   const [uQuery, setUQuery] = useState("");
+  const [expEvent, setExpEvent] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -242,15 +243,44 @@ export default function AdminPage() {
           {events.map((e) => {
             const m = eventMetrics(e, sales[e.id]);
             const off = suspended.has(e.id);
+            const open = expEvent === e.id;
             return (
-              <div key={e.id} className={`glass-card rounded-xl p-md flex items-center justify-between gap-3 ${off ? "opacity-50" : ""}`}>
-                <div className="min-w-0">
-                  <a href={`/events/${e.id}`} target="_blank" rel="noreferrer" className="text-label-md text-on-surface hover:text-primary-fixed truncate block">{e.title} <Icon name="open_in_new" className="text-[14px] inline" /></a>
-                  <p className="text-[11px] text-on-surface-variant">{e.city} · {e.date} · {m.sold} כרטיסים · {shekel(m.revenue)}</p>
+              <div key={e.id} className={`glass-card rounded-xl overflow-hidden ${off ? "opacity-50" : ""}`}>
+                <div className="p-md flex items-center justify-between gap-3">
+                  <button onClick={() => setExpEvent(open ? null : e.id)} className="min-w-0 text-right flex-1">
+                    <span className="text-label-md text-on-surface flex items-center gap-1.5">
+                      <Icon name={open ? "expand_less" : "expand_more"} className="text-on-surface-variant text-[18px]" />
+                      <span className="truncate">{e.title}</span>
+                    </span>
+                    <span className="text-[11px] text-on-surface-variant block pr-6">{e.city} · {e.date} · {m.sold} כרטיסים · {shekel(m.revenue)}</span>
+                  </button>
+                  <button onClick={() => setSuspended((s) => { const n = new Set(s); n.has(e.id) ? n.delete(e.id) : n.add(e.id); return n; })} className={`text-label-sm px-3 py-1.5 rounded-lg border shrink-0 ${off ? "border-primary-fixed/30 text-primary-fixed" : "border-error/30 text-error"}`}>
+                    {off ? "הפעל" : "השהה"}
+                  </button>
                 </div>
-                <button onClick={() => setSuspended((s) => { const n = new Set(s); n.has(e.id) ? n.delete(e.id) : n.add(e.id); return n; })} className={`text-label-sm px-3 py-1.5 rounded-lg border shrink-0 ${off ? "border-primary-fixed/30 text-primary-fixed" : "border-error/30 text-error"}`}>
-                  {off ? "הפעל" : "השהה"}
-                </button>
+                {open && (
+                  <div className="px-md pb-md pt-0 border-t border-white/5">
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-3">
+                      {[
+                        { l: "הכנסות", v: shekel(m.revenue) },
+                        { l: "כרטיסים", v: m.sold.toLocaleString() },
+                        { l: "הזמנות", v: m.orders.toLocaleString() },
+                        { l: "תפוסה", v: `${m.occupancy}%` },
+                        { l: "מחיר ממוצע", v: shekel(m.avgPrice) },
+                        { l: "קיבולת", v: m.capacity.toLocaleString() },
+                      ].map((s) => (
+                        <div key={s.l} className="bg-surface-container-low rounded-lg p-2.5">
+                          <p className="text-[10px] text-on-surface-variant">{s.l}</p>
+                          <p className="text-on-surface font-bold">{s.v}</p>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="flex flex-wrap gap-2 mt-3">
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full border ${m.isReal ? "bg-primary-fixed/10 text-primary-fixed border-primary-fixed/30" : "bg-white/5 text-on-surface-variant border-white/10"}`}>{m.isReal ? "מכירות אמיתיות" : "הערכה"}</span>
+                      <a href={`/events/${e.id}`} target="_blank" rel="noreferrer" className="text-[11px] text-primary-fixed-dim hover:underline flex items-center gap-1"><Icon name="open_in_new" className="text-[13px]" /> תצוגה מקדימה של עמוד האירוע</a>
+                    </div>
+                  </div>
+                )}
               </div>
             );
           })}
