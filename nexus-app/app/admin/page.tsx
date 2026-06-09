@@ -174,6 +174,20 @@ export default function AdminPage() {
         <Link href="/" className="text-on-surface-variant/60 text-sm hover:text-primary-fixed">← חזרה ל-NEXUS</Link>
       </header>
 
+      {/* Persistent pending-payouts banner — stays until every request is handled */}
+      {pendingPayouts.length > 0 && tab !== "payouts" && (
+        <button onClick={() => setTab("payouts")} className="w-full mb-lg glass-card rounded-xl p-4 border-2 border-secondary-fixed/50 flex items-center justify-between gap-3 animate-pulse hover:animate-none transition-all text-right">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-secondary-fixed/15 flex items-center justify-center shrink-0"><Icon name="notifications_active" className="text-secondary-fixed" fill /></div>
+            <div>
+              <p className="text-label-md text-secondary-fixed font-bold">{pendingPayouts.length} בקשות תשלום ממתינות לטיפול</p>
+              <p className="text-[11px] text-on-surface-variant">סך {shekel(pendingPayouts.reduce((s, p) => s + p.amount, 0))} · לחץ לטיפול מיידי</p>
+            </div>
+          </div>
+          <Icon name="arrow_back" className="text-secondary-fixed shrink-0" />
+        </button>
+      )}
+
       {/* Tabs */}
       <div className="flex gap-2 mb-lg overflow-x-auto hide-scrollbar">
         {tabs.map((t) => (
