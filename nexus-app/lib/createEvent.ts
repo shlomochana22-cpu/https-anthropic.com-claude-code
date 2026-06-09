@@ -50,6 +50,9 @@ export async function createEvent(input: NewEventInput): Promise<CreateResult> {
   const prices = input.tiers.map((t) => t.price).filter((n) => n > 0);
   const fromPrice = prices.length ? Math.min(...prices) : input.tiers[0]?.price || 0;
 
+  // Attribute the event to its producer (creates the profile on first event).
+  const { data: producerId } = await sb.rpc("ensure_my_producer");
+
   const { error } = await sb.from("events").insert({
     id,
     title: input.title,
@@ -65,6 +68,7 @@ export async function createEvent(input: NewEventInput): Promise<CreateResult> {
     description: input.description ?? "",
     age: input.age ?? null,
     age_visible: input.ageVisible ?? true,
+    producer_id: producerId ?? null,
   });
   // Real failure (e.g. missing INSERT policy / columns) — surface it, don't fake success.
   if (error) return { id, demo: false, error: error.message };

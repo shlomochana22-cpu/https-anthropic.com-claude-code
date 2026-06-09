@@ -7,6 +7,7 @@ export type PayoutStatus = "pending" | "approved" | "paid" | "rejected";
 
 export type PayoutRow = {
   id: string;
+  user_id: string | null;
   kind: PayoutKind;
   amount: number;
   holder: string;
@@ -26,8 +27,8 @@ export type AdminOverview = { paidRevenue: number; orders: number; tickets: numb
 
 /** Demo payouts so the admin UI is populated when there's no DB. */
 const demoPayouts: PayoutRow[] = [
-  { id: "demo-1", kind: "withdrawal", amount: 4200, holder: "אבי כהן", idnum: "302999111", bank: "בנק לאומי (10)", branch: "800", account: "45219", contact: "0521234567", status: "pending", receipt_url: null, admin_note: null, created_at: new Date().toISOString(), paid_at: null },
-  { id: "demo-2", kind: "promoter", amount: 750, holder: "דנה לוי", idnum: "204888222", bank: "בנק הפועלים (12)", branch: "600", account: "112233", contact: "0539876543", status: "pending", receipt_url: null, admin_note: null, created_at: new Date(Date.now() - 86400000).toISOString(), paid_at: null },
+  { id: "demo-1", user_id: null, kind: "withdrawal", amount: 4200, holder: "אבי כהן", idnum: "302999111", bank: "בנק לאומי (10)", branch: "800", account: "45219", contact: "0521234567", status: "pending", receipt_url: null, admin_note: null, created_at: new Date().toISOString(), paid_at: null },
+  { id: "demo-2", user_id: null, kind: "promoter", amount: 750, holder: "דנה לוי", idnum: "204888222", bank: "בנק הפועלים (12)", branch: "600", account: "112233", contact: "0539876543", status: "pending", receipt_url: null, admin_note: null, created_at: new Date(Date.now() - 86400000).toISOString(), paid_at: null },
 ];
 
 /** True when the signed-in user is a platform admin (or in demo mode). */

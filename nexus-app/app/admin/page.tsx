@@ -7,6 +7,7 @@ import { getEvents, getEventSales, type EventSales } from "@/lib/queries";
 import { aggregateMetrics, eventMetrics, shekel } from "@/lib/metrics";
 import { getBuyers } from "@/lib/buyers";
 import { amIAdmin, getAdminPayouts, getAdminOverview, setPayoutStatus, type PayoutRow, type PayoutStatus } from "@/lib/admin";
+import { AdminProducers } from "@/components/AdminProducers";
 import type { NexusEvent } from "@/lib/events";
 
 const KIND_LABEL: Record<string, string> = { withdrawal: "משיכה", friend: "העברה לחבר", promoter: "העברה ליחצן", supplier: "העברה לספק" };
@@ -16,7 +17,7 @@ const STATUS: Record<PayoutStatus, { label: string; cls: string }> = {
   paid: { label: "שולם", cls: "bg-primary-container/15 text-primary-container border-primary-container/40" },
   rejected: { label: "נדחה", cls: "bg-error/10 text-error border-error/30" },
 };
-type Tab = "overview" | "payouts" | "events" | "users";
+type Tab = "overview" | "producers" | "payouts" | "events" | "users";
 type Buyer = { name: string; phone?: string };
 
 export default function AdminPage() {
@@ -94,6 +95,7 @@ export default function AdminPage() {
 
   const tabs: { id: Tab; label: string; icon: string }[] = [
     { id: "overview", label: "סקירה", icon: "dashboard" },
+    { id: "producers", label: "מפיקים", icon: "badge" },
     { id: "payouts", label: `בקשות תשלום${pendingPayouts.length ? ` (${pendingPayouts.length})` : ""}`, icon: "request_quote" },
     { id: "events", label: "אירועים", icon: "confirmation_number" },
     { id: "users", label: "משתמשים", icon: "group" },
@@ -179,6 +181,9 @@ export default function AdminPage() {
           </section>
         </>
       )}
+
+      {/* ── PRODUCERS ── */}
+      {tab === "producers" && <AdminProducers payouts={payouts} />}
 
       {/* ── PAYOUTS ── */}
       {tab === "payouts" && (
