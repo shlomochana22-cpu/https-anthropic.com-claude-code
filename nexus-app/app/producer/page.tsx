@@ -72,6 +72,7 @@ export default async function ProducerDashboard({
             { href: "/producer/coupons", icon: "local_offer", label: "קופונים" },
             { href: "/producer/campaigns", icon: "ads_click", label: "קמפיינים" },
             { href: "/producer/customers", icon: "contacts", label: "מאגר לקוחות" },
+            { href: "/producer/profile", icon: "badge", label: "פרופיל מפיק והתראות" },
           ].map((t) => (
             <Link key={t.href} href={t.href} className="glass-card rounded-xl p-3 flex items-center gap-3 hover:bg-white/5 hover:border-primary-fixed/30 transition-all">
               <Icon name={t.icon} className="text-primary-fixed text-2xl shrink-0" />
