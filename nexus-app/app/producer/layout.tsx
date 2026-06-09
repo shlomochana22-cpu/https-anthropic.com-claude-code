@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { ProducerSidebar, ProducerBottomNav } from "@/components/ProducerNav";
+import { ProducerPurchaseAlerts } from "@/components/ProducerPurchaseAlerts";
 import { browserSupabase } from "@/lib/supabaseBrowser";
 
 export default function ProducerLayout({ children }: { children: React.ReactNode }) {
@@ -44,6 +45,7 @@ export default function ProducerLayout({ children }: { children: React.ReactNode
       <ProducerSidebar />
       <div className="md:mr-[280px] min-h-screen">{children}</div>
       <ProducerBottomNav />
+      <ProducerPurchaseAlerts />
     </>
   );
 }

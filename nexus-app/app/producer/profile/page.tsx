@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Icon } from "@/components/Icon";
 import { SafeImage } from "@/components/SafeImage";
+import { EnableNotifications } from "@/components/EnableNotifications";
 import { getMyProducer, updateMyProducer } from "@/lib/producerProfile";
 
 export default function ProducerProfilePage() {
@@ -38,7 +39,19 @@ export default function ProducerProfilePage() {
   return (
     <main className="pt-10 md:pt-12 pb-32 px-margin-mobile md:px-margin-desktop max-w-2xl">
       <h1 className="text-lg font-bold text-primary-fixed mb-1">פרופיל המפיק</h1>
-      <p className="text-on-surface-variant text-label-md mb-lg">הפרטים שיופיעו אצל מנהל הפלטפורמה ובאזורים הציבוריים.</p>
+      <p className="text-on-surface-variant text-label-md mb-md">הפרטים שיופיעו אצל מנהל הפלטפורמה ובאזורים הציבוריים.</p>
+
+      {/* Mobile notifications */}
+      <div className="glass-card rounded-xl p-md mb-lg flex items-center justify-between gap-3 flex-wrap">
+        <div className="flex items-center gap-3">
+          <Icon name="notifications_active" className="text-primary-fixed-dim" />
+          <div>
+            <p className="text-label-md text-on-surface">התראות על רכישות</p>
+            <p className="text-[11px] text-on-surface-variant">קבל התראה לנייד בכל פעם שנמכר כרטיס לאירוע שלך.</p>
+          </div>
+        </div>
+        <EnableNotifications />
+      </div>
 
       {/* Avatar + logo preview */}
       <section className="flex items-center gap-4 mb-lg">

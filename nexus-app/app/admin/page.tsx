@@ -9,8 +9,10 @@ import { getBuyers } from "@/lib/buyers";
 import { browserSupabase } from "@/lib/supabaseBrowser";
 import { amIAdmin, getAdminPayouts, getAdminOverview, setPayoutStatus, type PayoutRow, type PayoutStatus } from "@/lib/admin";
 import { AdminProducers } from "@/components/AdminProducers";
+import { EnableNotifications } from "@/components/EnableNotifications";
 import { getProducers, type ProducerSummary } from "@/lib/producers";
 import { notify } from "@/lib/notify";
+import { nativeNotify } from "@/lib/pushNotify";
 import type { NexusEvent } from "@/lib/events";
 
 const KIND_LABEL: Record<string, string> = { withdrawal: "משיכה", friend: "העברה לחבר", promoter: "העברה ליחצן", supplier: "העברה לספק" };
@@ -95,6 +97,7 @@ export default function AdminPage() {
         setPayouts((list) => (list.some((p) => p.id === row.id) ? list : [row, ...list]));
         setIncoming(row);
         chime();
+        nativeNotify("בקשת תשלום חדשה 💸", `${row.holder} · ₪${row.amount.toLocaleString()}`);
       })
       .subscribe();
     return () => { sb.removeChannel(ch); };
@@ -171,7 +174,10 @@ export default function AdminPage() {
           <h1 className="text-headline-lg">מרכז ניהול הפלטפורמה</h1>
           <p className="text-on-surface-variant">תצוגת-על: הכנסות, עמלות, מפיקים ובקשות תשלום</p>
         </div>
-        <Link href="/" className="text-on-surface-variant/60 text-sm hover:text-primary-fixed">← חזרה ל-NEXUS</Link>
+        <div className="flex items-center gap-3">
+          <EnableNotifications />
+          <Link href="/" className="text-on-surface-variant/60 text-sm hover:text-primary-fixed">← חזרה ל-NEXUS</Link>
+        </div>
       </header>
 
       {/* Persistent pending-payouts banner — stays until every request is handled */}
