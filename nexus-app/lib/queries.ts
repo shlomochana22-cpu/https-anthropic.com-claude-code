@@ -78,14 +78,29 @@ export async function getEvents(): Promise<NexusEvent[]> {
 
 export async function getEventById(id: string): Promise<NexusEvent | undefined> {
   const sb = getSupabase();
-  if (!sb) return mockEvents.find((e) => e.id === id);
+  // Normalize robustly: URL params can arrive still-encoded and Hebrew slugs can
+  // differ in Unicode normalization — align both sides before comparing.
+  const norm = (s: string) => {
+    let v = s;
+    try { v = decodeURIComponent(s); } catch { /* already decoded */ }
+    return v.normalize("NFC").trim();
+  };
+  const target = norm(id);
+
+  if (!sb) return mockEvents.find((e) => norm(e.id) === target);
+
+  // 1. Exact match.
   const { data } = await sb.from("events").select(SELECT).eq("id", id).maybeSingle();
   if (data) return rowToEvent(data as EventRow);
-  // Fallback: scan all events with normalized comparison. Handles ids the exact
-  // `.eq` match can miss (e.g. Hebrew slugs / Unicode normalization differences).
-  const norm = (s: string) => s.normalize("NFC");
-  const all = await getEvents();
-  return all.find((e) => norm(e.id) === norm(id)) ?? mockEvents.find((e) => e.id === id);
+
+  // 2. Direct DB scan with normalized compare (avoids the mock fallback so newly
+  //    created events with Hebrew slugs are always found).
+  const { data: rows } = await sb.from("events").select(SELECT);
+  const match = (rows as EventRow[] | null)?.find((e) => norm(e.id) === target);
+  if (match) return rowToEvent(match);
+
+  // 3. Mock fallback (no DB / unseeded ids).
+  return mockEvents.find((e) => norm(e.id) === target);
 }
 
 export type DBGuest = {

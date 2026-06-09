@@ -8,6 +8,7 @@ import { aggregateMetrics, eventMetrics, shekel } from "@/lib/metrics";
 import { getBuyers } from "@/lib/buyers";
 import { amIAdmin, getAdminPayouts, getAdminOverview, setPayoutStatus, type PayoutRow, type PayoutStatus } from "@/lib/admin";
 import { AdminProducers } from "@/components/AdminProducers";
+import { getProducers } from "@/lib/producers";
 import { notify } from "@/lib/notify";
 import type { NexusEvent } from "@/lib/events";
 
@@ -31,8 +32,8 @@ export default function AdminPage() {
   const [payouts, setPayouts] = useState<PayoutRow[]>([]);
   const [buyers, setBuyers] = useState<Buyer[]>([]);
   const [realRevenue, setRealRevenue] = useState<number | null>(null);
+  const [producerCommission, setProducerCommission] = useState(0);
 
-  const [commission, setCommission] = useState(10);
   const [suspended, setSuspended] = useState<Set<string>>(new Set());
 
   // Payout action state
@@ -43,15 +44,17 @@ export default function AdminPage() {
   const [uQuery, setUQuery] = useState("");
 
   useEffect(() => {
-    setCommission(Number(localStorage.getItem("nexus_commission")) || 10);
     (async () => {
       const ok = await amIAdmin();
       setIsAdmin(ok);
       if (ok) {
-        const [evs, sl, po, by, ov] = await Promise.all([getEvents(), getEventSales(), getAdminPayouts(), getBuyers(), getAdminOverview()]);
+        const [evs, sl, po, by, ov, prods] = await Promise.all([getEvents(), getEventSales(), getAdminPayouts(), getBuyers(), getAdminOverview(), getProducers()]);
         setEvents(evs); setSales(sl); setPayouts(po);
         setBuyers(by.map((b) => ({ name: b.name, phone: b.phone ?? undefined })));
         setRealRevenue(ov?.paidRevenue ?? null);
+        // Platform commission is the sum of each producer's own rate — it varies
+        // per producer, so it's set per-producer inside the producer card.
+        setProducerCommission(prods.reduce((s, p) => s + p.commission, 0));
       }
       setReady(true);
     })();
@@ -59,11 +62,9 @@ export default function AdminPage() {
 
   const agg = useMemo(() => aggregateMetrics(events, sales), [events, sales]);
   const revenue = realRevenue && realRevenue > 0 ? realRevenue : agg.revenue;
-  const platformCut = Math.round((revenue * commission) / 100);
+  const platformCut = producerCommission;
   const producerNet = revenue - platformCut;
   const pendingPayouts = payouts.filter((p) => p.status === "pending");
-
-  const setRate = (v: number) => { const r = Math.max(0, Math.min(50, v)); setCommission(r); localStorage.setItem("nexus_commission", String(r)); };
 
   const act = async (id: string, status: PayoutStatus) => {
     setBusy(true);
@@ -140,7 +141,7 @@ export default function AdminPage() {
           <section className="grid grid-cols-2 md:grid-cols-4 gap-gutter mb-lg">
             {[
               { label: "מחזור מכירות", value: shekel(revenue), icon: "payments", note: realRevenue ? "נתוני אמת" : "הערכה" },
-              { label: `עמלה מהמפיקים (${commission}%)`, value: shekel(platformCut), icon: "account_balance", accent: true, note: "ההכנסה שלך" },
+              { label: "עמלה מהמפיקים", value: shekel(platformCut), icon: "account_balance", accent: true, note: "סכום העמלות הפר-מפיק" },
               { label: "נטו למפיקים", value: shekel(producerNet), icon: "savings", note: "אחרי העמלה" },
               { label: "כרטיסים שנמכרו", value: agg.sold.toLocaleString(), icon: "confirmation_number" },
             ].map((s) => (
@@ -161,17 +162,10 @@ export default function AdminPage() {
             <div className="glass-card p-md rounded-xl border border-secondary-fixed/20"><p className="text-on-surface-variant text-sm mb-1">בקשות תשלום ממתינות</p><p className="text-2xl font-bold text-secondary-fixed">{pendingPayouts.length} · {shekel(pendingPayouts.reduce((s, p) => s + p.amount, 0))}</p></div>
           </section>
 
-          {/* Commission control */}
-          <section className="glass-card p-md rounded-xl mb-lg max-w-md">
-            <h3 className="text-label-md text-primary-fixed mb-3 flex items-center gap-2"><Icon name="percent" className="text-[18px]" /> עמלה שאתה גובה מהמפיקים</h3>
-            <div className="flex items-center gap-3">
-              <input type="range" min={0} max={30} value={commission} onChange={(e) => setRate(Number(e.target.value))} className="flex-1 accent-primary-fixed" />
-              <div className="flex items-center gap-1">
-                <input type="number" min={0} max={50} value={commission} onChange={(e) => setRate(Number(e.target.value))} className="w-16 bg-surface-container-low border border-white/10 rounded-lg px-2 py-1.5 text-center text-on-surface focus:border-primary-fixed outline-none" />
-                <span className="text-on-surface-variant">%</span>
-              </div>
-            </div>
-            <p className="text-label-sm text-on-surface-variant mt-2">ממחזור של {shekel(revenue)} — אתה גובה {shekel(platformCut)} עמלה מהמפיקים, והם מקבלים {shekel(producerNet)} נטו.</p>
+          {/* Commission note — the rate itself is set per producer in their card */}
+          <section className="glass-card p-md rounded-xl mb-lg flex items-start gap-3 border border-primary-fixed/15">
+            <Icon name="info" className="text-primary-fixed-dim text-[20px] shrink-0 mt-0.5" fill />
+            <p className="text-label-sm text-on-surface-variant">אחוז העמלה נקבע <span className="text-primary-fixed">בנפרד לכל מפיק</span> בתוך כרטיס המפיק (לשונית "מפיקים"), כי הוא משתנה ממפיק למפיק. הסכום למעלה הוא צירוף כל העמלות שגבית.</p>
           </section>
 
           {/* Top events */}
