@@ -245,7 +245,7 @@ export default function AdminPage() {
             return (
               <div key={e.id} className={`glass-card rounded-xl p-md flex items-center justify-between gap-3 ${off ? "opacity-50" : ""}`}>
                 <div className="min-w-0">
-                  <Link href={`/producer/events/${e.id}`} className="text-label-md text-on-surface hover:text-primary-fixed truncate block">{e.title}</Link>
+                  <a href={`/events/${e.id}`} target="_blank" rel="noreferrer" className="text-label-md text-on-surface hover:text-primary-fixed truncate block">{e.title} <Icon name="open_in_new" className="text-[14px] inline" /></a>
                   <p className="text-[11px] text-on-surface-variant">{e.city} · {e.date} · {m.sold} כרטיסים · {shekel(m.revenue)}</p>
                 </div>
                 <button onClick={() => setSuspended((s) => { const n = new Set(s); n.has(e.id) ? n.delete(e.id) : n.add(e.id); return n; })} className={`text-label-sm px-3 py-1.5 rounded-lg border shrink-0 ${off ? "border-primary-fixed/30 text-primary-fixed" : "border-error/30 text-error"}`}>
