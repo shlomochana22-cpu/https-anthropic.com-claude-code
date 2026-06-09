@@ -1,60 +1,103 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/Icon";
+import { getEvents, getEventSales, type EventSales } from "@/lib/queries";
+import { aggregateMetrics, eventMetrics, shekel } from "@/lib/metrics";
+import { getBuyers } from "@/lib/buyers";
+import { amIAdmin, getAdminPayouts, getAdminOverview, setPayoutStatus, type PayoutRow, type PayoutStatus } from "@/lib/admin";
+import type { NexusEvent } from "@/lib/events";
 
-const stats = [
-  { label: "סה\"כ לקוחות", value: "124,502", chip: "+12%" },
-  { label: "ז'אנר מוביל", value: "Techno", note: "32,104 העדפות" },
-  { label: "רכישות אקטיביות", value: "8,912", note: "24 שעות אחרונות" },
-  { label: "מפיקים פעילים", value: "342", chip: "+8%" },
-];
-
-type User = { name: string; email: string; age: number; gender: string; genre: string; online: boolean };
-const initialUsers: User[] = [
-  { name: "עידן רייכלר", email: "idan@nexus.io", age: 24, gender: "זכר", genre: "Techno", online: true },
-  { name: "מאיה בר", email: "maya.b@gmail.com", age: 22, gender: "נקבה", genre: "Mainstream", online: false },
-  { name: "יוסי לוי", email: "yossi.levy@outlook.com", age: 31, gender: "זכר", genre: "Trance", online: true },
-  { name: "נועה גל", email: "noa.g@nexus.io", age: 27, gender: "נקבה", genre: "Melodic", online: true },
-  { name: "רון אבני", email: "ron.a@gmail.com", age: 29, gender: "זכר", genre: "Techno", online: false },
-];
-const allProducers = [
-  { letter: "S", name: "Spoons Production", v: "15.2k" },
-  { letter: "U", name: "Unity Events", v: "12.8k" },
-  { letter: "M", name: "Music First", v: "9.4k" },
-  { letter: "B", name: "Boombox Crew", v: "8.1k", dim: true },
-  { letter: "N", name: "Neon Collective", v: "6.7k", dim: true },
-  { letter: "A", name: "Afterdark", v: "5.3k", dim: true },
-];
+const KIND_LABEL: Record<string, string> = { withdrawal: "משיכה", friend: "העברה לחבר", promoter: "העברה ליחצן", supplier: "העברה לספק" };
+const STATUS: Record<PayoutStatus, { label: string; cls: string }> = {
+  pending: { label: "ממתין", cls: "bg-secondary-fixed/10 text-secondary-fixed border-secondary-fixed/30" },
+  approved: { label: "אושר", cls: "bg-primary-fixed/10 text-primary-fixed border-primary-fixed/30" },
+  paid: { label: "שולם", cls: "bg-primary-container/15 text-primary-container border-primary-container/40" },
+  rejected: { label: "נדחה", cls: "bg-error/10 text-error border-error/30" },
+};
+type Tab = "overview" | "payouts" | "events" | "users";
+type Buyer = { name: string; phone?: string };
 
 export default function AdminPage() {
-  const [users, setUsers] = useState<User[]>(initialUsers);
-  const [ageMin, setAgeMin] = useState("");
-  const [ageMax, setAgeMax] = useState("");
-  const [gender, setGender] = useState("הכל");
-  const [genres, setGenres] = useState<string[]>([]);
-  const [query, setQuery] = useState("");
-  const [menu, setMenu] = useState<string | null>(null);
-  const [showAllProducers, setShowAllProducers] = useState(false);
+  const [ready, setReady] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [tab, setTab] = useState<Tab>("overview");
 
-  const toggleGenre = (g: string) => setGenres((l) => (l.includes(g) ? l.filter((x) => x !== g) : [...l, g]));
-  const removeUser = (email: string) => { setUsers((u) => u.filter((x) => x.email !== email)); setMenu(null); };
-  const toggleOnline = (email: string) => { setUsers((u) => u.map((x) => (x.email === email ? { ...x, online: !x.online } : x))); setMenu(null); };
+  const [events, setEvents] = useState<NexusEvent[]>([]);
+  const [sales, setSales] = useState<Record<string, EventSales>>({});
+  const [payouts, setPayouts] = useState<PayoutRow[]>([]);
+  const [buyers, setBuyers] = useState<Buyer[]>([]);
+  const [realRevenue, setRealRevenue] = useState<number | null>(null);
 
-  const filtered = useMemo(
-    () =>
-      users.filter((u) => {
-        if (ageMin && u.age < Number(ageMin)) return false;
-        if (ageMax && u.age > Number(ageMax)) return false;
-        if (gender !== "הכל" && u.gender !== gender) return false;
-        if (genres.length && !genres.includes(u.genre)) return false;
-        if (query && !(u.name.includes(query) || u.email.toLowerCase().includes(query.toLowerCase()))) return false;
-        return true;
-      }),
-    [users, ageMin, ageMax, gender, genres, query]
-  );
-  const producers = showAllProducers ? allProducers : allProducers.slice(0, 4);
+  const [commission, setCommission] = useState(10);
+  const [suspended, setSuspended] = useState<Set<string>>(new Set());
+
+  // Payout action state
+  const [actId, setActId] = useState<string | null>(null);
+  const [receipt, setReceipt] = useState("");
+  const [note, setNote] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [uQuery, setUQuery] = useState("");
+
+  useEffect(() => {
+    setCommission(Number(localStorage.getItem("nexus_commission")) || 10);
+    (async () => {
+      const ok = await amIAdmin();
+      setIsAdmin(ok);
+      if (ok) {
+        const [evs, sl, po, by, ov] = await Promise.all([getEvents(), getEventSales(), getAdminPayouts(), getBuyers(), getAdminOverview()]);
+        setEvents(evs); setSales(sl); setPayouts(po);
+        setBuyers(by.map((b) => ({ name: b.name, phone: b.phone ?? undefined })));
+        setRealRevenue(ov?.paidRevenue ?? null);
+      }
+      setReady(true);
+    })();
+  }, []);
+
+  const agg = useMemo(() => aggregateMetrics(events, sales), [events, sales]);
+  const revenue = realRevenue && realRevenue > 0 ? realRevenue : agg.revenue;
+  const platformCut = Math.round((revenue * commission) / 100);
+  const producerNet = revenue - platformCut;
+  const pendingPayouts = payouts.filter((p) => p.status === "pending");
+
+  const setRate = (v: number) => { const r = Math.max(0, Math.min(50, v)); setCommission(r); localStorage.setItem("nexus_commission", String(r)); };
+
+  const act = async (id: string, status: PayoutStatus) => {
+    setBusy(true);
+    const ok = await setPayoutStatus(id, status, receipt, note);
+    setBusy(false);
+    if (ok) {
+      setPayouts((list) => list.map((p) => (p.id === id ? { ...p, status, receipt_url: receipt || p.receipt_url, admin_note: note || p.admin_note } : p)));
+      setActId(null); setReceipt(""); setNote("");
+    }
+  };
+
+  const filteredBuyers = useMemo(() => buyers.filter((b) => !uQuery || b.name?.includes(uQuery) || (b.phone || "").includes(uQuery)), [buyers, uQuery]);
+
+  if (!ready) {
+    return <main className="min-h-screen flex items-center justify-center text-on-surface-variant"><Icon name="progress_activity" className="animate-spin text-primary-fixed text-3xl" /></main>;
+  }
+
+  if (!isAdmin) {
+    return (
+      <main className="min-h-screen flex items-center justify-center px-margin-mobile">
+        <div className="glass-card rounded-2xl p-lg max-w-md text-center border border-error/20">
+          <Icon name="lock" className="text-error text-4xl mb-3" />
+          <h1 className="text-headline-md text-primary mb-2">אזור מנהל הפלטפורמה</h1>
+          <p className="text-on-surface-variant text-body-md mb-4">אין לך הרשאת מנהל. כדי לקבל גישה, הוסף את המשתמש שלך לטבלת <span className="font-mono text-primary-fixed">admins</span> ב-Supabase.</p>
+          <Link href="/" className="text-primary-fixed text-label-md hover:underline">← חזרה ל-NEXUS</Link>
+        </div>
+      </main>
+    );
+  }
+
+  const tabs: { id: Tab; label: string; icon: string }[] = [
+    { id: "overview", label: "סקירה", icon: "dashboard" },
+    { id: "payouts", label: `בקשות תשלום${pendingPayouts.length ? ` (${pendingPayouts.length})` : ""}`, icon: "request_quote" },
+    { id: "events", label: "אירועים", icon: "confirmation_number" },
+    { id: "users", label: "משתמשים", icon: "group" },
+  ];
 
   return (
     <main className="px-margin-mobile md:px-margin-desktop pt-10 pb-32 min-h-screen">
@@ -62,139 +105,174 @@ export default function AdminPage() {
         <div>
           <div className="flex items-center gap-2 mb-2">
             <Icon name="shield_person" className="text-primary-fixed" />
-            <span className="text-[10px] text-on-surface-variant uppercase tracking-widest">Superuser · Admin</span>
+            <span className="text-[10px] text-on-surface-variant uppercase tracking-widest">Platform Owner · Admin</span>
           </div>
-          <h1 className="text-headline-lg">ניהול דאטא גלובלי</h1>
-          <p className="text-on-surface-variant">סקירה מלאה של תנועת המשתמשים בפלטפורמה</p>
+          <h1 className="text-headline-lg">מרכז ניהול הפלטפורמה</h1>
+          <p className="text-on-surface-variant">תצוגת-על: הכנסות, עמלות, מפיקים ובקשות תשלום</p>
         </div>
         <Link href="/" className="text-on-surface-variant/60 text-sm hover:text-primary-fixed">← חזרה ל-NEXUS</Link>
       </header>
 
-      <section className="grid grid-cols-2 md:grid-cols-4 gap-gutter mb-lg">
-        {stats.map((s) => (
-          <div key={s.label} className="glass-card p-md rounded-xl flex flex-col justify-between h-32">
-            <span className="text-on-surface-variant text-sm">{s.label}</span>
-            <div className="flex items-end justify-between">
-              <span className="text-3xl font-extrabold text-primary-fixed neon-text">{s.value}</span>
-              {s.chip && <span className="text-primary-fixed-dim text-xs bg-primary-fixed/10 px-1.5 py-0.5 rounded">{s.chip}</span>}
-            </div>
-            {s.note && <span className="text-[10px] text-on-surface-variant">{s.note}</span>}
-          </div>
+      {/* Tabs */}
+      <div className="flex gap-2 mb-lg overflow-x-auto hide-scrollbar">
+        {tabs.map((t) => (
+          <button key={t.id} onClick={() => setTab(t.id)} className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition-all border ${tab === t.id ? "bg-primary-fixed text-on-primary-fixed font-bold border-primary-fixed" : "glass border-white/10 text-on-surface-variant hover:text-primary-fixed"}`}>
+            <Icon name={t.icon} className="text-[18px]" /> <span className="text-label-md">{t.label}</span>
+          </button>
         ))}
-      </section>
+      </div>
 
-      {/* Advanced filtering */}
-      <section className="glass-card p-md rounded-xl mb-gutter">
-        <div className="flex items-center justify-between mb-md">
-          <div className="flex items-center gap-2 text-primary-fixed"><Icon name="filter_list" /><h3 className="text-label-md">סינון מתקדם</h3></div>
-          <span className="text-label-sm text-on-surface-variant">{filtered.length} תוצאות</span>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-md">
-          <div className="space-y-2">
-            <label className="text-[10px] uppercase font-bold text-on-surface-variant tracking-widest block">טווח גילאים</label>
-            <div className="flex gap-2">
-              <input type="number" value={ageMin} onChange={(e) => setAgeMin(e.target.value)} placeholder="מ-" className="w-full bg-surface-container-low border border-white/10 rounded-lg p-2 text-sm focus:border-primary-fixed outline-none" />
-              <input type="number" value={ageMax} onChange={(e) => setAgeMax(e.target.value)} placeholder="עד" className="w-full bg-surface-container-low border border-white/10 rounded-lg p-2 text-sm focus:border-primary-fixed outline-none" />
-            </div>
-          </div>
-          <div className="space-y-2">
-            <label className="text-[10px] uppercase font-bold text-on-surface-variant tracking-widest block">מגדר</label>
-            <select value={gender} onChange={(e) => setGender(e.target.value)} className="w-full bg-surface-container-low border border-white/10 rounded-lg p-2 text-sm focus:border-primary-fixed outline-none appearance-none"><option>הכל</option><option>זכר</option><option>נקבה</option><option>אחר</option></select>
-          </div>
-          <div className="space-y-2">
-            <label className="text-[10px] uppercase font-bold text-on-surface-variant tracking-widest block">ז'אנר מוזיקלי</label>
-            <div className="flex flex-wrap gap-2">
-              {["Techno", "Trance", "Mainstream", "Melodic"].map((g) => {
-                const on = genres.includes(g);
-                return <button key={g} onClick={() => toggleGenre(g)} className={`px-3 py-1 rounded-full text-xs transition-all ${on ? "bg-primary-fixed text-on-primary-fixed font-bold border border-primary-fixed" : "bg-transparent text-on-surface-variant border border-white/10 hover:border-primary-fixed"}`}>{g}</button>;
-              })}
-            </div>
-          </div>
-          <div className="space-y-2">
-            <label className="text-[10px] uppercase font-bold text-on-surface-variant tracking-widest block">חיפוש משתמש</label>
-            <div className="relative">
-              <Icon name="search" className="absolute right-2 top-2 text-on-surface-variant text-sm" />
-              <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="שם, מייל או טלפון..." className="w-full bg-surface-container-low border border-white/10 rounded-lg p-2 pr-8 text-sm focus:border-primary-fixed outline-none text-right" />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="glass-card rounded-xl overflow-hidden">
-        {menu && <div className="fixed inset-0 z-[55]" onClick={() => setMenu(null)} />}
-        <div className="overflow-x-auto">
-          <table className="w-full text-right border-collapse">
-            <thead>
-              <tr className="bg-white/5 text-on-surface-variant border-b border-white/5 text-sm">
-                <th className="p-md">משתמש</th><th className="p-md">גיל</th><th className="p-md">מגדר</th><th className="p-md">ז'אנר מועדף</th><th className="p-md">סטטוס</th><th className="p-md text-center">פעולות</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/5">
-              {filtered.map((u) => (
-                <tr key={u.email} className="hover:bg-white/[0.02] transition-colors">
-                  <td className="p-md">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center border border-white/10 text-on-surface-variant"><Icon name="person" /></div>
-                      <div className="flex flex-col"><span className="text-label-md">{u.name}</span><span className="text-[10px] text-on-surface-variant">{u.email}</span></div>
-                    </div>
-                  </td>
-                  <td className="p-md">{u.age}</td>
-                  <td className="p-md text-on-surface-variant">{u.gender}</td>
-                  <td className="p-md"><span className="bg-secondary-fixed/10 text-secondary-fixed px-2 py-0.5 rounded text-xs font-bold border border-secondary-fixed/20">{u.genre}</span></td>
-                  <td className="p-md">
-                    <div className={`flex items-center gap-2 ${u.online ? "" : "text-on-surface-variant opacity-50"}`}>
-                      <div className={`w-1.5 h-1.5 rounded-full ${u.online ? "bg-primary-fixed shadow-[0_0_8px_rgba(191,245,32,0.8)]" : "bg-on-surface-variant"}`} />
-                      <span className="text-xs">{u.online ? "מחובר כעת" : "לא מחובר"}</span>
-                    </div>
-                  </td>
-                  <td className="p-md text-center">
-                    <div className="relative inline-block">
-                      <button onClick={() => setMenu(menu === u.email ? null : u.email)} className="text-on-surface-variant hover:text-primary-fixed transition-colors"><Icon name="more_vert" /></button>
-                      {menu === u.email && (
-                        <div className="absolute left-0 top-full mt-1 w-40 glass-card border border-white/10 rounded-xl py-1 z-[60] shadow-2xl text-right">
-                          <button onClick={() => toggleOnline(u.email)} className="w-full px-3 py-2 flex items-center gap-2 text-label-sm text-on-surface hover:bg-white/5"><Icon name="toggle_on" className="text-[18px] text-primary-fixed" /> {u.online ? "סמן כלא מחובר" : "סמן כמחובר"}</button>
-                          <button onClick={() => removeUser(u.email)} className="w-full px-3 py-2 flex items-center gap-2 text-label-sm text-error hover:bg-error/10"><Icon name="delete" className="text-[18px]" /> מחיקת משתמש</button>
-                        </div>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              {filtered.length === 0 && <tr><td colSpan={6} className="p-md text-center text-on-surface-variant/60 py-8">לא נמצאו משתמשים תואמים</td></tr>}
-            </tbody>
-          </table>
-        </div>
-        <div className="p-md border-t border-white/5 text-xs text-on-surface-variant text-left">מציג {filtered.length} מתוך 124,502 משתמשים</div>
-      </section>
-
-      {/* Growth chart + top producers */}
-      <section className="mt-xl grid grid-cols-1 md:grid-cols-3 gap-gutter">
-        <div className="glass-card p-md rounded-xl md:col-span-2">
-          <div className="flex justify-between items-center mb-md">
-            <h3 className="text-label-md text-primary-fixed uppercase tracking-wider">צמיחת משתמשים (חודשי)</h3>
-            <div className="flex gap-4 text-[10px] text-on-surface-variant"><div className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-primary-fixed" /> 2024</div><div className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-white/20" /> 2023</div></div>
-          </div>
-          <div className="h-44 w-full flex items-end gap-2 relative">
-            <div className="absolute inset-x-0 bottom-0 border-b border-white/10 h-px" />
-            {[40, 60, 55, 80, 70, 95, 85].map((h, i) => (
-              <div key={i} className={`flex-1 bg-primary-fixed/20 border-t-2 border-primary-fixed transition-all hover:brightness-150 ${h === 95 ? "shadow-[0_0_20px_rgba(191,245,32,0.3)]" : ""}`} style={{ height: `${h}%` }} />
-            ))}
-          </div>
-          <div className="flex justify-between mt-2 text-[10px] text-on-surface-variant"><span>ינו'</span><span>פבר'</span><span>מרץ</span><span>אפר'</span><span>מאי</span><span>יוני</span><span>יולי</span></div>
-        </div>
-        <div className="glass-card p-md rounded-xl flex flex-col">
-          <h3 className="text-label-md text-primary-fixed mb-md">הפקות מבוקשות</h3>
-          <div className="space-y-4 flex-1">
-            {producers.map((p) => (
-              <div key={p.name} className={`flex items-center justify-between ${p.dim ? "opacity-50" : ""}`}>
-                <div className="flex items-center gap-2"><div className="w-8 h-8 rounded bg-white/5 flex items-center justify-center font-bold text-xs">{p.letter}</div><span className="text-sm">{p.name}</span></div>
-                <span className="text-xs font-bold text-primary-fixed">{p.v}</span>
+      {/* ── OVERVIEW ── */}
+      {tab === "overview" && (
+        <>
+          <section className="grid grid-cols-2 md:grid-cols-4 gap-gutter mb-lg">
+            {[
+              { label: "מחזור מכירות", value: shekel(revenue), icon: "payments", note: realRevenue ? "נתוני אמת" : "הערכה" },
+              { label: `עמלת פלטפורמה (${commission}%)`, value: shekel(platformCut), icon: "account_balance", accent: true },
+              { label: "נטו למפיקים", value: shekel(producerNet), icon: "savings" },
+              { label: "כרטיסים שנמכרו", value: agg.sold.toLocaleString(), icon: "confirmation_number" },
+            ].map((s) => (
+              <div key={s.label} className={`glass-card p-md rounded-xl flex flex-col justify-between h-32 ${s.accent ? "border border-primary-fixed/30" : ""}`}>
+                <div className="flex items-center justify-between">
+                  <span className="text-on-surface-variant text-sm">{s.label}</span>
+                  <Icon name={s.icon} className="text-primary-fixed-dim text-[18px]" />
+                </div>
+                <span className="text-2xl md:text-3xl font-extrabold text-primary-fixed neon-text">{s.value}</span>
+                {s.note && <span className="text-[10px] text-on-surface-variant">{s.note}</span>}
               </div>
             ))}
+          </section>
+
+          <section className="grid grid-cols-1 md:grid-cols-3 gap-gutter mb-lg">
+            <div className="glass-card p-md rounded-xl"><p className="text-on-surface-variant text-sm mb-1">אירועים פעילים</p><p className="text-2xl font-bold text-primary">{events.length - suspended.size}</p></div>
+            <div className="glass-card p-md rounded-xl"><p className="text-on-surface-variant text-sm mb-1">הזמנות</p><p className="text-2xl font-bold text-primary">{agg.orders.toLocaleString()}</p></div>
+            <div className="glass-card p-md rounded-xl border border-secondary-fixed/20"><p className="text-on-surface-variant text-sm mb-1">בקשות תשלום ממתינות</p><p className="text-2xl font-bold text-secondary-fixed">{pendingPayouts.length} · {shekel(pendingPayouts.reduce((s, p) => s + p.amount, 0))}</p></div>
+          </section>
+
+          {/* Commission control */}
+          <section className="glass-card p-md rounded-xl mb-lg max-w-md">
+            <h3 className="text-label-md text-primary-fixed mb-3 flex items-center gap-2"><Icon name="percent" className="text-[18px]" /> עמלת פלטפורמה גלובלית</h3>
+            <div className="flex items-center gap-3">
+              <input type="range" min={0} max={30} value={commission} onChange={(e) => setRate(Number(e.target.value))} className="flex-1 accent-primary-fixed" />
+              <div className="flex items-center gap-1">
+                <input type="number" min={0} max={50} value={commission} onChange={(e) => setRate(Number(e.target.value))} className="w-16 bg-surface-container-low border border-white/10 rounded-lg px-2 py-1.5 text-center text-on-surface focus:border-primary-fixed outline-none" />
+                <span className="text-on-surface-variant">%</span>
+              </div>
+            </div>
+            <p className="text-label-sm text-on-surface-variant mt-2">על מחזור של {shekel(revenue)} → עמלה {shekel(platformCut)}, נטו למפיקים {shekel(producerNet)}.</p>
+          </section>
+
+          {/* Top events */}
+          <section className="glass-card p-md rounded-xl">
+            <h3 className="text-label-md text-primary-fixed mb-md uppercase tracking-wider">אירועים מובילים</h3>
+            <div className="space-y-2">
+              {[...events].map((e) => ({ e, m: eventMetrics(e, sales[e.id]) })).sort((a, b) => b.m.revenue - a.m.revenue).slice(0, 5).map(({ e, m }) => (
+                <div key={e.id} className="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <Icon name="local_activity" className="text-primary-fixed-dim shrink-0" />
+                    <div className="min-w-0"><p className="text-label-md text-on-surface truncate">{e.title}</p><p className="text-[10px] text-on-surface-variant">{e.city} · {m.sold} כרטיסים</p></div>
+                  </div>
+                  <span className="text-label-md font-bold text-primary-fixed shrink-0">{shekel(m.revenue)}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+        </>
+      )}
+
+      {/* ── PAYOUTS ── */}
+      {tab === "payouts" && (
+        <section className="space-y-3">
+          {payouts.length === 0 && <div className="glass-card rounded-xl p-lg text-center text-on-surface-variant"><Icon name="inbox" className="text-3xl mb-2 opacity-40" /><p>אין בקשות תשלום עדיין.</p></div>}
+          {payouts.map((p) => (
+            <div key={p.id} className="glass-card rounded-xl p-md">
+              <div className="flex items-start justify-between gap-3 flex-wrap">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-primary-fixed shrink-0"><Icon name={p.kind === "withdrawal" ? "account_balance" : "send"} /></div>
+                  <div>
+                    <p className="text-label-md text-on-surface">{p.holder} <span className="text-on-surface-variant text-label-sm">· {KIND_LABEL[p.kind] || p.kind}</span></p>
+                    <p className="text-[11px] text-on-surface-variant font-mono" dir="ltr">{p.bank} · {p.branch}-{p.account} · ת.ז {p.idnum}</p>
+                    {p.contact && <p className="text-[11px] text-on-surface-variant" dir="ltr">{p.contact}</p>}
+                  </div>
+                </div>
+                <div className="text-left">
+                  <p className="text-headline-md text-primary-fixed font-bold">{shekel(p.amount)}</p>
+                  <span className={`inline-block text-[10px] px-2 py-0.5 rounded-full border ${STATUS[p.status].cls}`}>{STATUS[p.status].label}</span>
+                </div>
+              </div>
+
+              {p.receipt_url && <a href={p.receipt_url} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center gap-1 text-label-sm text-primary-fixed hover:underline"><Icon name="receipt_long" className="text-[16px]" /> אסמכתא מצורפת</a>}
+              {p.admin_note && <p className="text-label-sm text-on-surface-variant mt-1">הערה: {p.admin_note}</p>}
+
+              {p.status === "pending" && (
+                actId === p.id ? (
+                  <div className="mt-3 space-y-2 border-t border-white/10 pt-3">
+                    <input value={receipt} onChange={(e) => setReceipt(e.target.value)} placeholder="קישור לאסמכתא (צילום העברה)" dir="ltr" className="w-full bg-surface-container-low border border-white/10 rounded-lg px-3 py-2 text-on-surface text-sm focus:border-primary-fixed outline-none" />
+                    <input value={note} onChange={(e) => setNote(e.target.value)} placeholder="הערת מנהל (אופציונלי)" className="w-full bg-surface-container-low border border-white/10 rounded-lg px-3 py-2 text-on-surface text-sm focus:border-primary-fixed outline-none" />
+                    <div className="flex gap-2">
+                      <button disabled={busy} onClick={() => act(p.id, "paid")} className="flex-1 bg-primary-fixed text-on-primary-fixed font-bold py-2 rounded-lg text-label-md active:scale-95 disabled:opacity-50">סומן כשולם + אסמכתא</button>
+                      <button disabled={busy} onClick={() => act(p.id, "approved")} className="px-4 bg-surface-container-highest text-on-surface py-2 rounded-lg text-label-md active:scale-95 disabled:opacity-50">אשר</button>
+                      <button onClick={() => { setActId(null); setReceipt(""); setNote(""); }} className="px-3 text-on-surface-variant"><Icon name="close" /></button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex gap-2 mt-3">
+                    <button onClick={() => { setActId(p.id); setReceipt(""); setNote(""); }} className="flex-1 bg-primary-fixed/10 text-primary-fixed border border-primary-fixed/30 py-2 rounded-lg text-label-md font-bold active:scale-95">טפל בבקשה</button>
+                    <button disabled={busy} onClick={() => act(p.id, "rejected")} className="px-4 text-error border border-error/30 py-2 rounded-lg text-label-md active:scale-95 disabled:opacity-50">דחה</button>
+                  </div>
+                )
+              )}
+            </div>
+          ))}
+        </section>
+      )}
+
+      {/* ── EVENTS ── */}
+      {tab === "events" && (
+        <section className="space-y-2">
+          {events.map((e) => {
+            const m = eventMetrics(e, sales[e.id]);
+            const off = suspended.has(e.id);
+            return (
+              <div key={e.id} className={`glass-card rounded-xl p-md flex items-center justify-between gap-3 ${off ? "opacity-50" : ""}`}>
+                <div className="min-w-0">
+                  <Link href={`/producer/events/${e.id}`} className="text-label-md text-on-surface hover:text-primary-fixed truncate block">{e.title}</Link>
+                  <p className="text-[11px] text-on-surface-variant">{e.city} · {e.date} · {m.sold} כרטיסים · {shekel(m.revenue)}</p>
+                </div>
+                <button onClick={() => setSuspended((s) => { const n = new Set(s); n.has(e.id) ? n.delete(e.id) : n.add(e.id); return n; })} className={`text-label-sm px-3 py-1.5 rounded-lg border shrink-0 ${off ? "border-primary-fixed/30 text-primary-fixed" : "border-error/30 text-error"}`}>
+                  {off ? "הפעל" : "השהה"}
+                </button>
+              </div>
+            );
+          })}
+        </section>
+      )}
+
+      {/* ── USERS ── */}
+      {tab === "users" && (
+        <section>
+          <div className="relative mb-md max-w-md">
+            <Icon name="search" className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant" />
+            <input value={uQuery} onChange={(e) => setUQuery(e.target.value)} placeholder="חיפוש לפי שם או טלפון…" className="w-full bg-surface-container-low border border-white/10 rounded-xl py-3 pr-11 pl-4 text-on-surface focus:border-primary-fixed outline-none" />
           </div>
-          <button onClick={() => setShowAllProducers((v) => !v)} className="w-full mt-4 py-2 text-xs border border-white/10 rounded-lg hover:border-primary-fixed/50 hover:text-primary-fixed transition-all">{showAllProducers ? "הצג פחות" : "צפה בכל המפיקים"}</button>
-        </div>
-      </section>
+          {filteredBuyers.length === 0 ? (
+            <div className="glass-card rounded-xl p-lg text-center text-on-surface-variant"><Icon name="group_off" className="text-3xl mb-2 opacity-40" /><p>אין רוכשים עדיין (או שאין התאמה לחיפוש).</p></div>
+          ) : (
+            <div className="glass-card rounded-xl overflow-hidden divide-y divide-white/5">
+              {filteredBuyers.map((b, i) => (
+                <div key={i} className="p-3 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant"><Icon name="person" /></div>
+                    <div><p className="text-label-md text-on-surface">{b.name}</p>{b.phone && <p className="text-[11px] text-on-surface-variant" dir="ltr">{b.phone}</p>}</div>
+                  </div>
+                  <Icon name="confirmation_number" className="text-primary-fixed-dim text-[18px]" />
+                </div>
+              ))}
+            </div>
+          )}
+          <p className="text-[11px] text-on-surface-variant mt-3">מוצגים רוכשים אמיתיים מתוך מאגר ההזמנות. מודל פרופילי-מפיק מלא (אישור/חסימה/עמלה אישית) יתווסף בשלב הבא.</p>
+        </section>
+      )}
     </main>
   );
 }
