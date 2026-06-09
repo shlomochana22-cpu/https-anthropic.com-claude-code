@@ -6,6 +6,7 @@ import { Icon } from "@/components/Icon";
 import { getEvents, getEventSales, type EventSales } from "@/lib/queries";
 import { aggregateMetrics, eventMetrics, shekel } from "@/lib/metrics";
 import { getBuyers } from "@/lib/buyers";
+import { browserSupabase } from "@/lib/supabaseBrowser";
 import { amIAdmin, getAdminPayouts, getAdminOverview, setPayoutStatus, type PayoutRow, type PayoutStatus } from "@/lib/admin";
 import { AdminProducers } from "@/components/AdminProducers";
 import { getProducers, type ProducerSummary } from "@/lib/producers";
@@ -21,6 +22,25 @@ const STATUS: Record<PayoutStatus, { label: string; cls: string }> = {
 };
 type Tab = "overview" | "producers" | "payouts" | "events" | "users";
 type Buyer = { name: string; phone?: string };
+
+/** Short two-tone alert chime (best-effort; ignored if audio is blocked). */
+function chime() {
+  try {
+    const Ctx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    const ctx = new Ctx();
+    [880, 1320].forEach((f, i) => {
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = "sine"; o.frequency.value = f;
+      o.connect(g); g.connect(ctx.destination);
+      const t = ctx.currentTime + i * 0.18;
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.25, t + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.16);
+      o.start(t); o.stop(t + 0.18);
+    });
+  } catch { /* audio blocked — visual popup still shows */ }
+}
 
 export default function AdminPage() {
   const [ready, setReady] = useState(false);
@@ -45,6 +65,7 @@ export default function AdminPage() {
   const [busy, setBusy] = useState(false);
   const [uQuery, setUQuery] = useState("");
   const [expEvent, setExpEvent] = useState<string | null>(null);
+  const [incoming, setIncoming] = useState<PayoutRow | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -61,6 +82,23 @@ export default function AdminPage() {
       setReady(true);
     })();
   }, []);
+
+  // Real-time alert: pop a window the moment a producer submits a payout request.
+  useEffect(() => {
+    if (!isAdmin) return;
+    const sb = browserSupabase();
+    if (!sb) return;
+    const ch = sb
+      .channel("admin-payout-alerts")
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "withdrawal_requests" }, (payload) => {
+        const row = payload.new as PayoutRow;
+        setPayouts((list) => (list.some((p) => p.id === row.id) ? list : [row, ...list]));
+        setIncoming(row);
+        chime();
+      })
+      .subscribe();
+    return () => { sb.removeChannel(ch); };
+  }, [isAdmin]);
 
   const agg = useMemo(() => aggregateMetrics(events, sales), [events, sales]);
   const pendingPayouts = payouts.filter((p) => p.status === "pending");
@@ -352,6 +390,26 @@ export default function AdminPage() {
           )}
           <p className="text-[11px] text-on-surface-variant mt-3">מוצגים רוכשים אמיתיים מתוך מאגר ההזמנות. מודל פרופילי-מפיק מלא (אישור/חסימה/עמלה אישית) יתווסף בשלב הבא.</p>
         </section>
+      )}
+
+      {/* Real-time new-payout alert */}
+      {incoming && (
+        <div className="fixed inset-0 z-[90] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setIncoming(null)} />
+          <div className="relative glass-card w-full max-w-sm rounded-2xl p-6 border-2 border-primary-fixed shadow-neon-primary text-center animate-[pulse_1.2s_ease-in-out_2]">
+            <div className="w-16 h-16 rounded-full bg-primary-fixed/15 flex items-center justify-center mx-auto mb-4">
+              <Icon name="notifications_active" className="text-primary-fixed text-4xl" fill />
+            </div>
+            <p className="text-[11px] text-primary-fixed-dim uppercase tracking-widest mb-1">בקשת תשלום חדשה</p>
+            <h3 className="text-headline-md text-primary mb-2">{incoming.holder}</h3>
+            <p className="text-3xl font-extrabold text-primary-fixed neon-text mb-1">{shekel(incoming.amount)}</p>
+            <p className="text-label-md text-on-surface-variant mb-4">{KIND_LABEL[incoming.kind] || incoming.kind} · {incoming.bank} {incoming.branch}-{incoming.account}</p>
+            <div className="flex gap-2">
+              <button onClick={() => { setTab("payouts"); setActId(incoming.id); setReceipt(""); setNote(""); setIncoming(null); }} className="flex-1 bg-primary-fixed text-on-primary-fixed font-bold py-3 rounded-lg active:scale-95 shadow-neon-primary">טפל עכשיו</button>
+              <button onClick={() => setIncoming(null)} className="px-4 py-3 rounded-lg glass border border-white/10 text-on-surface-variant">סגור</button>
+            </div>
+          </div>
+        </div>
       )}
     </main>
   );
