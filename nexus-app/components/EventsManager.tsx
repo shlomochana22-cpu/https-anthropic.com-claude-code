@@ -109,7 +109,7 @@ export function EventsManager({ events, salesByEvent = {} }: { events: NexusEven
                       {m.revenue > 0 ? (
                         <>
                           <p className="text-headline-md text-primary-fixed">{shekel(m.revenue)}</p>
-                          <p className="text-[10px] text-on-surface-variant">סך הכנסה</p>
+                          <p className="text-[10px] text-on-surface-variant flex items-center justify-end gap-1"><Icon name="confirmation_number" className="text-[12px]" /> {m.sold.toLocaleString()} כרטיסים · סך הכנסה</p>
                         </>
                       ) : (
                         <>
