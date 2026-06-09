@@ -72,9 +72,9 @@ export function ProducerBottomNav() {
   const items = [
     { href: "/producer", icon: "dashboard", label: "דאשבורד" },
     { href: "/producer/events", icon: "confirmation_number", label: "אירועים" },
-    { href: "/producer/scanner", icon: "qr_code_scanner", label: "סורק" },
     { href: "/producer/wallet", icon: "account_balance_wallet", label: "ארנק" },
-    { href: "/", icon: "exit_to_app", label: "יציאה לאתר" },
+    { href: "/producer/profile", icon: "badge", label: "פרופיל" },
+    { href: "/", icon: "exit_to_app", label: "יציאה" },
   ];
   return (
     <nav className="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-[env(safe-area-inset-bottom)] h-20 bg-surface-container-lowest/90 backdrop-blur-2xl border-t border-white/5 shadow-[0_-8px_24px_rgba(0,0,0,0.5)] rounded-t-xl">
