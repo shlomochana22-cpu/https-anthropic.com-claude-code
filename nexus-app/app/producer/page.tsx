@@ -1,8 +1,7 @@
 import Link from "next/link";
 import { Icon } from "@/components/Icon";
 import { ProducerGreeting } from "@/components/ProducerGreeting";
-import { ProducerStatCards } from "@/components/ProducerStatCards";
-import { ProducerActiveEvents } from "@/components/ProducerActiveEvents";
+import { ProducerHome } from "@/components/ProducerHome";
 
 // Always reflect fresh sales — never serve a statically cached dashboard.
 export const dynamic = "force-dynamic";
@@ -28,8 +27,8 @@ export default function ProducerDashboard({
         <p className="text-body-md text-on-surface-variant">הנה סקירה של הביצועים שלך להיום.</p>
       </header>
 
-      {/* Stat cards — scoped to YOUR events only (real data) */}
-      <ProducerStatCards />
+      {/* KPIs + your events — scoped to YOU, loaded once */}
+      <ProducerHome />
 
       {/* Quick navigation — row list, max two per row */}
       <div className="mb-lg">
@@ -122,8 +121,6 @@ export default function ProducerDashboard({
         </div>
       </div>
 
-      {/* Active events — your own */}
-      <ProducerActiveEvents />
     </main>
   );
 }
