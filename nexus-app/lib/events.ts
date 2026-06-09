@@ -8,6 +8,9 @@ export type TicketTier = {
   benefits?: string[];
 };
 
+export type LineupAct = { name: string; time?: string; headliner?: boolean };
+export type FaqItem = { q: string; a: string };
+
 export type NexusEvent = {
   id: string;
   title: string;
@@ -24,8 +27,27 @@ export type NexusEvent = {
   description?: string;
   age?: string;
   ageVisible?: boolean;
+  lineup?: LineupAct[];
+  entryPolicy?: string[];
+  faq?: FaqItem[];
   tiers: TicketTier[];
 };
+
+/** Generic nightlife policy shown when a producer hasn't set a custom one. */
+export const DEFAULT_ENTRY_POLICY = (age?: string): string[] => [
+  `כניסה ${age ? `מגיל ${age} ` : ""}בהצגת תעודת זהות פיזית בלבד`,
+  "הזכות לכניסה שמורה למארגנים · קוד לבוש: סמארט-קז'ואל",
+  "אין כניסה חוזרת לאחר יציאה מהמתחם",
+  "אסורה הכנסת משקאות, סמים או חפצים מסוכנים",
+];
+
+/** Generic FAQ shown when a producer hasn't set custom questions. */
+export const DEFAULT_FAQ: FaqItem[] = [
+  { q: "איך מקבלים את הכרטיס?", a: "מיד לאחר הרכישה הכרטיס הדיגיטלי עם קוד ה-QR נשמר תחת \"הכרטיסים שלי\" ונשלח גם למייל." },
+  { q: "אפשר להחזיר או למכור כרטיס?", a: "כרטיסים אינם ניתנים להחזר, אך ניתן להעביר או למכור אותם דרך מערכת המכירה החוזרת באפליקציה." },
+  { q: "מה צריך להביא לכניסה?", a: "תעודת זהות פיזית והכרטיס הדיגיטלי (QR). ודאו שהשם בכרטיס תואם לתעודה." },
+  { q: "יש חניה במקום?", a: "מומלץ להגיע בתחבורה ציבורית או מונית. פרטי חניה מעודכנים מופיעים במפת המתחם." },
+];
 
 const IMG =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuC1O4Fan1VztsSOvfbIhXajsSec9GmEu_MpVC8Ay_in3OabYFsN4Pq5_TZAUMQ2DqeeaW1LsF2D3zZEKMl_1oQ-1RYt4zF2RA4xzHLBLvL9AhPis8p7WAiKmWJF9UFCLw0rRcjhI7GsKgfC0FmL9qlsn_okfvAsiDN3tSb3nAH88YFIGAaoOESpYSAlPNMTqVPjlXZ66LugA8HEgygOKJ4GaGTaUm_pfAiJp7iDqzOKm4mf42cRpB9UKW2RGz9r6oPFGiHVR0TwZg";
@@ -56,6 +78,17 @@ export const events: NexusEvent[] = [
     fromPrice: 120,
     age: "18+",
     ageVisible: true,
+    lineup: [
+      { name: "AMÉLIE LENS", time: "02:00", headliner: true },
+      { name: "Red Axes", time: "00:30" },
+      { name: "Moscoman", time: "23:00" },
+      { name: "Resident: Nadav", time: "22:00" },
+    ],
+    faq: [
+      { q: "מה שעות האירוע?", a: "הדלתות נפתחות ב-23:00 והאירוע נמשך עד אור הבוקר (~06:00)." },
+      { q: "יש כניסה חוזרת?", a: "לא — לאחר יציאה מהמתחם לא ניתן להיכנס שוב עם אותו כרטיס." },
+      { q: "איך מקבלים את הכרטיס?", a: "הכרטיס הדיגיטלי עם ה-QR נשמר תחת \"הכרטיסים שלי\" מיד לאחר הרכישה ונשלח גם למייל." },
+    ],
     tiers: [
       { id: "early", name: "Early Bird", description: "מכירה מוקדמת - סבב א'", price: 80, soldOut: true },
       { id: "regular", name: "Regular Ticket", description: "כניסה רגילה לכל המתחמים", price: 120 },

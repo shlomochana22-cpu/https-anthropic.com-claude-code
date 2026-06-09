@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Icon } from "./Icon";
 import { SafeImage } from "./SafeImage";
-import type { NexusEvent } from "@/lib/events";
+import { DEFAULT_ENTRY_POLICY, DEFAULT_FAQ, type NexusEvent } from "@/lib/events";
 
 export function EventDetail({ event }: { event: NexusEvent }) {
   const router = useRouter();
@@ -13,6 +13,10 @@ export function EventDetail({ event }: { event: NexusEvent }) {
     Object.fromEntries(event.tiers.map((t) => [t.id, t.id === "regular" ? 1 : 0]))
   );
   const [descOpen, setDescOpen] = useState(false);
+  const [faqOpen, setFaqOpen] = useState<number | null>(null);
+
+  const entryPolicy = event.entryPolicy?.length ? event.entryPolicy : DEFAULT_ENTRY_POLICY(event.age);
+  const faq = event.faq?.length ? event.faq : DEFAULT_FAQ;
 
   const total = useMemo(
     () => event.tiers.reduce((sum, t) => sum + (qty[t.id] || 0) * t.price, 0),
@@ -112,6 +116,29 @@ export function EventDetail({ event }: { event: NexusEvent }) {
           </button>
         </section>
 
+        {/* Lineup */}
+        {event.lineup && event.lineup.length > 0 && (
+          <section className="px-margin-mobile mt-lg">
+            <h3 className="text-headline-md text-primary mb-sm flex items-center gap-2">
+              <Icon name="queue_music" className="text-primary-fixed-dim" /> ליינאפ
+            </h3>
+            <div className="space-y-2">
+              {event.lineup.map((act, i) => (
+                <div key={i} className={`glass-card rounded-xl p-md flex items-center justify-between ${act.headliner ? "border border-primary-container/40" : ""}`}>
+                  <div className="flex items-center gap-3">
+                    <Icon name={act.headliner ? "star" : "music_note"} className={act.headliner ? "text-primary-container" : "text-on-surface-variant"} fill={act.headliner} />
+                    <div>
+                      <p className={`text-label-md ${act.headliner ? "text-primary-container font-bold" : "text-on-surface"}`}>{act.name}</p>
+                      {act.headliner && <p className="text-[11px] text-primary-container/70">Headliner</p>}
+                    </div>
+                  </div>
+                  {act.time && <span className="text-label-md text-on-surface-variant font-mono" dir="ltr">{act.time}</span>}
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
         {/* Tiers */}
         <section className="px-margin-mobile mt-lg">
           <h3 className="text-headline-md text-primary mb-md">סוגי כרטיסים</h3>
@@ -174,6 +201,42 @@ export function EventDetail({ event }: { event: NexusEvent }) {
             ))}
           </div>
         </section>
+        {/* Entry policy */}
+        <section className="px-margin-mobile mt-lg">
+          <h3 className="text-headline-md text-primary mb-sm flex items-center gap-2">
+            <Icon name="policy" className="text-primary-fixed-dim" /> מדיניות כניסה
+          </h3>
+          <ul className="glass-card rounded-2xl p-md space-y-3">
+            {entryPolicy.map((rule, i) => (
+              <li key={i} className="flex items-start gap-3 text-body-md text-on-surface-variant">
+                <Icon name="check_circle" className="text-primary-fixed-dim text-[18px] mt-0.5 shrink-0" fill />
+                <span>{rule}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        {/* FAQ */}
+        <section className="px-margin-mobile mt-lg">
+          <h3 className="text-headline-md text-primary mb-sm flex items-center gap-2">
+            <Icon name="help" className="text-primary-fixed-dim" /> שאלות נפוצות
+          </h3>
+          <div className="space-y-2">
+            {faq.map((item, i) => {
+              const isOpen = faqOpen === i;
+              return (
+                <div key={i} className="glass-card rounded-xl overflow-hidden">
+                  <button onClick={() => setFaqOpen(isOpen ? null : i)} className="w-full flex items-center justify-between p-md text-right">
+                    <span className="text-label-md text-on-surface">{item.q}</span>
+                    <Icon name={isOpen ? "expand_less" : "expand_more"} className="text-on-surface-variant shrink-0" />
+                  </button>
+                  {isOpen && <p className="px-md pb-md text-body-md text-on-surface-variant leading-relaxed">{item.a}</p>}
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
         {/* Directions */}
         <section className="px-margin-mobile mt-lg mb-8">
           <h3 className="text-headline-md text-primary mb-sm">איך מגיעים</h3>
