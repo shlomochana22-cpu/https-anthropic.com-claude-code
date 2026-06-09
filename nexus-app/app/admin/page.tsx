@@ -8,7 +8,7 @@ import { aggregateMetrics, eventMetrics, shekel } from "@/lib/metrics";
 import { getBuyers } from "@/lib/buyers";
 import { amIAdmin, getAdminPayouts, getAdminOverview, setPayoutStatus, type PayoutRow, type PayoutStatus } from "@/lib/admin";
 import { AdminProducers } from "@/components/AdminProducers";
-import { getProducers } from "@/lib/producers";
+import { getProducers, type ProducerSummary } from "@/lib/producers";
 import { notify } from "@/lib/notify";
 import type { NexusEvent } from "@/lib/events";
 
@@ -33,7 +33,8 @@ export default function AdminPage() {
   const [buyers, setBuyers] = useState<Buyer[]>([]);
   const [realRevenue, setRealRevenue] = useState<number | null>(null);
   const [buyerFees, setBuyerFees] = useState(0);
-  const [producerCommission, setProducerCommission] = useState(0);
+  const [producers, setProducers] = useState<ProducerSummary[]>([]);
+  const [selProducer, setSelProducer] = useState<string>("all");
 
   const [suspended, setSuspended] = useState<Set<string>>(new Set());
 
@@ -55,21 +56,25 @@ export default function AdminPage() {
         setBuyers(by.map((b) => ({ name: b.name, phone: b.phone ?? undefined })));
         setRealRevenue(ov?.paidRevenue ?? null);
         setBuyerFees(ov?.fees ?? 0);
-        // Platform commission is the sum of each producer's own rate — it varies
-        // per producer, so it's set per-producer inside the producer card.
-        setProducerCommission(prods.reduce((s, p) => s + p.commission, 0));
+        setProducers(prods);
       }
       setReady(true);
     })();
   }, []);
 
   const agg = useMemo(() => aggregateMetrics(events, sales), [events, sales]);
-  const revenue = realRevenue && realRevenue > 0 ? realRevenue : agg.revenue;
-  const platformCut = producerCommission;
-  const producerNet = revenue - platformCut;
-  const totalFees = realRevenue !== null ? buyerFees : agg.fees; // buyer fees collected
-  const platformTotal = platformCut + totalFees; // your total income: producer commission + buyer fees
   const pendingPayouts = payouts.filter((p) => p.status === "pending");
+
+  // Income breakdown — platform-wide, or scoped to one selected producer.
+  const sp = selProducer === "all" ? null : producers.find((p) => p.id === selProducer) ?? null;
+  const revenue = sp ? sp.revenue : (realRevenue && realRevenue > 0 ? realRevenue : agg.revenue);
+  const platformCut = sp ? sp.commission : producers.reduce((s, p) => s + p.commission, 0);
+  const totalFees = sp ? sp.fees : (realRevenue !== null ? buyerFees : agg.fees);
+  const producerNet = revenue - platformCut;
+  const platformTotal = platformCut + totalFees; // your total income: producer commission + buyer fees
+  const soldCount = sp ? sp.tickets : agg.sold;
+  const ordersCount = sp ? sp.orders : agg.orders;
+  const scopedPending = sp ? pendingPayouts.filter((p) => sp.userId && p.user_id === sp.userId) : pendingPayouts;
 
   const act = async (id: string, status: PayoutStatus) => {
     setBusy(true);
@@ -143,9 +148,23 @@ export default function AdminPage() {
       {/* ── OVERVIEW ── */}
       {tab === "overview" && (
         <>
+          {/* Producer scope selector */}
+          <section className="glass-card rounded-xl p-md mb-gutter flex flex-col sm:flex-row sm:items-center gap-3">
+            <span className="text-label-md text-primary-fixed flex items-center gap-2 shrink-0"><Icon name="filter_alt" className="text-[18px]" /> פירוט הכנסות לפי מפיק</span>
+            <select value={selProducer} onChange={(e) => setSelProducer(e.target.value)} className="flex-1 bg-surface-container-low border border-white/10 rounded-lg px-3 py-2 text-on-surface focus:border-primary-fixed outline-none appearance-none">
+              <option value="all">כל המפיקים (יחד)</option>
+              {producers.map((p) => <option key={p.id} value={p.id}>{p.name}{p.company ? ` · ${p.company}` : ""}</option>)}
+            </select>
+            {sp && <button onClick={() => { setTab("producers"); }} className="shrink-0 text-label-sm text-primary-fixed border border-primary-fixed/30 rounded-lg px-3 py-2 hover:bg-primary-fixed/10 transition-colors flex items-center gap-1"><Icon name="open_in_full" className="text-[16px]" /> כרטיס מלא</button>}
+          </section>
+
+          {sp && (
+            <p className="text-label-sm text-on-surface-variant mb-gutter">מוצג: <span className="text-primary-fixed font-bold">{sp.name}</span> · עמלה {sp.commissionRate}% · {sp.eventsCount} אירועים · סטטוס {sp.status === "active" ? "פעיל" : sp.status === "suspended" ? "מושהה" : "חסום"}</p>
+          )}
+
           <section className="grid grid-cols-2 md:grid-cols-4 gap-gutter mb-gutter">
             {[
-              { label: "מחזור כרטיסים", value: shekel(revenue), icon: "confirmation_number", note: realRevenue ? "סכום מקורי · נתוני אמת" : "הערכה" },
+              { label: "מחזור כרטיסים", value: shekel(revenue), icon: "confirmation_number", note: sp ? "סכום מקורי" : (realRevenue ? "סכום מקורי · נתוני אמת" : "הערכה") },
               { label: "עמלה מהמפיקים", value: shekel(platformCut), icon: "account_balance", note: "סכום העמלות הפר-מפיק" },
               { label: "עמלת גבייה מרוכשים", value: shekel(totalFees), icon: "sell", note: "נגבית בצ'קאאוט" },
               { label: "סך הכנסות הפלטפורמה", value: shekel(platformTotal), icon: "savings", accent: true, note: "עמלת מפיקים + עמלת רוכשים" },
@@ -162,33 +181,43 @@ export default function AdminPage() {
           </section>
 
           <section className="grid grid-cols-2 md:grid-cols-4 gap-gutter mb-lg">
-            <div className="glass-card p-md rounded-xl"><p className="text-on-surface-variant text-sm mb-1">נטו למפיקים</p><p className="text-xl font-bold text-primary">{shekel(producerNet)}</p></div>
-            <div className="glass-card p-md rounded-xl"><p className="text-on-surface-variant text-sm mb-1">כרטיסים שנמכרו</p><p className="text-xl font-bold text-primary">{agg.sold.toLocaleString()}</p></div>
-            <div className="glass-card p-md rounded-xl"><p className="text-on-surface-variant text-sm mb-1">הזמנות</p><p className="text-xl font-bold text-primary">{agg.orders.toLocaleString()}</p></div>
-            <div className="glass-card p-md rounded-xl border border-secondary-fixed/20"><p className="text-on-surface-variant text-sm mb-1">תשלום ממתין</p><p className="text-xl font-bold text-secondary-fixed">{pendingPayouts.length} · {shekel(pendingPayouts.reduce((s, p) => s + p.amount, 0))}</p></div>
+            <div className="glass-card p-md rounded-xl"><p className="text-on-surface-variant text-sm mb-1">נטו למפיק{sp ? "" : "ים"}</p><p className="text-xl font-bold text-primary">{shekel(producerNet)}</p></div>
+            <div className="glass-card p-md rounded-xl"><p className="text-on-surface-variant text-sm mb-1">כרטיסים שנמכרו</p><p className="text-xl font-bold text-primary">{soldCount.toLocaleString()}</p></div>
+            <div className="glass-card p-md rounded-xl"><p className="text-on-surface-variant text-sm mb-1">הזמנות</p><p className="text-xl font-bold text-primary">{ordersCount.toLocaleString()}</p></div>
+            <div className="glass-card p-md rounded-xl border border-secondary-fixed/20"><p className="text-on-surface-variant text-sm mb-1">תשלום ממתין</p><p className="text-xl font-bold text-secondary-fixed">{scopedPending.length} · {shekel(scopedPending.reduce((s, p) => s + p.amount, 0))}</p></div>
           </section>
 
           {/* Commission note — the rate itself is set per producer in their card */}
-          <section className="glass-card p-md rounded-xl mb-lg flex items-start gap-3 border border-primary-fixed/15">
-            <Icon name="info" className="text-primary-fixed-dim text-[20px] shrink-0 mt-0.5" fill />
-            <p className="text-label-sm text-on-surface-variant">אחוז העמלה נקבע <span className="text-primary-fixed">בנפרד לכל מפיק</span> בתוך כרטיס המפיק (לשונית "מפיקים"), כי הוא משתנה ממפיק למפיק. הסכום למעלה הוא צירוף כל העמלות שגבית.</p>
-          </section>
+          {!sp && (
+            <section className="glass-card p-md rounded-xl mb-lg flex items-start gap-3 border border-primary-fixed/15">
+              <Icon name="info" className="text-primary-fixed-dim text-[20px] shrink-0 mt-0.5" fill />
+              <p className="text-label-sm text-on-surface-variant">אחוז העמלה נקבע <span className="text-primary-fixed">בנפרד לכל מפיק</span> בתוך כרטיס המפיק (לשונית "מפיקים"), כי הוא משתנה ממפיק למפיק. הסכום למעלה הוא צירוף כל העמלות שגבית.</p>
+            </section>
+          )}
 
-          {/* Top events */}
-          <section className="glass-card p-md rounded-xl">
-            <h3 className="text-label-md text-primary-fixed mb-md uppercase tracking-wider">אירועים מובילים</h3>
-            <div className="space-y-2">
-              {[...events].map((e) => ({ e, m: eventMetrics(e, sales[e.id]) })).sort((a, b) => b.m.revenue - a.m.revenue).slice(0, 5).map(({ e, m }) => (
-                <div key={e.id} className="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <Icon name="local_activity" className="text-primary-fixed-dim shrink-0" />
-                    <div className="min-w-0"><p className="text-label-md text-on-surface truncate">{e.title}</p><p className="text-[10px] text-on-surface-variant">{e.city} · {m.sold} כרטיסים</p></div>
+          {/* Top events (platform-wide). For a selected producer, the full
+              breakdown — events, top-5, payments — lives in their card. */}
+          {sp ? (
+            <section className="glass-card p-md rounded-xl flex items-center justify-between gap-3">
+              <p className="text-label-sm text-on-surface-variant">לפירוט מלא של {sp.name} — אירועים, טופ 5, חוזה ותשלומים — פתח את כרטיס המפיק.</p>
+              <button onClick={() => setTab("producers")} className="shrink-0 text-label-sm text-primary-fixed border border-primary-fixed/30 rounded-lg px-3 py-2 hover:bg-primary-fixed/10 transition-colors">לכרטיס</button>
+            </section>
+          ) : (
+            <section className="glass-card p-md rounded-xl">
+              <h3 className="text-label-md text-primary-fixed mb-md uppercase tracking-wider">אירועים מובילים</h3>
+              <div className="space-y-2">
+                {[...events].map((e) => ({ e, m: eventMetrics(e, sales[e.id]) })).sort((a, b) => b.m.revenue - a.m.revenue).slice(0, 5).map(({ e, m }) => (
+                  <div key={e.id} className="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <Icon name="local_activity" className="text-primary-fixed-dim shrink-0" />
+                      <div className="min-w-0"><p className="text-label-md text-on-surface truncate">{e.title}</p><p className="text-[10px] text-on-surface-variant">{e.city} · {m.sold} כרטיסים</p></div>
+                    </div>
+                    <span className="text-label-md font-bold text-primary-fixed shrink-0">{shekel(m.revenue)}</span>
                   </div>
-                  <span className="text-label-md font-bold text-primary-fixed shrink-0">{shekel(m.revenue)}</span>
-                </div>
-              ))}
-            </div>
-          </section>
+                ))}
+              </div>
+            </section>
+          )}
         </>
       )}
 

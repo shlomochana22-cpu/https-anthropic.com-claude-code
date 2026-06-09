@@ -22,10 +22,12 @@ export type ProducerSummary = {
   createdAt: string;
   // financials
   eventsCount: number;
-  revenue: number;
+  revenue: number;   // ticket price (subtotal)
   tickets: number;
   commission: number;
   paidOut: number;
+  fees: number;      // buyer fees collected on this producer's sales
+  orders: number;
 };
 
 export type ProducerEventRow = { eventId: string; title: string; date: string; tickets: number; revenue: number };
@@ -40,9 +42,9 @@ export type ProducerPatch = {
 };
 
 const demo: ProducerSummary[] = [
-  { id: "dp-1", userId: null, name: "עומר ספקטור", company: "Spoons Production", email: "omer@spoons.co.il", phone: "0521234567", whatsapp: "0521234567", status: "active", commissionRate: 12, contractType: "vip", contractStart: "2024-01-01", contractEnd: null, contractNotes: "חוזה VIP — עדיפות לאולמות מרכז.", createdAt: "2024-01-01T00:00:00Z", eventsCount: 8, revenue: 482000, tickets: 3120, commission: 57840, paidOut: 410000 },
-  { id: "dp-2", userId: null, name: "דנה לוי", company: "Unity Events", email: "dana@unity.co.il", phone: "0539876543", whatsapp: "0539876543", status: "active", commissionRate: 15, contractType: "standard", contractStart: "2024-03-15", contractEnd: null, contractNotes: "", createdAt: "2024-03-15T00:00:00Z", eventsCount: 5, revenue: 268000, tickets: 1740, commission: 40200, paidOut: 190000 },
-  { id: "dp-3", userId: null, name: "רון אבני", company: "Boombox Crew", email: "ron@boombox.co.il", phone: "0501112233", whatsapp: "0501112233", status: "suspended", commissionRate: 18, contractType: "special", contractStart: "2024-05-01", contractEnd: "2024-12-31", contractNotes: "מושהה עד הסדרת תשלום פתוח.", createdAt: "2024-05-01T00:00:00Z", eventsCount: 3, revenue: 96000, tickets: 640, commission: 17280, paidOut: 60000 },
+  { id: "dp-1", userId: null, name: "עומר ספקטור", company: "Spoons Production", email: "omer@spoons.co.il", phone: "0521234567", whatsapp: "0521234567", status: "active", commissionRate: 12, contractType: "vip", contractStart: "2024-01-01", contractEnd: null, contractNotes: "חוזה VIP — עדיפות לאולמות מרכז.", createdAt: "2024-01-01T00:00:00Z", eventsCount: 8, revenue: 482000, tickets: 3120, commission: 57840, paidOut: 410000, fees: 46800, orders: 2200 },
+  { id: "dp-2", userId: null, name: "דנה לוי", company: "Unity Events", email: "dana@unity.co.il", phone: "0539876543", whatsapp: "0539876543", status: "active", commissionRate: 15, contractType: "standard", contractStart: "2024-03-15", contractEnd: null, contractNotes: "", createdAt: "2024-03-15T00:00:00Z", eventsCount: 5, revenue: 268000, tickets: 1740, commission: 40200, paidOut: 190000, fees: 26100, orders: 1230 },
+  { id: "dp-3", userId: null, name: "רון אבני", company: "Boombox Crew", email: "ron@boombox.co.il", phone: "0501112233", whatsapp: "0501112233", status: "suspended", commissionRate: 18, contractType: "special", contractStart: "2024-05-01", contractEnd: "2024-12-31", contractNotes: "מושהה עד הסדרת תשלום פתוח.", createdAt: "2024-05-01T00:00:00Z", eventsCount: 3, revenue: 96000, tickets: 640, commission: 17280, paidOut: 60000, fees: 9600, orders: 470 },
 ];
 
 const demoEvents: Record<string, ProducerEventRow[]> = {
@@ -64,6 +66,7 @@ function rowToSummary(r: Record<string, unknown>): ProducerSummary {
     contractStart: (r.contract_start as string) ?? null, contractEnd: (r.contract_end as string) ?? null,
     contractNotes: (r.contract_notes as string) ?? null, createdAt: (r.created_at as string) ?? "",
     eventsCount: n(r.events_count), revenue: n(r.revenue), tickets: n(r.tickets), commission: n(r.commission), paidOut: n(r.paid_out),
+    fees: n(r.fees), orders: n(r.orders),
   };
 }
 
