@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Icon } from "./Icon";
 import { browserSupabase } from "@/lib/supabaseBrowser";
 import { chime, nativeNotify } from "@/lib/pushNotify";
+import { invalidateProducerData } from "@/lib/producerData";
 
 const shekel = (n: number) => `₪${n.toLocaleString("he-IL")}`;
 type Alert = { buyer: string; amount: number; event: string; qty: number };
@@ -28,6 +29,7 @@ export function ProducerPurchaseAlerts() {
         const qty = Array.isArray(row.participants) && row.participants.length ? row.participants.length : 1;
         const a: Alert = { buyer: row.buyer_name || "רוכש", amount: row.subtotal || 0, event, qty };
         setAlert(a);
+        invalidateProducerData(); // next dashboard view reflects the new sale
         chime();
         nativeNotify("כרטיס נמכר! 🎫", `${a.buyer} רכש ${a.qty} כרטיס ל${event} · ${shekel(a.amount)}`);
       })

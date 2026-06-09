@@ -3,8 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Icon } from "@/components/Icon";
 import type { NexusEvent } from "@/lib/events";
-import { getEventSales, getGuestCounts, type EventSales } from "@/lib/queries";
-import { getMyEvents } from "@/lib/myEvents";
+import { type EventSales } from "@/lib/queries";
+import { loadProducerData } from "@/lib/producerData";
 import { eventMetrics as metricsFor, shekel } from "@/lib/metrics";
 
 export function StatsDashboard() {
@@ -12,7 +12,7 @@ export function StatsDashboard() {
   const [salesByEvent, setSalesByEvent] = useState<Record<string, EventSales>>({});
   const [guestsByEvent, setGuestsByEvent] = useState<Record<string, number>>({});
   useEffect(() => {
-    Promise.all([getMyEvents(), getEventSales(), getGuestCounts()]).then(([e, s, g]) => {
+    loadProducerData().then(({ events: e, sales: s, guests: g }) => {
       setEvents(e); setSalesByEvent(s); setGuestsByEvent(g);
     });
   }, []);

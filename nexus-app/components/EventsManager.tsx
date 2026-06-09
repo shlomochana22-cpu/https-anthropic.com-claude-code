@@ -5,8 +5,8 @@ import Link from "next/link";
 import { Icon } from "@/components/Icon";
 import { SafeImage } from "@/components/SafeImage";
 import type { NexusEvent } from "@/lib/events";
-import { getEventSales, type EventSales } from "@/lib/queries";
-import { getMyEvents } from "@/lib/myEvents";
+import { type EventSales } from "@/lib/queries";
+import { loadProducerData } from "@/lib/producerData";
 import { eventMetrics, aggregateMetrics, shekel } from "@/lib/metrics";
 
 /** True only when the date has an explicit year that's already in the past.
@@ -37,7 +37,7 @@ export function EventsManager() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([getMyEvents(), getEventSales()]).then(([evs, sales]) => {
+    loadProducerData().then(({ events: evs, sales }) => {
       setEvents(evs);
       setSalesByEvent(sales);
       setLoading(false);

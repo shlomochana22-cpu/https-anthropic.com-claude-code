@@ -1,6 +1,7 @@
 "use client";
 
 import { browserSupabase } from "./supabaseBrowser";
+import { invalidateProducerData } from "./producerData";
 
 export type NewTier = { name: string; price: number; qty: number; exclusive?: boolean; benefits?: string[] };
 
@@ -91,6 +92,7 @@ export async function createEvent(input: NewEventInput): Promise<CreateResult> {
     if (tierError) return { id, demo: false, error: tierError.message };
   }
 
+  invalidateProducerData(); // show the new event immediately on the dashboard
   return { id, demo: false };
 }
 

@@ -3,24 +3,23 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Icon } from "./Icon";
-import { getMyEvents } from "@/lib/myEvents";
-import { getEventSales, type EventSales } from "@/lib/queries";
+import { loadProducerData } from "@/lib/producerData";
+import { type EventSales } from "@/lib/queries";
 import { aggregateMetrics, shekel, type AggMetrics } from "@/lib/metrics";
 import type { NexusEvent } from "@/lib/events";
 
-/** Dashboard home: KPI cards + the producer's own events — loaded once. */
+/** Dashboard home: KPI cards + the producer's own events — loaded once (cached). */
 export function ProducerHome() {
   const [events, setEvents] = useState<NexusEvent[] | null>(null);
   const [agg, setAgg] = useState<AggMetrics | null>(null);
 
   useEffect(() => {
-    (async () => {
-      const [evs, sales] = await Promise.all([getMyEvents(), getEventSales()]);
+    loadProducerData().then(({ events: evs, sales }) => {
       const scoped: Record<string, EventSales> = {};
       for (const e of evs) if (sales[e.id]) scoped[e.id] = sales[e.id];
       setEvents(evs);
       setAgg(aggregateMetrics(evs, scoped));
-    })();
+    });
   }, []);
 
   const a = agg ?? ({ revenue: 0, sold: 0, orders: 0, occupancy: 0, anyReal: false } as AggMetrics);
