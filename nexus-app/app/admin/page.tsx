@@ -128,8 +128,8 @@ export default function AdminPage() {
           <section className="grid grid-cols-2 md:grid-cols-4 gap-gutter mb-lg">
             {[
               { label: "מחזור מכירות", value: shekel(revenue), icon: "payments", note: realRevenue ? "נתוני אמת" : "הערכה" },
-              { label: `עמלת פלטפורמה (${commission}%)`, value: shekel(platformCut), icon: "account_balance", accent: true },
-              { label: "נטו למפיקים", value: shekel(producerNet), icon: "savings" },
+              { label: `עמלה מהמפיקים (${commission}%)`, value: shekel(platformCut), icon: "account_balance", accent: true, note: "ההכנסה שלך" },
+              { label: "נטו למפיקים", value: shekel(producerNet), icon: "savings", note: "אחרי העמלה" },
               { label: "כרטיסים שנמכרו", value: agg.sold.toLocaleString(), icon: "confirmation_number" },
             ].map((s) => (
               <div key={s.label} className={`glass-card p-md rounded-xl flex flex-col justify-between h-32 ${s.accent ? "border border-primary-fixed/30" : ""}`}>
@@ -151,7 +151,7 @@ export default function AdminPage() {
 
           {/* Commission control */}
           <section className="glass-card p-md rounded-xl mb-lg max-w-md">
-            <h3 className="text-label-md text-primary-fixed mb-3 flex items-center gap-2"><Icon name="percent" className="text-[18px]" /> עמלת פלטפורמה גלובלית</h3>
+            <h3 className="text-label-md text-primary-fixed mb-3 flex items-center gap-2"><Icon name="percent" className="text-[18px]" /> עמלה שאתה גובה מהמפיקים</h3>
             <div className="flex items-center gap-3">
               <input type="range" min={0} max={30} value={commission} onChange={(e) => setRate(Number(e.target.value))} className="flex-1 accent-primary-fixed" />
               <div className="flex items-center gap-1">
@@ -159,7 +159,7 @@ export default function AdminPage() {
                 <span className="text-on-surface-variant">%</span>
               </div>
             </div>
-            <p className="text-label-sm text-on-surface-variant mt-2">על מחזור של {shekel(revenue)} → עמלה {shekel(platformCut)}, נטו למפיקים {shekel(producerNet)}.</p>
+            <p className="text-label-sm text-on-surface-variant mt-2">ממחזור של {shekel(revenue)} — אתה גובה {shekel(platformCut)} עמלה מהמפיקים, והם מקבלים {shekel(producerNet)} נטו.</p>
           </section>
 
           {/* Top events */}
