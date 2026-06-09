@@ -1,11 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Icon } from "./Icon";
 import { browserSupabase } from "@/lib/supabaseBrowser";
-import { amIAdmin } from "@/lib/admin";
 
 async function signOut(router: ReturnType<typeof useRouter>) {
   const sb = browserSupabase();
@@ -31,8 +29,6 @@ const links = [
 export function ProducerSidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const [admin, setAdmin] = useState(false);
-  useEffect(() => { amIAdmin().then(setAdmin); }, []);
   // Standalone producer login — no dashboard chrome.
   if (pathname === "/producer/login") return null;
   return (
@@ -60,13 +56,7 @@ export function ProducerSidebar() {
           );
         })}
       </nav>
-      {admin && (
-        <Link href="/admin" className={`mt-auto flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${pathname === "/admin" ? "bg-secondary-fixed/15 text-secondary-fixed font-bold" : "text-secondary-fixed hover:bg-secondary-fixed/10"}`}>
-          <Icon name="shield_person" />
-          <span className="text-label-md">מרכז ניהול הפלטפורמה</span>
-        </Link>
-      )}
-      <button onClick={() => signOut(router)} className={`${admin ? "" : "mt-auto"} flex items-center gap-3 px-4 py-3 text-error hover:bg-error/10 rounded-lg transition-all w-full text-right`}>
+      <button onClick={() => signOut(router)} className="mt-auto flex items-center gap-3 px-4 py-3 text-error hover:bg-error/10 rounded-lg transition-all w-full text-right">
         <Icon name="logout" />
         <span className="text-label-md">יציאה</span>
       </button>
