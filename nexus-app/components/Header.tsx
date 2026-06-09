@@ -27,7 +27,7 @@ export function Header({ back }: { back?: string }) {
         className="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-fixed/30"
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <img loading="lazy"
           alt="פרופיל"
           className="w-full h-full object-cover"
           src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDCsm1aAO_urDc-jXRS8c0WVRHSbicgoVzGJJYMHJI0T_NySw-u-JILhRpFPawiex4Yiy0PoH9x3Qn3FAywMdQgCZ1s6mSEMEo-fKpOnzJBer-gOgpW1rUZjRoS7IChASa3pWjrpKNuBLTLMO3LHTfFkawTnFTFJfR1V1THMMnz_6z1_s--ASMj_NnQNF5CPtHluJ3UF8X0gcqWj_i6pxOluMk33zmbfrJSKvemj2tvV27UfiUUC4xPUuZ171DPnAuE9IlrIjb0Q"

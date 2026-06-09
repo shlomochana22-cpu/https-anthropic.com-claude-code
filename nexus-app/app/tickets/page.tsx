@@ -84,7 +84,7 @@ export default function TicketsPage() {
                     </div>
                     <div className="bg-white p-4 rounded-lg flex items-center justify-center mb-md mx-auto w-fit">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img alt="QR" className="w-48 h-48" src={qrUrl(t.qrCode)} />
+                      <img loading="lazy" alt="QR" className="w-48 h-48" src={qrUrl(t.qrCode)} />
                     </div>
                     <p className="text-center text-xs text-on-surface-variant font-mono">קוד: {t.qrCode}</p>
                   </div>
@@ -104,7 +104,7 @@ export default function TicketsPage() {
                     </div>
                     <div className="bg-white p-4 rounded-lg flex items-center justify-center mb-md mx-auto w-fit">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img alt="QR" className="w-48 h-48" src={qrUrl(t.code)} />
+                      <img loading="lazy" alt="QR" className="w-48 h-48" src={qrUrl(t.code)} />
                     </div>
                     <p className="text-center text-xs text-on-surface-variant font-mono mb-lg">קוד: {t.code}</p>
                     <div className="grid grid-cols-2 gap-sm">
@@ -132,7 +132,7 @@ export default function TicketsPage() {
             <a href="/events/neon-rooftop" className="glass-card p-4 rounded-xl flex items-center gap-md hover:bg-white/5 transition-colors">
               <div className="w-16 h-16 rounded-lg overflow-hidden shrink-0">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img className="w-full h-full object-cover" alt="" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdIJ9VJe06FpklCJ3G_pCoE0HV_9Q0BNKLYgoHpG6xjeFeenQ1Cg9mMuLd11bYxOuXUUrn1F5jrigdQOrAIbCVBSsd-iux2MOgQ_TThXcp1Wt74eE8sNxlDJsE8JckLfxYet5cvtcyrD9xPc2Pul8LizyQXTgZWlK2iXCcX6nwwzjlTjoOwJv26GTzVo37AG1WLOdHRKjX3ZYUw5MoyQLfboCebxH3vhxkMVHJIJE1oudrS2YfOyD7oCanJj4qSxwazQm3LLsqsg" />
+                <img loading="lazy" className="w-full h-full object-cover" alt="" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdIJ9VJe06FpklCJ3G_pCoE0HV_9Q0BNKLYgoHpG6xjeFeenQ1Cg9mMuLd11bYxOuXUUrn1F5jrigdQOrAIbCVBSsd-iux2MOgQ_TThXcp1Wt74eE8sNxlDJsE8JckLfxYet5cvtcyrD9xPc2Pul8LizyQXTgZWlK2iXCcX6nwwzjlTjoOwJv26GTzVo37AG1WLOdHRKjX3ZYUw5MoyQLfboCebxH3vhxkMVHJIJE1oudrS2YfOyD7oCanJj4qSxwazQm3LLsqsg" />
               </div>
               <div className="flex-1">
                 <h5 className="text-sm font-semibold text-primary">Desert Ray: Open Air</h5>

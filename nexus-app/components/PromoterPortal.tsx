@@ -104,7 +104,7 @@ export function PromoterPortal({ name, events }: { name: string; events: NexusEv
             <div key={e.id} className="glass-card rounded-xl overflow-hidden">
               <div className="h-28 w-full relative">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img className="w-full h-full object-cover opacity-70" src={e.image} alt={e.title} />
+                <img loading="lazy" className="w-full h-full object-cover opacity-70" src={e.image} alt={e.title} />
                 <div className="absolute inset-0 bg-gradient-to-t from-surface-container-low to-transparent" />
                 <h3 className="absolute bottom-2 right-3 text-[18px] text-primary drop-shadow">{e.title}</h3>
               </div>

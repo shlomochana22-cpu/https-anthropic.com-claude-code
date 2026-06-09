@@ -68,7 +68,7 @@ export function FavoritesView({ events }: { events: NexusEvent[] }) {
             <Link key={e.id} href={`/events/${e.id}`} className="group relative bg-surface-container rounded-xl overflow-hidden border border-white/5 transition-transform active:scale-95">
               <div className="h-40 overflow-hidden relative">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src={e.image} alt={e.title} />
+                <img loading="lazy" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src={e.image} alt={e.title} />
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
                 <div className="absolute top-2 left-2 w-8 h-8 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-primary-fixed shadow-neon-primary">
                   <Icon name="favorite" className="text-[18px]" fill />

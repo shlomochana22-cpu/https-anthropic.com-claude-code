@@ -23,7 +23,7 @@ export default async function CheckoutPage({
         {event && (
           <div className="glass-card rounded-xl p-md mb-gutter flex items-center gap-4">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={event.image} alt={event.title} className="w-16 h-16 rounded-lg object-cover" />
+            <img loading="lazy" src={event.image} alt={event.title} className="w-16 h-16 rounded-lg object-cover" />
             <div>
               <h2 className="text-headline-md text-white">{event.title}</h2>
               <p className="text-label-sm text-on-surface-variant">

@@ -59,7 +59,7 @@ export function ResaleBoard({ events }: { events: NexusEvent[] }) {
           <Link key={e.id} href={`/events/${e.id}`} className="block glass-card rounded-2xl overflow-hidden group">
             <div className="relative h-40">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img className="w-full h-full object-cover" src={e.image} alt={e.title} />
+              <img loading="lazy" className="w-full h-full object-cover" src={e.image} alt={e.title} />
               <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
               <div className="absolute top-4 left-4 bg-surface/80 backdrop-blur-md px-3 py-1 rounded-full flex items-center gap-1 border border-primary-fixed/30">
                 <Icon name="verified" className="text-primary-fixed text-sm" fill />

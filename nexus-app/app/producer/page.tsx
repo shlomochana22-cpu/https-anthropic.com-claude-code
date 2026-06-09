@@ -157,7 +157,7 @@ export default async function ProducerDashboard({
           {events.map((e) => (
             <Link key={e.id} href={`/producer/events/${e.id}`} className="glass-card rounded-xl p-sm flex items-center gap-md hover:bg-white/5 transition-all border border-white/5">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img className="w-16 h-16 rounded-lg object-cover" src={e.image} alt={e.title} />
+              <img loading="lazy" className="w-16 h-16 rounded-lg object-cover" src={e.image} alt={e.title} />
               <div className="flex-1">
                 <h4 className="text-label-md text-primary">{e.title}</h4>
                 <p className="text-label-sm text-on-surface-variant">{e.venue} • {e.date}</p>

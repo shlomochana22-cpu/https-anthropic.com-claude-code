@@ -439,7 +439,7 @@ export default function CreateEventPage() {
                 <input value={location} onChange={(e) => setLocation(e.target.value)} placeholder="חפש מיקום או כתובת..." className="bg-surface-container-low border border-white/10 rounded-lg px-4 py-4 text-body-md text-primary focus:border-primary-fixed outline-none" />
                 <div className="mt-2 h-40 w-full rounded-lg overflow-hidden border border-white/5 relative">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img alt="מפה" className="w-full h-full object-cover grayscale contrast-125 opacity-60" src={MAP_IMG} />
+                  <img loading="lazy" alt="מפה" className="w-full h-full object-cover grayscale contrast-125 opacity-60" src={MAP_IMG} />
                   <div className="absolute inset-0 bg-primary-fixed/5" />
                 </div>
               </div>
@@ -568,7 +568,7 @@ export default function CreateEventPage() {
                   {cover ? (
                     <span className="relative block w-full h-full">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={cover} alt="קאבר האירוע" className="w-full h-full object-cover" />
+                      <img loading="lazy" src={cover} alt="קאבר האירוע" className="w-full h-full object-cover" />
                       <span className="absolute bottom-2 right-2 bg-black/60 text-primary-fixed text-[11px] px-2 py-1 rounded-full flex items-center gap-1"><Icon name="check_circle" className="text-[14px]" fill /> הקאבר הועלה · החלף</span>
                     </span>
                   ) : (
@@ -694,7 +694,7 @@ export default function CreateEventPage() {
                 <div className="relative h-48 bg-surface-container-high flex items-center justify-center overflow-hidden">
                   {cover ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={cover} alt="קאבר" className="absolute inset-0 w-full h-full object-cover" />
+                    <img loading="lazy" src={cover} alt="קאבר" className="absolute inset-0 w-full h-full object-cover" />
                   ) : (
                     <Icon name="image" className="text-on-surface-variant/30 text-5xl" />
                   )}

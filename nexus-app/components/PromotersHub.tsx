@@ -330,7 +330,7 @@ export function PromotersHub({ events, initialTab = "overview" }: { events: Nexu
                   <div key={e.id} className="glass-card rounded-xl p-md">
                     <div className="flex items-center gap-3 mb-3">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img className="w-12 h-12 rounded-lg object-cover" src={e.image} alt={e.title} />
+                      <img loading="lazy" className="w-12 h-12 rounded-lg object-cover" src={e.image} alt={e.title} />
                       <div className="flex-1 min-w-0">
                         <h4 className="text-label-md text-primary truncate">{e.title}</h4>
                         <p className="text-label-sm text-on-surface-variant">{e.venue} • {e.date} · {assignedPromoters.length} יחצנים</p>
@@ -439,7 +439,7 @@ export function PromotersHub({ events, initialTab = "overview" }: { events: Nexu
             <div key={e.id} className="glass-card rounded-xl overflow-hidden">
               <div className="h-28 w-full relative">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img className="w-full h-full object-cover opacity-60" src={e.image} alt={e.title} />
+                <img loading="lazy" className="w-full h-full object-cover opacity-60" src={e.image} alt={e.title} />
                 <div className="absolute inset-0 bg-gradient-to-t from-surface-container-low to-transparent" />
               </div>
               <div className="p-md">

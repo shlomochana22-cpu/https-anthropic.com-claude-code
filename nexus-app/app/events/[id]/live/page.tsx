@@ -37,7 +37,7 @@ export default async function EventLivePage({ params }: { params: { id: string }
                 <div className={`rounded-full p-[3px] w-20 h-20 ${s.live ? "bg-gradient-to-tr from-primary-fixed to-secondary-fixed shadow-[0_0_15px_rgba(191,245,32,0.4)]" : "border-2 border-primary-fixed/30"}`}>
                   <div className="w-full h-full rounded-full border-2 border-background overflow-hidden">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img className={`w-full h-full object-cover ${s.live ? "" : "grayscale"}`} src={s.img} alt={s.label} />
+                    <img loading="lazy" className={`w-full h-full object-cover ${s.live ? "" : "grayscale"}`} src={s.img} alt={s.label} />
                   </div>
                 </div>
                 <span className={`text-xs ${s.live ? "font-bold text-primary-fixed" : "text-on-surface-variant"}`}>{s.label}</span>
@@ -50,7 +50,7 @@ export default async function EventLivePage({ params }: { params: { id: string }
         <section className="px-margin-mobile mb-8">
           <div className="relative w-full aspect-[9/16] max-h-[500px] rounded-3xl overflow-hidden border-2 border-primary-fixed shadow-[0_0_10px_rgba(191,245,32,0.4)]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="w-full h-full object-cover" src={event.image} alt={event.title} />
+            <img loading="lazy" className="w-full h-full object-cover" src={event.image} alt={event.title} />
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
             <div className="absolute bottom-0 right-0 w-full p-6 flex justify-between items-end gap-4">
               <div className="flex-1">

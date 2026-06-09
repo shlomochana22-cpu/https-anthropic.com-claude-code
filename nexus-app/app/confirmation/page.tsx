@@ -60,7 +60,7 @@ export default async function ConfirmationPage({
           <div className="p-8 flex flex-col items-center">
             <div className="bg-white p-4 rounded-xl mb-6 shadow-[0_0_30px_rgba(255,255,255,0.15)]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <img loading="lazy"
                 alt="QR"
                 className="w-48 h-48"
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuA86E_hL_KcjHLgJWG7bT8FD3dq7wgCK5xEvOukW28f3O4XjSbjjdd7mQDLlofE7g_lh4XOILOGzq1eBVgG_fvrmtnLumLCwao3Mf0sKy99ZZjZHqWlyXP26ZGSe_CtShFMKjWRWBvTVFDS4ZykuPUsgURKZDVEtUmV5Xc6Tx-t0LHNEX_H55_bg5zKcqUScfTgyR0_vSfYe-zuxWL0lvO5t9Vb2Fzdzb9_cwL_k_XXzuhJpeEjy0m2JqpImzeOxGhKCdFxWzZLpg"

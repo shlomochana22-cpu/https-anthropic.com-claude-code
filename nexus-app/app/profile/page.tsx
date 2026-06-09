@@ -46,7 +46,7 @@ export default function ProfilePage() {
         <section className="flex flex-col items-center text-center mb-lg">
           <div className="w-28 h-28 rounded-full border-4 border-primary-fixed p-1 shadow-[0_0_20px_rgba(191,245,32,0.3)] mb-md">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="w-full h-full object-cover rounded-full" alt="פרופיל" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxZCrrTo9SKjwne2y89SE9CBssiyHrw_vYmr8wnI9aKiVdMCHzPBmgoBU_cXGGd2Flq3R6LS_jGivUNRnmztMms9H0-0v1yae_kyP7Rkt47Hp9nUtjP2_mo-HjLXMOQcAeiWxQ4AcXCOqPICrfbw057_H0gmme6yo-ZYqHuFrsDrEWZe4pLGaIqg29E5Xhm8rEnBNmoTyx5DB-vJjoQlCI-WYyczTfecNsqAWVslWQkrkdBDVinM2WqIM0dpV8V9OPFwb1ZM1MBw" />
+            <img loading="lazy" className="w-full h-full object-cover rounded-full" alt="פרופיל" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxZCrrTo9SKjwne2y89SE9CBssiyHrw_vYmr8wnI9aKiVdMCHzPBmgoBU_cXGGd2Flq3R6LS_jGivUNRnmztMms9H0-0v1yae_kyP7Rkt47Hp9nUtjP2_mo-HjLXMOQcAeiWxQ4AcXCOqPICrfbw057_H0gmme6yo-ZYqHuFrsDrEWZe4pLGaIqg29E5Xhm8rEnBNmoTyx5DB-vJjoQlCI-WYyczTfecNsqAWVslWQkrkdBDVinM2WqIM0dpV8V9OPFwb1ZM1MBw" />
           </div>
           <h2 className="text-headline-md font-bold text-primary-fixed mb-1">{name}</h2>
           <p className="text-on-surface-variant">{email}</p>

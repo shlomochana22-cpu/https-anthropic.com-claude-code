@@ -6,13 +6,6 @@ import { Icon } from "./Icon";
 import { SafeImage } from "./SafeImage";
 import type { NexusEvent } from "@/lib/events";
 
-const filterChips = [
-  { icon: "location_on", label: "עיר" },
-  { icon: "theater_comedy", label: "ז'אנר" },
-  { icon: "calendar_today", label: "תאריך" },
-  { icon: "filter_list", label: "עוד פילטרים" },
-];
-
 const categories = [
   { label: "Techno", icon: "speaker", genre: "טכנו" },
   { label: "Mainstream", icon: "star", genre: "מיינסטרים" },
@@ -24,6 +17,11 @@ const categories = [
 export function HomeFeed({ events }: { events: NexusEvent[] }) {
   const [query, setQuery] = useState("");
   const [activeGenre, setActiveGenre] = useState<string | null>(null);
+  const [activeCity, setActiveCity] = useState<string | null>(null);
+  const [openFilter, setOpenFilter] = useState<"city" | "genre" | null>(null);
+
+  const cities = useMemo(() => Array.from(new Set(events.map((e) => e.city).filter(Boolean))), [events]);
+  const genres = useMemo(() => Array.from(new Set(events.map((e) => e.genre).filter(Boolean))), [events]);
 
   // countdown for the early-bird banner
   const [t, setT] = useState(12 * 3600 + 4 * 60 + 55);
@@ -42,11 +40,13 @@ export function HomeFeed({ events }: { events: NexusEvent[] }) {
     return events.filter((e) => {
       const mq = !q || e.title.toLowerCase().includes(q) || e.venue.toLowerCase().includes(q) || e.city.toLowerCase().includes(q);
       const mg = !activeGenre || e.genre === activeGenre;
-      return mq && mg;
+      const mc = !activeCity || e.city === activeCity;
+      return mq && mg && mc;
     });
-  }, [events, query, activeGenre]);
+  }, [events, query, activeGenre, activeCity]);
 
-  const searching = query.trim() !== "" || activeGenre !== null;
+  const searching = query.trim() !== "" || activeGenre !== null || activeCity !== null;
+  const clearAll = () => { setQuery(""); setActiveGenre(null); setActiveCity(null); setOpenFilter(null); };
 
   return (
     <>
@@ -62,18 +62,59 @@ export function HomeFeed({ events }: { events: NexusEvent[] }) {
           <Icon name="search" className="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant" />
         </div>
         <div className="flex gap-sm overflow-x-auto hide-scrollbar py-2">
-          {filterChips.map((c, i) => (
-            <button
-              key={c.label}
-              className={`flex items-center gap-xs px-4 py-2 rounded-full glass whitespace-nowrap active:scale-95 transition-transform ${
-                i === 0 ? "border-primary-fixed text-primary-fixed" : "border-white/10 text-on-surface-variant"
-              }`}
-            >
-              <Icon name={c.icon} className="text-[18px]" />
-              <span className="text-label-md">{c.label}</span>
+          {/* City filter */}
+          <button
+            onClick={() => setOpenFilter((f) => (f === "city" ? null : "city"))}
+            className={`flex items-center gap-xs px-4 py-2 rounded-full glass whitespace-nowrap active:scale-95 transition-transform border ${
+              activeCity ? "border-primary-fixed text-primary-fixed" : "border-white/10 text-on-surface-variant"
+            }`}
+          >
+            <Icon name="location_on" className="text-[18px]" />
+            <span className="text-label-md">{activeCity ?? "עיר"}</span>
+            <Icon name={openFilter === "city" ? "expand_less" : "expand_more"} className="text-[16px]" />
+          </button>
+          {/* Genre filter */}
+          <button
+            onClick={() => setOpenFilter((f) => (f === "genre" ? null : "genre"))}
+            className={`flex items-center gap-xs px-4 py-2 rounded-full glass whitespace-nowrap active:scale-95 transition-transform border ${
+              activeGenre ? "border-primary-fixed text-primary-fixed" : "border-white/10 text-on-surface-variant"
+            }`}
+          >
+            <Icon name="theater_comedy" className="text-[18px]" />
+            <span className="text-label-md">{activeGenre ?? "ז'אנר"}</span>
+            <Icon name={openFilter === "genre" ? "expand_less" : "expand_more"} className="text-[16px]" />
+          </button>
+          {(activeCity || activeGenre) && (
+            <button onClick={clearAll} className="flex items-center gap-xs px-4 py-2 rounded-full glass whitespace-nowrap border border-white/10 text-error active:scale-95 transition-transform">
+              <Icon name="close" className="text-[18px]" />
+              <span className="text-label-md">נקה</span>
             </button>
-          ))}
+          )}
         </div>
+
+        {/* Filter dropdown panel */}
+        {openFilter && (
+          <div className="glass-card rounded-xl p-sm mt-1 flex flex-wrap gap-2">
+            {(openFilter === "city" ? cities : genres).map((opt) => {
+              const active = openFilter === "city" ? activeCity === opt : activeGenre === opt;
+              return (
+                <button
+                  key={opt}
+                  onClick={() => {
+                    if (openFilter === "city") setActiveCity(active ? null : opt);
+                    else setActiveGenre(active ? null : opt);
+                    setOpenFilter(null);
+                  }}
+                  className={`px-4 py-2 rounded-lg text-label-md transition-all ${
+                    active ? "bg-primary-container text-on-primary-container font-bold" : "glass text-on-surface-variant hover:text-primary-fixed"
+                  }`}
+                >
+                  {opt}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </section>
 
       {searching ? (
@@ -82,7 +123,7 @@ export function HomeFeed({ events }: { events: NexusEvent[] }) {
           <div className="flex justify-between items-center mb-md">
             <h2 className="text-headline-lg-mobile text-primary">תוצאות</h2>
             <button
-              onClick={() => { setQuery(""); setActiveGenre(null); }}
+              onClick={clearAll}
               className="text-primary-fixed text-label-md flex items-center gap-1"
             >
               <Icon name="close" className="text-[18px]" /> נקה

@@ -242,7 +242,7 @@ export function EventDetail({ event }: { event: NexusEvent }) {
           <h3 className="text-headline-md text-primary mb-sm">איך מגיעים</h3>
           <Link href={`/events/${event.id}/map`} className="block h-40 rounded-2xl overflow-hidden glass-card relative">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <img loading="lazy"
               alt="מפה"
               className="w-full h-full object-cover opacity-50 grayscale contrast-125"
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjO6McQiHvw1lDmliN6f8Rn3o-mGiOjUYhLFDzTd0Luxi10fml4UXi47l7PMcZ3qDao8Z9bIF3ysUMcWBdarDCQOPgPmRbtKZJylSOsURejUQ1FQPI0S2iSuqb1wps4dCIdqOPWJJKdmdRlYxbnzdbCOGjI1bDPAjVens2ybZzbktYH2ApPTyw5wB4dmyP9LzUcofS6J7LDNgBgVUkqkERnx-gceoTYroRVFLCvFeNfe_KtG3HgDiEEpfJHdzTtDwcQp_2fjzolg"
