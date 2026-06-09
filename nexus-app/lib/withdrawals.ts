@@ -2,9 +2,12 @@
 
 import { browserSupabase } from "./supabaseBrowser";
 
+export type PayoutKind = "withdrawal" | "friend" | "promoter" | "supplier";
+
 export type WithdrawalRequest = {
+  kind: PayoutKind; // משיכה / העברה לחבר / יחצן / ספק
   amount: number;
-  holder: string;   // שם בעל החשבון (מוטב)
+  holder: string;   // שם בעל החשבון (מוטב / מקבל)
   idnum: string;    // ת.ז / ח.פ
   bank: string;     // שם הבנק
   branch: string;   // מספר סניף
@@ -15,9 +18,10 @@ export type WithdrawalRequest = {
 export type WithdrawalResult = { ok: boolean; demo: boolean; error?: string };
 
 /**
- * Submits a producer withdrawal request to the platform admin. Stored with
- * status 'pending'; the admin later marks it paid and attaches a receipt
- * (אסמכתא). No INSERT...RETURNING so guest/owner RLS never blocks the write.
+ * Submits a producer payout request (withdrawal or transfer) to the platform
+ * admin. Stored with status 'pending'; the admin later marks it paid and
+ * attaches a receipt (אסמכתא). No INSERT...RETURNING so owner-only RLS never
+ * blocks the write.
  */
 export async function createWithdrawalRequest(req: WithdrawalRequest): Promise<WithdrawalResult> {
   const sb = browserSupabase();
@@ -26,6 +30,7 @@ export async function createWithdrawalRequest(req: WithdrawalRequest): Promise<W
   const userId = (await sb.auth.getUser()).data.user?.id ?? null;
   const { error } = await sb.from("withdrawal_requests").insert({
     user_id: userId,
+    kind: req.kind,
     amount: Math.round(req.amount),
     holder: req.holder.trim(),
     idnum: req.idnum.trim(),
@@ -36,7 +41,7 @@ export async function createWithdrawalRequest(req: WithdrawalRequest): Promise<W
     status: "pending",
   });
   if (error) {
-    console.error("withdrawal request failed:", error.message);
+    console.error("payout request failed:", error.message);
     return { ok: false, demo: false, error: error.message };
   }
   return { ok: true, demo: false };
