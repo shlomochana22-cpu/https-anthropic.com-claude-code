@@ -1,19 +1,17 @@
 import Link from "next/link";
 import { Icon } from "@/components/Icon";
 import { ProducerGreeting } from "@/components/ProducerGreeting";
-import { getEvents, getEventSales } from "@/lib/queries";
-import { aggregateMetrics, shekel } from "@/lib/metrics";
+import { ProducerStatCards } from "@/components/ProducerStatCards";
+import { ProducerActiveEvents } from "@/components/ProducerActiveEvents";
 
 // Always reflect fresh sales — never serve a statically cached dashboard.
 export const dynamic = "force-dynamic";
 
-export default async function ProducerDashboard({
+export default function ProducerDashboard({
   searchParams,
 }: {
   searchParams: { created?: string };
 }) {
-  const [events, salesByEvent] = await Promise.all([getEvents(), getEventSales()]);
-  const agg = aggregateMetrics(events, salesByEvent);
   return (
     <main className="pt-10 md:pt-12 pb-32 px-margin-mobile md:px-margin-desktop">
       {searchParams.created && (
@@ -30,32 +28,8 @@ export default async function ProducerDashboard({
         <p className="text-body-md text-on-surface-variant">הנה סקירה של הביצועים שלך להיום.</p>
       </header>
 
-      {/* Stat cards — 4 compact cells, synced with the stats/events dashboards */}
-      <div className="grid grid-cols-2 gap-sm mb-lg">
-        <Link href="/producer/stats" className="glass-card p-3 rounded-xl shadow-neon-primary">
-          <div className="flex justify-between items-center mb-1">
-            <Icon name="payments" className="text-primary-fixed-dim bg-primary-fixed-dim/10 p-1.5 rounded-lg text-[18px]" />
-            <span className="text-[10px] text-primary-fixed-dim bg-primary-fixed-dim/20 px-1.5 py-0.5 rounded-full">{agg.anyReal ? "LIVE" : "הערכה"}</span>
-          </div>
-          <p className="text-label-sm text-on-surface-variant">סך הכנסות</p>
-          <p className="text-headline-md text-primary">{shekel(agg.revenue)}</p>
-        </Link>
-        <Link href="/producer/events" className="glass-card p-3 rounded-xl">
-          <Icon name="confirmation_number" className="text-secondary-fixed-dim bg-secondary-fixed-dim/10 p-1.5 rounded-lg mb-1 inline-block text-[18px]" />
-          <p className="text-label-sm text-on-surface-variant">כרטיסים שנמכרו</p>
-          <p className="text-headline-md text-primary">{agg.sold.toLocaleString()}</p>
-        </Link>
-        <Link href="/producer/stats" className="glass-card p-3 rounded-xl">
-          <Icon name="receipt_long" className="text-tertiary-fixed-dim bg-tertiary-fixed-dim/10 p-1.5 rounded-lg mb-1 inline-block text-[18px]" />
-          <p className="text-label-sm text-on-surface-variant">הזמנות</p>
-          <p className="text-headline-md text-primary">{agg.orders.toLocaleString()}</p>
-        </Link>
-        <Link href="/producer/events" className="glass-card p-3 rounded-xl">
-          <Icon name="event_seat" className="text-primary-fixed bg-primary-fixed/10 p-1.5 rounded-lg mb-1 inline-block text-[18px]" />
-          <p className="text-label-sm text-on-surface-variant">תפוסה ממוצעת</p>
-          <p className="text-headline-md text-primary">{agg.occupancy}%</p>
-        </Link>
-      </div>
+      {/* Stat cards — scoped to YOUR events only (real data) */}
+      <ProducerStatCards />
 
       {/* Quick navigation — row list, max two per row */}
       <div className="mb-lg">
@@ -148,32 +122,8 @@ export default async function ProducerDashboard({
         </div>
       </div>
 
-      {/* Active events */}
-      <div className="mb-lg">
-        <div className="flex justify-between items-center mb-md">
-          <h3 className="text-headline-md text-primary">אירועים פעילים</h3>
-          <Link href="/producer/events" className="text-label-md text-primary-fixed hover:underline">הצג הכל</Link>
-        </div>
-        <div className="space-y-sm">
-          {events.map((e) => (
-            <Link key={e.id} href={`/producer/events/${e.id}`} className="glass-card rounded-xl p-sm flex items-center gap-md hover:bg-white/5 transition-all border border-white/5">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img loading="lazy" className="w-16 h-16 rounded-lg object-cover" src={e.image} alt={e.title} />
-              <div className="flex-1">
-                <h4 className="text-label-md text-primary">{e.title}</h4>
-                <p className="text-label-sm text-on-surface-variant">{e.venue} • {e.date}</p>
-                <div className="flex items-center gap-xs mt-1">
-                  <div className="h-1.5 w-32 bg-surface-container-high rounded-full overflow-hidden">
-                    <div className="h-full bg-primary-fixed" style={{ width: `${e.occupancy}%` }} />
-                  </div>
-                  <span className="text-[10px] text-primary-fixed font-bold">{e.occupancy}% נמכר</span>
-                </div>
-              </div>
-              <Icon name="chevron_left" className="text-on-surface-variant/40" />
-            </Link>
-          ))}
-        </div>
-      </div>
+      {/* Active events — your own */}
+      <ProducerActiveEvents />
     </main>
   );
 }

@@ -1,11 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/Icon";
 import { SafeImage } from "@/components/SafeImage";
 import type { NexusEvent } from "@/lib/events";
-import type { EventSales } from "@/lib/queries";
+import { getEventSales, type EventSales } from "@/lib/queries";
+import { getMyEvents } from "@/lib/myEvents";
 import { eventMetrics, aggregateMetrics, shekel } from "@/lib/metrics";
 
 /** True only when the date has an explicit year that's already in the past.
@@ -29,8 +30,19 @@ const TABS = [
   { id: "all", label: "הכל" },
 ] as const;
 
-export function EventsManager({ events, salesByEvent = {} }: { events: NexusEvent[]; salesByEvent?: Record<string, EventSales> }) {
+export function EventsManager() {
   const [tab, setTab] = useState<(typeof TABS)[number]["id"]>("active");
+  const [events, setEvents] = useState<NexusEvent[]>([]);
+  const [salesByEvent, setSalesByEvent] = useState<Record<string, EventSales>>({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([getMyEvents(), getEventSales()]).then(([evs, sales]) => {
+      setEvents(evs);
+      setSalesByEvent(sales);
+      setLoading(false);
+    });
+  }, []);
 
   const { active, ended } = useMemo(() => {
     const active: NexusEvent[] = [];
@@ -83,7 +95,8 @@ export function EventsManager({ events, salesByEvent = {} }: { events: NexusEven
 
       {/* Event cards */}
       <div className="space-y-md">
-        {shown.map((e) => {
+        {loading && <div className="text-center py-12 text-on-surface-variant"><Icon name="progress_activity" className="animate-spin text-primary-fixed text-3xl" /></div>}
+        {!loading && shown.map((e) => {
           const m = eventMetrics(e, salesByEvent[e.id]);
           const done = isEnded(e.date);
           return (
@@ -151,8 +164,8 @@ export function EventsManager({ events, salesByEvent = {} }: { events: NexusEven
             </div>
           );
         })}
-        {shown.length === 0 && (
-          <p className="text-center text-on-surface-variant/60 py-12">{tab === "ended" ? "אין עדיין אירועים שהסתיימו" : "אין אירועים פעילים — צרו אירוע חדש"}</p>
+        {!loading && shown.length === 0 && (
+          <p className="text-center text-on-surface-variant/60 py-12">{tab === "ended" ? "אין עדיין אירועים שהסתיימו" : "אין אירועים שלך עדיין — צרו אירוע חדש"}</p>
         )}
       </div>
     </main>

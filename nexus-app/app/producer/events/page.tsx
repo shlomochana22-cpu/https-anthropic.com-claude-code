@@ -1,9 +1,6 @@
 import { EventsManager } from "@/components/EventsManager";
-import { getEvents, getEventSales } from "@/lib/queries";
 
-export default async function EventManagerPage() {
-  const [events, salesByEvent] = await Promise.all([getEvents(), getEventSales()]);
-  return <EventsManager events={events} salesByEvent={salesByEvent} />;
+// EventsManager loads the signed-in producer's own events client-side.
+export default function EventManagerPage() {
+  return <EventsManager />;
 }
-
-export const dynamic = "force-dynamic";

@@ -6,7 +6,7 @@ import { events as mockEvents, type NexusEvent, type TicketTier } from "./events
  * otherwise falls back to the in-memory mock so the app runs without keys.
  */
 
-type EventRow = {
+export type EventRow = {
   id: string;
   title: string;
   subtitle: string | null;
@@ -34,7 +34,7 @@ type EventRow = {
   }[];
 };
 
-function rowToEvent(row: EventRow): NexusEvent {
+export function rowToEvent(row: EventRow): NexusEvent {
   const tiers: TicketTier[] = [...(row.ticket_tiers ?? [])]
     .sort((a, b) => a.sort_order - b.sort_order)
     .map((t) => ({
@@ -66,7 +66,7 @@ function rowToEvent(row: EventRow): NexusEvent {
   };
 }
 
-const SELECT = "*, ticket_tiers(slug,name,description,price,sold_out,exclusive,sort_order,benefits)";
+export const SELECT = "*, ticket_tiers(slug,name,description,price,sold_out,exclusive,sort_order,benefits)";
 
 export async function getEvents(): Promise<NexusEvent[]> {
   const sb = getSupabase();

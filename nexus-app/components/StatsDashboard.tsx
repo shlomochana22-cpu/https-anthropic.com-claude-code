@@ -1,12 +1,22 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Icon } from "@/components/Icon";
 import type { NexusEvent } from "@/lib/events";
-import type { EventSales } from "@/lib/queries";
+import { getEventSales, getGuestCounts, type EventSales } from "@/lib/queries";
+import { getMyEvents } from "@/lib/myEvents";
 import { eventMetrics as metricsFor, shekel } from "@/lib/metrics";
 
-export function StatsDashboard({ events, salesByEvent = {}, guestsByEvent = {} }: { events: NexusEvent[]; salesByEvent?: Record<string, EventSales>; guestsByEvent?: Record<string, number> }) {
+export function StatsDashboard() {
+  const [events, setEvents] = useState<NexusEvent[]>([]);
+  const [salesByEvent, setSalesByEvent] = useState<Record<string, EventSales>>({});
+  const [guestsByEvent, setGuestsByEvent] = useState<Record<string, number>>({});
+  useEffect(() => {
+    Promise.all([getMyEvents(), getEventSales(), getGuestCounts()]).then(([e, s, g]) => {
+      setEvents(e); setSalesByEvent(s); setGuestsByEvent(g);
+    });
+  }, []);
+
   const [selectedId, setSelectedId] = useState("all");
   const sel = selectedId === "all" ? null : events.find((e) => e.id === selectedId);
 
