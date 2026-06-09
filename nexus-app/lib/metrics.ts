@@ -16,7 +16,8 @@ export type EventMetrics = {
   capacity: number;
   sold: number;
   avgPrice: number;
-  revenue: number;
+  revenue: number; // ticket price only (what the producer sees)
+  fees: number;    // buyer fee collected (admin-only)
   orders: number;
   occupancy: number; // 0-100
   isReal: boolean;
@@ -36,6 +37,7 @@ export function eventMetrics(e: NexusEvent, real?: EventSales | null): EventMetr
       sold,
       avgPrice: sold ? Math.round(real.revenue / sold) : avgPriceEst,
       revenue: real.revenue,
+      fees: real.fees ?? 0,
       orders: real.orders,
       occupancy: Math.min(100, Math.round((sold / capacity) * 100)),
       isReal: true,
@@ -48,19 +50,20 @@ export function eventMetrics(e: NexusEvent, real?: EventSales | null): EventMetr
     sold,
     avgPrice: avgPriceEst,
     revenue: sold * avgPriceEst,
+    fees: 0,
     orders: sold > 0 ? Math.max(1, Math.round(sold / 2.2)) : 0,
     occupancy: e.occupancy,
     isReal: false,
   };
 }
 
-export type AggMetrics = { capacity: number; sold: number; revenue: number; orders: number; avgPrice: number; occupancy: number; anyReal: boolean };
+export type AggMetrics = { capacity: number; sold: number; revenue: number; fees: number; orders: number; avgPrice: number; occupancy: number; anyReal: boolean };
 
 export function aggregateMetrics(events: NexusEvent[], salesByEvent: Record<string, EventSales> = {}): AggMetrics {
   const ms = events.map((e) => eventMetrics(e, salesByEvent[e.id]));
   const a = ms.reduce(
-    (acc, m) => ({ capacity: acc.capacity + m.capacity, sold: acc.sold + m.sold, revenue: acc.revenue + m.revenue, orders: acc.orders + m.orders }),
-    { capacity: 0, sold: 0, revenue: 0, orders: 0 }
+    (acc, m) => ({ capacity: acc.capacity + m.capacity, sold: acc.sold + m.sold, revenue: acc.revenue + m.revenue, fees: acc.fees + m.fees, orders: acc.orders + m.orders }),
+    { capacity: 0, sold: 0, revenue: 0, fees: 0, orders: 0 }
   );
   return {
     ...a,

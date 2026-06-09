@@ -23,7 +23,7 @@ export type PayoutRow = {
   paid_at: string | null;
 };
 
-export type AdminOverview = { paidRevenue: number; orders: number; tickets: number; pendingPayouts: number; pendingAmount: number };
+export type AdminOverview = { paidRevenue: number; fees: number; orders: number; tickets: number; pendingPayouts: number; pendingAmount: number };
 
 /** Demo payouts so the admin UI is populated when there's no DB. */
 const demoPayouts: PayoutRow[] = [
@@ -60,6 +60,6 @@ export async function getAdminOverview(): Promise<AdminOverview | null> {
   if (!sb) return null; // caller falls back to client-side estimate
   const { data, error } = await sb.rpc("admin_overview");
   if (error || !data || !data[0]) return null;
-  const r = data[0] as { paid_revenue: number; orders: number; tickets: number; pending_payouts: number; pending_amount: number };
-  return { paidRevenue: Number(r.paid_revenue) || 0, orders: Number(r.orders) || 0, tickets: Number(r.tickets) || 0, pendingPayouts: Number(r.pending_payouts) || 0, pendingAmount: Number(r.pending_amount) || 0 };
+  const r = data[0] as { paid_revenue: number; fees: number; orders: number; tickets: number; pending_payouts: number; pending_amount: number };
+  return { paidRevenue: Number(r.paid_revenue) || 0, fees: Number(r.fees) || 0, orders: Number(r.orders) || 0, tickets: Number(r.tickets) || 0, pendingPayouts: Number(r.pending_payouts) || 0, pendingAmount: Number(r.pending_amount) || 0 };
 }

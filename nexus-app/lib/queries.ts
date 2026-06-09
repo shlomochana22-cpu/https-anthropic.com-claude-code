@@ -164,11 +164,12 @@ export async function getGuestCounts(): Promise<Record<string, number>> {
   return map;
 }
 
-export type EventSales = { tickets: number; orders: number; revenue: number };
+export type EventSales = { tickets: number; orders: number; revenue: number; fees: number };
 
 /**
- * Real sales aggregates per event from the event_sales() function (paid orders
- * + tickets). Returns {} when no DB / function — dashboards then use estimates.
+ * Real sales aggregates per event from the event_sales() function. `revenue` is
+ * the ticket price only (subtotal); `fees` is the buyer fee collected. Returns
+ * {} when no DB / function — dashboards then use estimates.
  */
 export async function getEventSales(): Promise<Record<string, EventSales>> {
   const sb = getSupabase();
@@ -176,8 +177,8 @@ export async function getEventSales(): Promise<Record<string, EventSales>> {
   const { data, error } = await sb.rpc("event_sales");
   if (error || !data) return {};
   const map: Record<string, EventSales> = {};
-  for (const r of data as { event_id: string; tickets: number; orders: number; revenue: number }[]) {
-    map[r.event_id] = { tickets: Number(r.tickets) || 0, orders: Number(r.orders) || 0, revenue: Number(r.revenue) || 0 };
+  for (const r of data as { event_id: string; tickets: number; orders: number; revenue: number; fees: number }[]) {
+    map[r.event_id] = { tickets: Number(r.tickets) || 0, orders: Number(r.orders) || 0, revenue: Number(r.revenue) || 0, fees: Number(r.fees) || 0 };
   }
   return map;
 }

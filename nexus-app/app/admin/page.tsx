@@ -32,6 +32,7 @@ export default function AdminPage() {
   const [payouts, setPayouts] = useState<PayoutRow[]>([]);
   const [buyers, setBuyers] = useState<Buyer[]>([]);
   const [realRevenue, setRealRevenue] = useState<number | null>(null);
+  const [buyerFees, setBuyerFees] = useState(0);
   const [producerCommission, setProducerCommission] = useState(0);
 
   const [suspended, setSuspended] = useState<Set<string>>(new Set());
@@ -53,6 +54,7 @@ export default function AdminPage() {
         setEvents(evs); setSales(sl); setPayouts(po);
         setBuyers(by.map((b) => ({ name: b.name, phone: b.phone ?? undefined })));
         setRealRevenue(ov?.paidRevenue ?? null);
+        setBuyerFees(ov?.fees ?? 0);
         // Platform commission is the sum of each producer's own rate — it varies
         // per producer, so it's set per-producer inside the producer card.
         setProducerCommission(prods.reduce((s, p) => s + p.commission, 0));
@@ -65,6 +67,8 @@ export default function AdminPage() {
   const revenue = realRevenue && realRevenue > 0 ? realRevenue : agg.revenue;
   const platformCut = producerCommission;
   const producerNet = revenue - platformCut;
+  const totalFees = realRevenue !== null ? buyerFees : agg.fees; // buyer fees collected
+  const platformTotal = platformCut + totalFees; // your total income: producer commission + buyer fees
   const pendingPayouts = payouts.filter((p) => p.status === "pending");
 
   const act = async (id: string, status: PayoutStatus) => {
@@ -139,14 +143,14 @@ export default function AdminPage() {
       {/* ── OVERVIEW ── */}
       {tab === "overview" && (
         <>
-          <section className="grid grid-cols-2 md:grid-cols-4 gap-gutter mb-lg">
+          <section className="grid grid-cols-2 md:grid-cols-4 gap-gutter mb-gutter">
             {[
-              { label: "מחזור מכירות", value: shekel(revenue), icon: "payments", note: realRevenue ? "נתוני אמת" : "הערכה" },
-              { label: "עמלה מהמפיקים", value: shekel(platformCut), icon: "account_balance", accent: true, note: "סכום העמלות הפר-מפיק" },
-              { label: "נטו למפיקים", value: shekel(producerNet), icon: "savings", note: "אחרי העמלה" },
-              { label: "כרטיסים שנמכרו", value: agg.sold.toLocaleString(), icon: "confirmation_number" },
+              { label: "מחזור כרטיסים", value: shekel(revenue), icon: "confirmation_number", note: realRevenue ? "סכום מקורי · נתוני אמת" : "הערכה" },
+              { label: "עמלה מהמפיקים", value: shekel(platformCut), icon: "account_balance", note: "סכום העמלות הפר-מפיק" },
+              { label: "עמלת גבייה מרוכשים", value: shekel(totalFees), icon: "sell", note: "נגבית בצ'קאאוט" },
+              { label: "סך הכנסות הפלטפורמה", value: shekel(platformTotal), icon: "savings", accent: true, note: "עמלת מפיקים + עמלת רוכשים" },
             ].map((s) => (
-              <div key={s.label} className={`glass-card p-md rounded-xl flex flex-col justify-between h-32 ${s.accent ? "border border-primary-fixed/30" : ""}`}>
+              <div key={s.label} className={`glass-card p-md rounded-xl flex flex-col justify-between h-32 ${s.accent ? "border border-primary-fixed/40 shadow-neon-primary" : ""}`}>
                 <div className="flex items-center justify-between">
                   <span className="text-on-surface-variant text-sm">{s.label}</span>
                   <Icon name={s.icon} className="text-primary-fixed-dim text-[18px]" />
@@ -157,10 +161,11 @@ export default function AdminPage() {
             ))}
           </section>
 
-          <section className="grid grid-cols-1 md:grid-cols-3 gap-gutter mb-lg">
-            <div className="glass-card p-md rounded-xl"><p className="text-on-surface-variant text-sm mb-1">אירועים פעילים</p><p className="text-2xl font-bold text-primary">{events.length - suspended.size}</p></div>
-            <div className="glass-card p-md rounded-xl"><p className="text-on-surface-variant text-sm mb-1">הזמנות</p><p className="text-2xl font-bold text-primary">{agg.orders.toLocaleString()}</p></div>
-            <div className="glass-card p-md rounded-xl border border-secondary-fixed/20"><p className="text-on-surface-variant text-sm mb-1">בקשות תשלום ממתינות</p><p className="text-2xl font-bold text-secondary-fixed">{pendingPayouts.length} · {shekel(pendingPayouts.reduce((s, p) => s + p.amount, 0))}</p></div>
+          <section className="grid grid-cols-2 md:grid-cols-4 gap-gutter mb-lg">
+            <div className="glass-card p-md rounded-xl"><p className="text-on-surface-variant text-sm mb-1">נטו למפיקים</p><p className="text-xl font-bold text-primary">{shekel(producerNet)}</p></div>
+            <div className="glass-card p-md rounded-xl"><p className="text-on-surface-variant text-sm mb-1">כרטיסים שנמכרו</p><p className="text-xl font-bold text-primary">{agg.sold.toLocaleString()}</p></div>
+            <div className="glass-card p-md rounded-xl"><p className="text-on-surface-variant text-sm mb-1">הזמנות</p><p className="text-xl font-bold text-primary">{agg.orders.toLocaleString()}</p></div>
+            <div className="glass-card p-md rounded-xl border border-secondary-fixed/20"><p className="text-on-surface-variant text-sm mb-1">תשלום ממתין</p><p className="text-xl font-bold text-secondary-fixed">{pendingPayouts.length} · {shekel(pendingPayouts.reduce((s, p) => s + p.amount, 0))}</p></div>
           </section>
 
           {/* Commission note — the rate itself is set per producer in their card */}
@@ -240,6 +245,13 @@ export default function AdminPage() {
       {/* ── EVENTS ── */}
       {tab === "events" && (
         <section className="space-y-2">
+          {/* Payments breakdown summary */}
+          <div className="glass-card rounded-xl p-md mb-2 grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div><p className="text-[11px] text-on-surface-variant">סכום כרטיסים (מקורי)</p><p className="text-lg font-bold text-on-surface">{shekel(agg.revenue)}</p></div>
+            <div><p className="text-[11px] text-on-surface-variant">עמלת גבייה מרוכשים</p><p className="text-lg font-bold text-secondary-fixed">{shekel(agg.fees)}</p></div>
+            <div><p className="text-[11px] text-on-surface-variant">כרטיסים שנמכרו</p><p className="text-lg font-bold text-on-surface">{agg.sold.toLocaleString()}</p></div>
+            <div className="md:border-r md:border-white/10 md:pr-3"><p className="text-[11px] text-on-surface-variant">סך הכל (כרטיסים + גבייה)</p><p className="text-lg font-bold text-primary-fixed neon-text">{shekel(agg.revenue + agg.fees)}</p></div>
+          </div>
           {events.map((e) => {
             const m = eventMetrics(e, sales[e.id]);
             const off = suspended.has(e.id);
@@ -252,7 +264,7 @@ export default function AdminPage() {
                       <Icon name={open ? "expand_less" : "expand_more"} className="text-on-surface-variant text-[18px]" />
                       <span className="truncate">{e.title}</span>
                     </span>
-                    <span className="text-[11px] text-on-surface-variant block pr-6">{e.city} · {e.date} · {m.sold} כרטיסים · {shekel(m.revenue)}</span>
+                    <span className="text-[11px] text-on-surface-variant block pr-6">{e.city} · {e.date} · {m.sold} כרטיסים · {shekel(m.revenue)} <span className="text-secondary-fixed">+ גבייה {shekel(m.fees)}</span></span>
                   </button>
                   <button onClick={() => setSuspended((s) => { const n = new Set(s); n.has(e.id) ? n.delete(e.id) : n.add(e.id); return n; })} className={`text-label-sm px-3 py-1.5 rounded-lg border shrink-0 ${off ? "border-primary-fixed/30 text-primary-fixed" : "border-error/30 text-error"}`}>
                     {off ? "הפעל" : "השהה"}
@@ -262,16 +274,16 @@ export default function AdminPage() {
                   <div className="px-md pb-md pt-0 border-t border-white/5">
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-3">
                       {[
-                        { l: "הכנסות", v: shekel(m.revenue) },
-                        { l: "כרטיסים", v: m.sold.toLocaleString() },
+                        { l: "כרטיסים שנרכשו", v: m.sold.toLocaleString() },
+                        { l: "סכום כרטיסים (מקורי)", v: shekel(m.revenue) },
+                        { l: "עמלת גבייה מרוכש", v: shekel(m.fees), accent: true },
                         { l: "הזמנות", v: m.orders.toLocaleString() },
-                        { l: "תפוסה", v: `${m.occupancy}%` },
-                        { l: "מחיר ממוצע", v: shekel(m.avgPrice) },
-                        { l: "קיבולת", v: m.capacity.toLocaleString() },
+                        { l: "מחיר ממוצע לכרטיס", v: shekel(m.avgPrice) },
+                        { l: "סך הכל (כרטיס + גבייה)", v: shekel(m.revenue + m.fees) },
                       ].map((s) => (
-                        <div key={s.l} className="bg-surface-container-low rounded-lg p-2.5">
+                        <div key={s.l} className={`rounded-lg p-2.5 ${s.accent ? "bg-secondary-fixed/10 border border-secondary-fixed/20" : "bg-surface-container-low"}`}>
                           <p className="text-[10px] text-on-surface-variant">{s.l}</p>
-                          <p className="text-on-surface font-bold">{s.v}</p>
+                          <p className={`font-bold ${s.accent ? "text-secondary-fixed" : "text-on-surface"}`}>{s.v}</p>
                         </div>
                       ))}
                     </div>
