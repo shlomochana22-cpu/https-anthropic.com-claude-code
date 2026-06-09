@@ -5,34 +5,22 @@ import { rowToEvent, SELECT, type EventRow } from "./queries";
 import type { NexusEvent } from "./events";
 
 /**
- * The signed-in producer's own events only. Resolves the producer profile via
- * the validated session (getUser refreshes the token if needed) and a direct
- * owner-readable profile lookup — robust against RPC/grant edge cases.
+ * The signed-in producer's own events only — in a SINGLE query. Filters events
+ * by the embedded producer_profiles.user_id (inner join), so there's no extra
+ * round-trip to resolve the profile first. Scoped per producer via RLS.
  */
 export async function getMyEvents(): Promise<NexusEvent[]> {
   const sb = browserSupabase();
   if (!sb) return [];
 
-  // getSession reads the cached session (no network) — fast; the client keeps
-  // the token fresh in the background.
   const { data: { session } } = await sb.auth.getSession();
-  const user = session?.user;
-  if (!user) return [];
-
-  // Resolve (or create) the producer profile id.
-  let pid: string | null = null;
-  const { data: prof } = await sb.from("producer_profiles").select("id").eq("user_id", user.id).maybeSingle();
-  pid = (prof?.id as string) ?? null;
-  if (!pid) {
-    const { data: ensured } = await sb.rpc("ensure_my_producer");
-    pid = (ensured as string) ?? null;
-  }
-  if (!pid) return [];
+  const userId = session?.user?.id;
+  if (!userId) return [];
 
   const { data, error } = await sb
     .from("events")
-    .select(SELECT)
-    .eq("producer_id", pid)
+    .select(`${SELECT}, producer_profiles!inner(user_id)`)
+    .eq("producer_profiles.user_id", userId)
     .order("created_at", { ascending: false });
   if (error || !data) return [];
   return (data as EventRow[]).map(rowToEvent);
