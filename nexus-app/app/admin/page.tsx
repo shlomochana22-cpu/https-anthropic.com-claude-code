@@ -8,6 +8,7 @@ import { aggregateMetrics, eventMetrics, shekel } from "@/lib/metrics";
 import { getBuyers } from "@/lib/buyers";
 import { amIAdmin, getAdminPayouts, getAdminOverview, setPayoutStatus, type PayoutRow, type PayoutStatus } from "@/lib/admin";
 import { AdminProducers } from "@/components/AdminProducers";
+import { notify } from "@/lib/notify";
 import type { NexusEvent } from "@/lib/events";
 
 const KIND_LABEL: Record<string, string> = { withdrawal: "משיכה", friend: "העברה לחבר", promoter: "העברה ליחצן", supplier: "העברה לספק" };
@@ -69,6 +70,15 @@ export default function AdminPage() {
     const ok = await setPayoutStatus(id, status, receipt, note);
     setBusy(false);
     if (ok) {
+      const row = payouts.find((p) => p.id === id);
+      // Notify the producer when their payout is paid (best-effort).
+      if (status === "paid" && row?.contact && row.contact.includes("@")) {
+        void notify({
+          to: row.contact,
+          subject: `התשלום שלך בוצע · ₪${row.amount.toLocaleString()}`,
+          html: `<div dir="rtl"><h2>התשלום בוצע ✅</h2><p>בקשתך על סך <b>₪${row.amount.toLocaleString()}</b> אושרה ושולמה.${receipt ? ` <a href="${receipt}">צפייה באסמכתא</a>` : ""}</p></div>`,
+        });
+      }
       setPayouts((list) => list.map((p) => (p.id === id ? { ...p, status, receipt_url: receipt || p.receipt_url, admin_note: note || p.admin_note } : p)));
       setActId(null); setReceipt(""); setNote("");
     }

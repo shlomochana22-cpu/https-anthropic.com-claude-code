@@ -1,6 +1,9 @@
 "use client";
 
 import { browserSupabase } from "./supabaseBrowser";
+import { notify } from "./notify";
+
+const KIND_HE: Record<string, string> = { withdrawal: "משיכה", friend: "העברה לחבר", promoter: "העברה ליחצן", supplier: "העברה לספק" };
 
 export type PayoutKind = "withdrawal" | "friend" | "promoter" | "supplier";
 
@@ -44,5 +47,14 @@ export async function createWithdrawalRequest(req: WithdrawalRequest): Promise<W
     console.error("payout request failed:", error.message);
     return { ok: false, demo: false, error: error.message };
   }
+  // Notify the platform admin of the new request (best-effort).
+  void notify({
+    toAdmin: true,
+    subject: `בקשת ${KIND_HE[req.kind] || "תשלום"} חדשה · ₪${Math.round(req.amount).toLocaleString()}`,
+    html: `<div dir="rtl"><h2>בקשת ${KIND_HE[req.kind] || "תשלום"} חדשה</h2>
+      <p>מוטב: <b>${req.holder}</b><br>סכום: <b>₪${Math.round(req.amount).toLocaleString()}</b><br>
+      בנק: ${req.bank} · סניף ${req.branch} · חשבון ${req.account}<br>ת.ז/ח.פ: ${req.idnum}</p>
+      <p>היכנס למרכז הניהול לאישור וצירוף אסמכתא.</p></div>`,
+  });
   return { ok: true, demo: false };
 }

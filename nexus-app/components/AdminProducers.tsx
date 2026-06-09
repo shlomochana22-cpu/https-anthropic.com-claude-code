@@ -112,6 +112,34 @@ function ProducerCard({ producer, payouts, onBack, onSaved }: { producer: Produc
     const a = document.createElement("a"); a.href = url; a.download = `producer-${producer.name}.csv`; a.click(); URL.revokeObjectURL(url);
   };
 
+  const exportPdf = () => {
+    const rows = events.map((e) => `<tr><td>${e.title}</td><td>${e.date}</td><td>${e.tickets}</td><td>₪${e.revenue.toLocaleString()}</td><td>₪${Math.round((e.revenue * f.commissionRate) / 100).toLocaleString()}</td></tr>`).join("");
+    const html = `<!doctype html><html dir="rtl" lang="he"><head><meta charset="utf-8"><title>דוח מפיק — ${producer.name}</title>
+      <style>body{font-family:Arial,Helvetica,sans-serif;color:#111;padding:32px;direction:rtl}h1{color:#3a4d00;margin:0}h2{border-bottom:2px solid #bff520;padding-bottom:4px;margin-top:28px;font-size:16px}.muted{color:#666}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:8px}.box{border:1px solid #ddd;border-radius:8px;padding:10px}.box b{display:block;font-size:18px}table{width:100%;border-collapse:collapse;margin-top:8px;font-size:13px}th,td{border:1px solid #ddd;padding:6px 8px;text-align:right}th{background:#f4f7e6}</style></head>
+      <body>
+        <h1>${producer.name}${producer.company ? ` · ${producer.company}` : ""}</h1>
+        <p class="muted">דוח מפיק NEXUS · ${new Date().toLocaleDateString("he-IL")} · ${producer.email || ""} ${producer.phone || ""}</p>
+        <h2>חוזה ועמלה</h2>
+        <p>אחוז עמלה: <b>${f.commissionRate}%</b> · סוג חוזה: ${({ standard: "סטנדרטי", vip: "VIP", special: "מיוחד" } as Record<string, string>)[f.contractType]} · ${fmtDate(f.contractStart || null)} – ${fmtDate(f.contractEnd || null)}</p>
+        ${f.contractNotes ? `<p class="muted">${f.contractNotes}</p>` : ""}
+        <h2>סיכום פיננסי</h2>
+        <div class="grid">
+          <div class="box">סך הכנסות<b>₪${producer.revenue.toLocaleString()}</b></div>
+          <div class="box">עמלות שנגבו<b>₪${commission.toLocaleString()}</b></div>
+          <div class="box">נטו למפיק<b>₪${producerNet.toLocaleString()}</b></div>
+          <div class="box">אירועים<b>${producer.eventsCount}</b></div>
+          <div class="box">כרטיסים<b>${producer.tickets.toLocaleString()}</b></div>
+          <div class="box">יתרה לתשלום<b>₪${owed.toLocaleString()}</b></div>
+        </div>
+        <h2>אירועים (${events.length})</h2>
+        <table><thead><tr><th>אירוע</th><th>תאריך</th><th>כרטיסים</th><th>מחזור</th><th>עמלה שנגבתה</th></tr></thead><tbody>${rows || '<tr><td colspan="5">—</td></tr>'}</tbody></table>
+      </body></html>`;
+    const w = window.open("", "_blank");
+    if (!w) return;
+    w.document.write(html); w.document.close(); w.focus();
+    setTimeout(() => w.print(), 350);
+  };
+
   const fieldCls = "w-full bg-surface-container-low border border-white/10 rounded-lg px-3 py-2 text-on-surface text-sm focus:border-primary-fixed outline-none";
 
   return (
@@ -140,7 +168,8 @@ function ProducerCard({ producer, payouts, onBack, onSaved }: { producer: Produc
         {/* Quick actions */}
         <div className="flex flex-wrap gap-2 mt-md">
           <button onClick={() => setEdit((v) => !v)} className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-primary-fixed/10 text-primary-fixed border border-primary-fixed/30 text-label-sm"><Icon name="edit" className="text-[16px]" /> עריכת חוזה ועמלה</button>
-          <button onClick={exportCsv} className="flex items-center gap-1.5 px-3 py-2 rounded-lg glass border border-white/10 text-on-surface-variant text-label-sm"><Icon name="download" className="text-[16px]" /> ייצוא דוח</button>
+          <button onClick={exportPdf} className="flex items-center gap-1.5 px-3 py-2 rounded-lg glass border border-white/10 text-on-surface-variant text-label-sm"><Icon name="picture_as_pdf" className="text-[16px]" /> ייצוא PDF</button>
+          <button onClick={exportCsv} className="flex items-center gap-1.5 px-3 py-2 rounded-lg glass border border-white/10 text-on-surface-variant text-label-sm"><Icon name="table_view" className="text-[16px]" /> ייצוא Excel</button>
           {producer.email && <a href={`mailto:${producer.email}?subject=NEXUS — עדכון מפיק`} className="flex items-center gap-1.5 px-3 py-2 rounded-lg glass border border-white/10 text-on-surface-variant text-label-sm"><Icon name="mail" className="text-[16px]" /> שליחת מייל</a>}
           {f.status !== "active" && <button onClick={() => changeStatus("active")} className="px-3 py-2 rounded-lg text-label-sm border border-primary-fixed/30 text-primary-fixed">הפעל</button>}
           {f.status !== "suspended" && <button onClick={() => changeStatus("suspended")} className="px-3 py-2 rounded-lg text-label-sm border border-secondary-fixed/30 text-secondary-fixed">השהה</button>}

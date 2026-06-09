@@ -23,6 +23,7 @@ const links = [
   { href: "/producer/coupons", icon: "local_offer", label: "קופונים" },
   { href: "/producer/campaigns", icon: "ads_click", label: "קמפיינים" },
   { href: "/producer/customers", icon: "contacts", label: "מאגר לקוחות" },
+  { href: "/producer/profile", icon: "badge", label: "פרופיל מפיק" },
 ];
 
 /** Desktop sidebar for the producer (Pro) area. */
