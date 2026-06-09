@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Icon } from "@/components/Icon";
 import { ProducerGreeting } from "@/components/ProducerGreeting";
+import { AdminEntry } from "@/components/AdminEntry";
 import { getEvents, getEventSales } from "@/lib/queries";
 import { aggregateMetrics, shekel } from "@/lib/metrics";
 
@@ -16,6 +17,7 @@ export default async function ProducerDashboard({
   const agg = aggregateMetrics(events, salesByEvent);
   return (
     <main className="pt-10 md:pt-12 pb-32 px-margin-mobile md:px-margin-desktop">
+      <AdminEntry />
       {searchParams.created && (
         <div className="mb-md glass-card border border-primary-fixed/30 rounded-xl p-4 flex items-center gap-3">
           <Icon name="check_circle" className="text-primary-fixed" fill />
