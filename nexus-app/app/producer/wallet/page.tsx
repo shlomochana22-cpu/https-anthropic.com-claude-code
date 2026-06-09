@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Icon } from "@/components/Icon";
 import { createWithdrawalRequest, type PayoutKind } from "@/lib/withdrawals";
 import { getRecipients, saveRecipient, type Recipient } from "@/lib/recipients";
+import { getMyEarnings, type MyEarnings } from "@/lib/earnings";
 
 type Txn = { icon: string; label: string; date: string; amount: string; positive: boolean; pending?: boolean };
 type Account = { bank: string; last4: string };
@@ -25,13 +26,15 @@ const BANKS = [
 const shekel = (n: number) => `₪${n.toLocaleString("he-IL", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
 export default function ProducerWalletPage() {
-  const [balance] = useState(14582.4);
+  const [earnings, setEarnings] = useState<MyEarnings | null>(null);
+  const [demoBalance] = useState(14582.4);
+  const balance = earnings ? earnings.available : demoBalance;
   const [txns, setTxns] = useState<Txn[]>(initialTxns);
   const [accounts, setAccounts] = useState<Account[]>([{ bank: "בנק לאומי (10)", last4: "8291" }]);
   const [recipients, setRecipients] = useState<Recipient[]>([]);
   const [modal, setModal] = useState<Modal | null>(null);
 
-  useEffect(() => { setRecipients(getRecipients()); }, []);
+  useEffect(() => { setRecipients(getRecipients()); getMyEarnings().then(setEarnings); }, []);
 
   // add-account fields
   const [party, setParty] = useState("");
@@ -129,6 +132,13 @@ export default function ProducerWalletPage() {
       <section className="mb-6 text-center rounded-2xl p-5 glass-card border-primary-fixed/20 max-w-2xl">
         <h2 className="text-label-md text-on-surface-variant mb-1">יתרה זמינה למשיכה</h2>
         <div className="text-3xl font-extrabold text-primary-fixed neon-glow mb-4">{shekel(balance)}</div>
+        {earnings && (
+          <div className="grid grid-cols-3 gap-2 mb-4 text-center">
+            <div className="bg-surface-container-low rounded-lg p-2"><p className="text-[10px] text-on-surface-variant">מכירות (כרטיסים)</p><p className="text-label-md text-on-surface font-bold">{shekel(earnings.revenue)}</p></div>
+            <div className="bg-surface-container-low rounded-lg p-2"><p className="text-[10px] text-on-surface-variant">עמלת פלטפורמה</p><p className="text-label-md text-error font-bold">− {shekel(earnings.commission)}</p></div>
+            <div className="bg-surface-container-low rounded-lg p-2"><p className="text-[10px] text-on-surface-variant">נמשך/בבקשה</p><p className="text-label-md text-on-surface-variant font-bold">− {shekel(earnings.withdrawn)}</p></div>
+          </div>
+        )}
         <button onClick={() => open("withdraw", "בקשת משיכה", "withdrawal")} className="bg-primary-fixed text-on-primary-fixed text-label-md font-bold px-8 py-2.5 rounded-full shadow-neon-primary active:scale-95 transition-transform flex items-center justify-center gap-2 mx-auto w-full max-w-xs">
           <Icon name="payments" className="text-[18px]" /> בקשת משיכה
         </button>

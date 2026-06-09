@@ -7,7 +7,7 @@ import { getEvents, getEventSales, type EventSales } from "@/lib/queries";
 import { aggregateMetrics, eventMetrics, shekel } from "@/lib/metrics";
 import { getBuyers } from "@/lib/buyers";
 import { browserSupabase } from "@/lib/supabaseBrowser";
-import { amIAdmin, getAdminPayouts, getAdminOverview, setPayoutStatus, type PayoutRow, type PayoutStatus } from "@/lib/admin";
+import { amIAdmin, getAdminPayouts, getAdminOverview, setPayoutStatus, getAdminOrders, type PayoutRow, type PayoutStatus, type AdminOrder } from "@/lib/admin";
 import { AdminProducers } from "@/components/AdminProducers";
 import { EnableNotifications } from "@/components/EnableNotifications";
 import { getProducers, type ProducerSummary } from "@/lib/producers";
@@ -22,7 +22,7 @@ const STATUS: Record<PayoutStatus, { label: string; cls: string }> = {
   paid: { label: "שולם", cls: "bg-primary-container/15 text-primary-container border-primary-container/40" },
   rejected: { label: "נדחה", cls: "bg-error/10 text-error border-error/30" },
 };
-type Tab = "overview" | "producers" | "payouts" | "events" | "users";
+type Tab = "overview" | "producers" | "payouts" | "orders" | "events" | "users";
 type Buyer = { name: string; phone?: string };
 
 /** Short two-tone alert chime (best-effort; ignored if audio is blocked). */
@@ -68,14 +68,15 @@ export default function AdminPage() {
   const [uQuery, setUQuery] = useState("");
   const [expEvent, setExpEvent] = useState<string | null>(null);
   const [incoming, setIncoming] = useState<PayoutRow | null>(null);
+  const [orders, setOrders] = useState<AdminOrder[]>([]);
 
   useEffect(() => {
     (async () => {
       const ok = await amIAdmin();
       setIsAdmin(ok);
       if (ok) {
-        const [evs, sl, po, by, ov, prods] = await Promise.all([getEvents(), getEventSales(), getAdminPayouts(), getBuyers(), getAdminOverview(), getProducers()]);
-        setEvents(evs); setSales(sl); setPayouts(po);
+        const [evs, sl, po, by, ov, prods, ords] = await Promise.all([getEvents(), getEventSales(), getAdminPayouts(), getBuyers(), getAdminOverview(), getProducers(), getAdminOrders()]);
+        setEvents(evs); setSales(sl); setPayouts(po); setOrders(ords);
         setBuyers(by.map((b) => ({ name: b.name, phone: b.phone ?? undefined })));
         setRealRevenue(ov?.paidRevenue ?? null);
         setBuyerFees(ov?.fees ?? 0);
@@ -159,6 +160,7 @@ export default function AdminPage() {
     { id: "overview", label: "סקירה", icon: "dashboard" },
     { id: "producers", label: "מפיקים", icon: "badge" },
     { id: "payouts", label: `בקשות תשלום${pendingPayouts.length ? ` (${pendingPayouts.length})` : ""}`, icon: "request_quote" },
+    { id: "orders", label: `הזמנות${orders.length ? ` (${orders.length})` : ""}`, icon: "receipt_long" },
     { id: "events", label: "אירועים", icon: "confirmation_number" },
     { id: "users", label: "משתמשים", icon: "group" },
   ];
@@ -326,6 +328,35 @@ export default function AdminPage() {
               )}
             </div>
           ))}
+        </section>
+      )}
+
+      {/* ── ORDERS (all purchases) ── */}
+      {tab === "orders" && (
+        <section>
+          <div className="glass-card rounded-xl p-md mb-2 grid grid-cols-3 gap-3 text-center">
+            <div><p className="text-[11px] text-on-surface-variant">הזמנות</p><p className="text-lg font-bold text-on-surface">{orders.length}</p></div>
+            <div><p className="text-[11px] text-on-surface-variant">סכום כרטיסים</p><p className="text-lg font-bold text-on-surface">{shekel(orders.reduce((s, o) => s + o.subtotal, 0))}</p></div>
+            <div><p className="text-[11px] text-on-surface-variant">עמלת גבייה</p><p className="text-lg font-bold text-secondary-fixed">{shekel(orders.reduce((s, o) => s + o.fee, 0))}</p></div>
+          </div>
+          {orders.length === 0 ? (
+            <div className="glass-card rounded-xl p-lg text-center text-on-surface-variant"><Icon name="receipt_long" className="text-3xl mb-2 opacity-40" /><p>אין הזמנות עדיין.</p></div>
+          ) : (
+            <div className="space-y-2">
+              {orders.map((o) => (
+                <div key={o.id} className="glass-card rounded-xl p-md flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-label-md text-on-surface truncate">{o.buyerName || "רוכש"} <span className="text-on-surface-variant">· {o.eventTitle || o.eventId}</span></p>
+                    <p className="text-[11px] text-on-surface-variant">{new Date(o.createdAt).toLocaleString("he-IL")} · {o.participants || 1} כרטיס{o.producer ? ` · מפיק: ${o.producer}` : ""}{o.buyerPhone ? ` · ${o.buyerPhone}` : ""}</p>
+                  </div>
+                  <div className="text-left shrink-0">
+                    <p className="text-label-md font-bold text-primary-fixed">{shekel(o.subtotal)}</p>
+                    <p className="text-[10px] text-secondary-fixed">+ גבייה {shekel(o.fee)}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
       )}
 

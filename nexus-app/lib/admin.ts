@@ -25,6 +25,25 @@ export type PayoutRow = {
 
 export type AdminOverview = { paidRevenue: number; fees: number; orders: number; tickets: number; pendingPayouts: number; pendingAmount: number };
 
+export type AdminOrder = {
+  id: string; createdAt: string; eventId: string; eventTitle: string | null; producer: string | null;
+  buyerName: string | null; buyerPhone: string | null; subtotal: number; fee: number; total: number; status: string; participants: number;
+};
+
+export async function getAdminOrders(): Promise<AdminOrder[]> {
+  const sb = browserSupabase();
+  if (!sb) return [];
+  const { data, error } = await sb.rpc("admin_orders");
+  if (error || !data) return [];
+  return (data as Record<string, unknown>[]).map((r) => ({
+    id: String(r.id), createdAt: (r.created_at as string) ?? "", eventId: (r.event_id as string) ?? "",
+    eventTitle: (r.event_title as string) ?? null, producer: (r.producer as string) ?? null,
+    buyerName: (r.buyer_name as string) ?? null, buyerPhone: (r.buyer_phone as string) ?? null,
+    subtotal: Number(r.subtotal) || 0, fee: Number(r.fee) || 0, total: Number(r.total) || 0,
+    status: (r.status as string) ?? "paid", participants: Number(r.participants) || 0,
+  }));
+}
+
 /** Demo payouts so the admin UI is populated when there's no DB. */
 const demoPayouts: PayoutRow[] = [
   { id: "demo-1", user_id: null, kind: "withdrawal", amount: 4200, holder: "אבי כהן", idnum: "302999111", bank: "בנק לאומי (10)", branch: "800", account: "45219", contact: "0521234567", status: "pending", receipt_url: null, admin_note: null, created_at: new Date().toISOString(), paid_at: null },
