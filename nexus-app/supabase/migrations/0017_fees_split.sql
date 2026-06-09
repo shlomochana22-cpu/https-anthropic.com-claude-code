@@ -4,6 +4,11 @@
 -- buyer-fee income separately. Re-creates the aggregate functions so `revenue`
 -- now means TICKET revenue (subtotal) and `fees` is the buyer fee. Safe to re-run.
 
+-- These two change their return type (added `fees`), so they must be dropped
+-- before re-create (CREATE OR REPLACE can't change a function's output columns).
+drop function if exists public.event_sales();
+drop function if exists public.admin_overview();
+
 create or replace function public.event_sales()
 returns table (event_id text, tickets bigint, orders bigint, revenue bigint, fees bigint)
 language sql stable security definer set search_path = public as $$
