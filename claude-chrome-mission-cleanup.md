@@ -19,12 +19,14 @@
 ב. תבנית הבת (Hello Elementor Child): בקבצים header.php ו-footer.php, הסר את הקוד הזדוני. הערה: בתבנית בת תקינה לרוב אין בכלל header.php/footer.php, התוקף יצר אותם כדי לדרוס את האם. אם הקובץ כולו זדוני, מחק אותו לגמרי (האתר יחזור להשתמש בקובץ הנקי של תבנית האם). אם יש בו גם קוד לגיטימי, הסר רק את הזדוני.
 ג. תבנית האם (hello-elementor): הדרך הבטוחה היא להתקין מחדש את התבנית מ-WordPress.org (Appearance -> Themes -> Add New -> חפש Hello Elementor -> התקן/עדכן), מה שדורס את header.php/footer.php המודבקים בקבצים נקיים. ודא שהתבנית הפעילה היא הבת, כך שהעדכון לא ישבור עיצוב.
 
-שלב 2, הסרת ה-backdoor וקבצים זדוניים [למלא מדוח המיפוי]:
-מחק את הקבצים הבאים שזוהו כזדוניים במיפוי:
-- [למלא: נתיב קובץ 1]
-- [למלא: נתיב קובץ 2]
-- [למלא: כל קובץ PHP חשוד ב-uploads / mu-plugins]
-הראה לי כל קובץ לפני מחיקה.
+שלב 2, הסרת ה-backdoor וקבצים זדוניים (זוהו בסריקת Wordfence):
+א. מחק את כל התיקייה של התוסף הזדוני: wp-content/plugins/wp-default-deployer-modified/ (מכילה wp-phpunit.php עם backdoor מסוג exec). הדרך הבטוחה: Plugins -> מצא את התוסף הזה -> Deactivate -> Delete. אם לא מופיע ברשימת התוספים, מחק את התיקייה דרך File Manager.
+ב. מחק את קובץ ה-skimmer: wp-content/themes/hello-elementor/css.js (גונב כרטיסי אשראי). דרך File Manager.
+ג. בדוק מה טוען את css.js (כנראה functions.php או header.php של התבנית) והסר את שורת הטעינה.
+ד. הראה לי כל קובץ לפני מחיקה.
+
+שלב 2ב, סריקת התיקיות שדולגו:
+ב-Wordfence -> Scan Options, הפעל "Scan files outside your WordPress installation", והרץ סריקה נוספת כדי לכסות את /public_html/assets ו-/public_html/dev. דווח על כל ממצא לפני שממשיכים, ייתכן backdoor נוסף שם.
 
 שלב 3, משימות cron זדוניות [אם נמצאו במיפוי]:
 אם בדוח ה-cron נמצאו hooks חשודים שמשחזרים את ההדבקה, הסר אותם (דרך תוסף WP Crontrol או עריכת אופציית cron). הראה לי לפני.
@@ -36,7 +38,7 @@
 אפס סיסמה למשתמשים matzberimil, NY.media.ltd, Tsahi (אני אזין סיסמאות חזקות), והפעל אימות דו-שלבי אם התוסף תומך.
 
 שלב 6, עדכונים והקשחה:
-- עדכן את ליבת WordPress, כל התוספים וכל התבניות לגרסה אחרונה.
+- עדכן את ליבת WordPress וכל התבניות. עדכן תוספים פגיעים שזוהו: JetSmartFilters (קריטי, 3.8.0 -> 3.8.2.1), Classic Editor, JetEngine, JetTabs For Elementor, Elementor Pro, ותבנית Hello Elementor.
 - ב-wp-config.php הוסף: define('DISALLOW_FILE_EDIT', true); (חוסם עריכת קבצים מתוך הדשבורד).
 - ודא שהתוסף Really Simple Security פעיל ומוגדר, או התקן Wordfence עם Firewall.
 
