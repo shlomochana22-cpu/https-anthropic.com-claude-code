@@ -13,7 +13,9 @@
 
 ## ב. לסרוק את תיקיית התוספים לעוד backdoors מתחבאים
 
-ב-File Manager, פתח את `wp-content/plugins/` ורשום את כל התיקיות. השווה ל-23 התוספים הרשומים בדשבורד. כל תיקייה שאינה תואמת לתוסף רשום (כמו wp-default-deployer-modified) חשודה, פתח אותה, הראה לי, ונחליט. בדוק גם את `wp-content/mu-plugins/` אם קיימת (נטענת אוטומטית, מקום אהוב על backdoors).
+ב-File Manager, פתח את `wp-content/plugins/` ורשום את כל התיקיות. השווה ל-23 התוספים הרשומים בדשבורד. כל תיקייה שאינה תואמת לתוסף רשום (כמו wp-default-deployer-modified) חשודה, פתח אותה, הראה לי, ונחליט.
+
+חשוב: יש mu-plugin זדוני. בדף הבית מוזרק `<script id="tji-mu-js">` עם הלואדר __performance_optimizer_v6 ממקור mu-plugin. פתח את `wp-content/mu-plugins/`, מצא את הקובץ שמזריק את זה (כל קובץ .php שמכיל tji / __performance_optimizer_v6 / atob), הראה לי, ומחק אותו. mu-plugins נטענים אוטומטית ואי אפשר לכבותם מהדשבורד, לכן רק מחיקת הקובץ עוצרת אותם.
 
 ## ג. לנקות את קבצי התבנית המודבקים
 
