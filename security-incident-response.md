@@ -2,7 +2,24 @@
 
 עודכן: יוני 2026, אחרי דוח חקירת Claude כרום.
 
-## מצב
+## עדכון סגירה: האירוע טופל ונסגר (10 יוני 2026) ✅
+
+בוצע במלואו דרך Claude בכרום + Cloudways:
+- גיבוי מלא (UpdraftPlus) לפני התחלה.
+- נמחקו כל הקבצים/התיקיות הזדוניים: tji-site-js.php (mu-plugin), wp-default-deployer-modified (backdoor), hello-elementor/css.js (סקימר), theme-js-modifier, theme-js-wpcode, wpallpro.zip.
+- תבנית האם Hello Elementor הותקנה מחדש נקייה; הוסרו 4 בלוקי tji-theme-inline-js מ-header.php/footer.php של תבנית הבן.
+- נוטרלו הזרקות WPCode (Footer + סניפט; התוסף הושבת).
+- נמחקו 3 מנהלים זדוניים (seobackup, dev_ijeiawo7, cloudhdigital), התוכן יוחס ל-matzberimil.
+- עודכנו תוספים פגיעים (JetSmartFilters קריטי, JetEngine, JetTabs, Elementor Pro, Breeze, Classic Editor).
+- אומת: 0 סמני זדון (performance_optimizer_v6 / atob / tji / css.js) בדף הבית ובעמוד עיר.
+- סיבוב סיסמאות מלא: Salts (WordPress), Cloudways Master (SSH/SFTP שרת), סיסמת אפליקציה, סיסמת DB, סיסמת חשבון Cloudways.
+- סקירת Cloudways: אין משתמשי SSH/SFTP נוספים, אין מפתחות SSH מושתלים, חבר חשבון יחיד, יומן נקי.
+- סריקת Wordfence סופית נקייה (0 Critical, 0 malware; נותרו רק התראות "modified theme file" תקינות על תבנית הבן), סריקה שבועית אוטומטית הופעלה.
+- האתר הוחזר מתחזוקה לאוויר (HTTP 200), cache נוקה.
+
+מעקב מומלץ: 2FA ב-Cloudways וב-wp-admin; מחיקת הגיבוי שלפני הניקוי אחרי כמה ימי יציבות; העברת בעלות האחסון/דומיין לבעל העסק (כרגע על שם המתכן).
+
+## מצב (לפני הטיפול, לתיעוד)
 
 הפריצה פעילה ומשחזרת את עצמה (reinfection). אומת:
 - קוד זדוני (RCE בצד-לקוח) שמוריד ומריץ JavaScript שרירותי מ-ntdnewtds.shop / dnsnewtds.shop, מוסתר ב-base64, חתימת תוקף "tji-".
