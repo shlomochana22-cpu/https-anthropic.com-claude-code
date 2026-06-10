@@ -25,9 +25,9 @@ slug: מצבר-עד-הבית-בתל-אביב
       },
       "offers": {
         "@type": "Offer",
-        "price": "480",
+        "price": "449",
         "priceCurrency": "ILS",
-        "description": "החלפת מצבר עד הבית, מחיר החל מ-480 שקל"
+        "description": "החלפת מצבר עד הבית, מחיר החל מ-449 שקל"
       }
     },
     {
@@ -103,9 +103,9 @@ slug: מצבר-עד-הבית-בראשון-לציון
       },
       "offers": {
         "@type": "Offer",
-        "price": "480",
+        "price": "449",
         "priceCurrency": "ILS",
-        "description": "החלפת מצבר עד הבית, מחיר החל מ-480 שקל"
+        "description": "החלפת מצבר עד הבית, מחיר החל מ-449 שקל"
       }
     },
     {
@@ -189,9 +189,9 @@ slug: מצבר-עד-הבית-פתח-תקווה
       },
       "offers": {
         "@type": "Offer",
-        "price": "480",
+        "price": "449",
         "priceCurrency": "ILS",
-        "description": "החלפת מצבר עד הבית, מחיר החל מ-480 שקל"
+        "description": "החלפת מצבר עד הבית, מחיר החל מ-449 שקל"
       }
     },
     {
@@ -275,9 +275,9 @@ slug: מצבר-עד-הבית-בחולון
       },
       "offers": {
         "@type": "Offer",
-        "price": "480",
+        "price": "449",
         "priceCurrency": "ILS",
-        "description": "החלפת מצבר עד הבית, מחיר החל מ-480 שקל"
+        "description": "החלפת מצבר עד הבית, מחיר החל מ-449 שקל"
       }
     },
     {
@@ -369,9 +369,9 @@ slug: מצבר-עד-הבית-בבת-ים
       },
       "offers": {
         "@type": "Offer",
-        "price": "480",
+        "price": "449",
         "priceCurrency": "ILS",
-        "description": "החלפת מצבר עד הבית, מחיר החל מ-480 שקל"
+        "description": "החלפת מצבר עד הבית, מחיר החל מ-449 שקל"
       }
     },
     {
@@ -455,9 +455,9 @@ slug: מצבר-עד-הבית-ברמת-גן
       },
       "offers": {
         "@type": "Offer",
-        "price": "480",
+        "price": "449",
         "priceCurrency": "ILS",
-        "description": "החלפת מצבר עד הבית, מחיר החל מ-480 שקל"
+        "description": "החלפת מצבר עד הבית, מחיר החל מ-449 שקל"
       }
     },
     {
@@ -541,9 +541,9 @@ slug: מצבר-עד-הבית-בנתניה
       },
       "offers": {
         "@type": "Offer",
-        "price": "480",
+        "price": "449",
         "priceCurrency": "ILS",
-        "description": "החלפת מצבר עד הבית, מחיר החל מ-480 שקל"
+        "description": "החלפת מצבר עד הבית, מחיר החל מ-449 שקל"
       }
     },
     {
@@ -627,9 +627,9 @@ slug: מצבר-עד-הבית-ברחובות
       },
       "offers": {
         "@type": "Offer",
-        "price": "480",
+        "price": "449",
         "priceCurrency": "ILS",
-        "description": "החלפת מצבר עד הבית, מחיר החל מ-480 שקל"
+        "description": "החלפת מצבר עד הבית, מחיר החל מ-449 שקל"
       }
     },
     {
@@ -713,9 +713,9 @@ slug: מצבר-עד-הבית-באשדוד
       },
       "offers": {
         "@type": "Offer",
-        "price": "480",
+        "price": "449",
         "priceCurrency": "ILS",
-        "description": "החלפת מצבר עד הבית, מחיר החל מ-480 שקל"
+        "description": "החלפת מצבר עד הבית, מחיר החל מ-449 שקל"
       }
     },
     {
@@ -799,9 +799,9 @@ slug: מצבר-עד-הבית-במודיעין
       },
       "offers": {
         "@type": "Offer",
-        "price": "480",
+        "price": "449",
         "priceCurrency": "ILS",
-        "description": "החלפת מצבר עד הבית, מחיר החל מ-480 שקל"
+        "description": "החלפת מצבר עד הבית, מחיר החל מ-449 שקל"
       }
     },
     {
