@@ -4,7 +4,12 @@
 סדר העבודה שנקבע (בעלים): **מרכז → דרום → צפון → ירושלים והסביבה.**
 
 ## עקרונות (מעודכן לפי הקטלוג המלא)
-- Classic Editor במצב Text/Code בלבד.
+- **שתי שיטות הטמעה לפי מבנה העמוד (תגלית בני ברק):**
+  - עמוד שמרנדר `post_content` (יש Post Content widget בתבנית, כמו גבעתיים) -> **Classic Editor Text/Code mode** (כמו 10 הראשונות).
+  - עמוד קנבס Elementor ללא Post Content widget (כמו בני ברק 1008) -> **Elementor HTML widget** (בטוח ל-scripts; ה-Text mode חסר השפעה שם).
+- האיסור על Visual תקף רק ל-TinyMCE של Classic Editor (מוחק `<script>`). Elementor HTML widget בטוח.
+- תבניות חשודות: 2982 ("עמוד איזור שירות + תוכן") מול 1052 ("עמוד איזור יחיד"). לסווג כל עיר לתבנית/שיטה לפני הטמעה.
+- Classic Editor במצב Text/Code בלבד (בעמודי post_content).
 - FAQ schema = **רק זוגות ה-jet-toggle הגלויים מילה במילה** (לא כותרות H2/פרוזה ולא תוויות טופס). ספירת ה-FAQ בקטלוג מנופחת — לחלץ רק את ה-toggles האמיתיים, כמה שיש.
 - **9 ערים כבר נושאות FAQPage אוטומטי — בהן רק Service schema, בלי FAQPage (כפילות).**
 - שכונות ב-GEO Box: לחלץ מהעמוד עצמו (אזור "אזורי שירות"). אם אין — להשמיט, לא להמציא.
