@@ -363,7 +363,7 @@ slug: מצבר-עד-הבית-בנתניה
 <div style="border-top:1px solid #e0e0e0; padding-top:24px; margin-top:32px; direction:rtl;">
   <h3 style="font-size:16px; margin-bottom:12px;">שירות מצברים בערים סמוכות</h3>
   <p style="line-height:2;">
-    <a href="https://matzberimil.co.il/service-areas/מצבר-עד-הבית-בכפר-יונה/">מצבר בכפר יונה</a> |
+    <a href="https://matzberimil.co.il/service-areas/מצבר-עד-הבית-בכפר-יונה-השירות-המהיר-המ/">מצבר בכפר יונה</a> |
     <a href="https://matzberimil.co.il/service-areas/מצבר-עד-הבית-בתל-מונד/">מצבר בתל מונד</a> |
     <a href="https://matzberimil.co.il/service-areas/מצבר-עד-הבית-בעמק-חפר/">מצבר בעמק חפר</a> |
     <a href="https://matzberimil.co.il/service-areas/מצבר-עד-הבית-בחדרה/">מצבר בחדרה</a> |
