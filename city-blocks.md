@@ -312,8 +312,8 @@ slug: מצבר-עד-הבית-ברמת-גן
   <p style="line-height:2;">
     <a href="https://matzberimil.co.il/service-areas/מצבר-עד-הבית-בגבעתיים/">מצבר בגבעתיים</a> |
     <a href="https://matzberimil.co.il/service-areas/מצבר-עד-הבית-בתל-אביב/">מצבר בתל אביב</a> |
-    <a href="https://matzberimil.co.il/service-areas/מצבר-עד-הבית-בבני-ברק/">מצבר בבני ברק</a> |
-    <a href="https://matzberimil.co.il/service-areas/מצבר-עד-הבית-בגבעת-שמואל/">מצבר בגבעת שמואל</a> |
+    <a href="https://matzberimil.co.il/service-areas/מצבר-עד-הבית-בני-ברק/">מצבר בבני ברק</a> |
+    <a href="https://matzberimil.co.il/service-areas/מצבר-עד-הבית-גבעת-שמואל/">מצבר בגבעת שמואל</a> |
     <a href="https://matzberimil.co.il/service-areas/מצבר-עד-הבית-בחולון/">מצבר בחולון</a>
   </p>
   <h3 style="font-size:16px; margin:20px 0 12px;">מצבר לפי יצרן רכב</h3>
