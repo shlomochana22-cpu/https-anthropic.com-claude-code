@@ -69,6 +69,13 @@
 - admin_api.php מחזיר 500: `Access denied for user 'sppjjpgqeu'` — סיסמת DB מקודדת-קשיח שהתיישנה אחרי רוטציית הסיסמאות של ניקוי האבטחה (11 ביוני). הנתונים ב-MySQL כנראה שלמים (לא נמחקו).
 - תיקון: לעדכן את הסיסמה ב-public_html/dev/admin_api.php לסיסמת ה-DB הנוכחית (מ-Cloudways Access Details / wp-config). ממתין לאישור הבעלים ("מחשבון").
 - אבטחה להמשך: להגן על /dev/ (htpasswd) ולהוציא creds מהקוד.
+
+### תקלת מחשבון /dev/ — תוקנה ואומתה ✅ (12 ביוני 2026)
+- אומת שהנתונים שלמים ב-MySQL: batteries 757, manufacturers 51, models 547, vehicles 762. לא אבד דבר, לא נדרש שחזור.
+- שורש הבעיה: סיסמת DB מקודדת-קשיח ב-admin_api.php (שורת new mysqli הפעילה, host/user/dbname תקינים: localhost/sppjjpgqeu/sppjjpgqeu) התיישנה אחרי רוטציית סיסמאות האבטחה.
+- תיקון: הבעלים התחבר ל-SSH (דרך Terminal של מק: `ssh master_qsvtdknzjs@68.183.212.166` — Shell-in-a-Box נכשל ב-timeout/הקלדה), כרום הדריך, הבעלים הקליד את סיסמת ה-DB הנוכחית בקובץ. נוצר גיבוי admin_api.php.bak-20260612 (9588B).
+- אימות: curl ל-admin_api.php = HTTP 200 (לא 500); admin.html טוען את כל הנתונים. המחשבון פעיל.
+- ⚠️ הקשחה פתוחה: (1) $TOKEN ב-plaintext בקובץ + ב-shell history (`history -c`); (2) שורת root מוערת למחיקה; (3) htpasswd על /dev/; (4) **איפוס סיסמת Master של Cloudways** (נחשפה בצילום מסך במהלך התהליך); (5) התקנת wp_ משנית (staging) שהתגלתה ב-DB.
 - **🔴 פתוח לסבב הסיום:** (1) אישור/ביצוע תיקון כותרות 449→379 ברמת גן ונתניה (כרום טרם אישר ב-4 בקשות) + טאטוא גורף של כל וריאציות "449" בכותרות TSF בכל האתר. (2) נעילת עמודי יצרנים (GEO Box + Service schema + קישורים, בלי נגיעה בתוכן). (3) בלוק 2: llms.txt משודרג + FAQ דף הבית + Speakable.
 
 ### טאטוא כותרות 449 → 379 (הושלם ואומת) ✅
