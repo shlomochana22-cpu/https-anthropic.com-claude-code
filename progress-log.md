@@ -120,3 +120,10 @@
 - אומת חי: טויוטה = "24/7 (כולל שבת)" בלבד, אפס סתירות; חולון GEO Box = "12 עד 24 חודשים".
 - ⚠️ **פעולה פתוחה לבעלים: טיהור Varnish ב-Cloudways** (platform.cloudways.com -> Application Management -> Purge Varnish). WP Rocket נוקה, אך Cloudways Varnish דורש טיהור ידני מפלטפורמת האחסון (לכרום אין גישה).
 - **עקביות עובדתית גלובלית (מחיר 379 / אחריות 12-24 / 24-7 כולל שבת) — סגורה בכל האתר.**
+
+### עמודי יצרנים (13 ביוני)
+- 30 מונחי manufacturer על תבנית Elementor 1072 משותפת; תוכן ייחודי פר-יצרן ב-JetEngine term meta `term_content`. H1 דינמי (archive-title). מדורגים #1 — לא נוגעים בתוכן/תבנית.
+- ⚠️ term_content מסרס `<script>` (גם ב-Code mode) — Service/FAQPage schema לא עובר דרכו.
+- **החלטת בעלים: רק GEO Box + קישורים דרך term_content, מדלגים על schema** (לשמור על דירוג #1 בלי לגעת בתבנית).
+- **טויוטה (term 125) ✅:** GEO Box + קישורים ב-term_content (append, Code mode), מרונדר תקין, תוכן מקורי שלם, יונדאי לא הושפע. ניסיון schema הוסר נקי.
+- הבא: שכפול GEO Box + קישורים ל-29 היצרנים הנותרים.
