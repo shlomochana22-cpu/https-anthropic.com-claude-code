@@ -152,3 +152,15 @@
 - **✅ נישת הבלוג הושלמה (13 ביוני):** עדכון 2294 לכותרת 2026 (השנה הופיעה רק בכותרת); Article schema (BlogPosting) הוטמע ל-14 הפוסטים הקיימים (סה"כ 17 עם 3 החדשים), עם headline/author/publisher מצבר הדרך/datePublished/mainEntityOfPage, מאומת תקין. אין מחיר 449 בשום פוסט (ה-449 ב-HTML = מזהה Elementor).
 - ⚠️ פער תוכן לעתיד: פוסט 2294 "מחירי מצברים" לא מכיל מחירים בגוף (רק כותרת) — מועמד להעשרה (טבלת מחירים אמיתית 379/480/620/749). לאף פוסט אין Featured Image (חוץ מ-3972) — מועמד להוספת תמונות.
 - **סיכום בלוג: כפילות (canonical 2306->2290), קניבליזציה (canonical 2298->2510), 3 מאמרים חדשים + תמונה ממותגת, קישורים פנימיים בכל 17, Article schema בכל 17, עדכון שנה.**
+
+### מדור /en/ — מיקוד לדף נחיתה אחד (13 ביוני) ✅ (חלק ללא-קוד)
+- אבחון: 4 עמודי Elementor ידניים (אין תוסף רב-לשוני). /en/ הבית (3629) = 2,246 מילים תוכן אמיתי. בעיות: lang="he-IL" שגוי, אין hreflang, אין מתג שפה בעמודים העבריים, DSOT placeholder ב-contact-us, אין עמודי ליבה אנגליים.
+- החלטת בעלים: דף נחיתה אנגלי אחד (לכ-10% לקוחות נוספים).
+- בוצע: noindex ל-3 העמודים (about-us, contact-us, privacy-policy 3767) — /en/ נשאר index יחיד. כותרת/תיאור /en/ נוקו (Title: "Car Battery Replacement at Home in Israel 24/7 | Matzber HaDerech", Remove site title). DSOT ב-contact-us הוחלף ל-"Matzber HaDerech (Battery on the Road)". מותג שנבחר: Matzber HaDerech (Battery on the Road).
+- **נדחה למסלול הקוד (functions.php, עם המתכנת):** lang="he-IL"->"en" בעמודי /en/, hreflang דו-כיווני /en/ ↔ דף הבית, ומתג שפה שמוצג בשני הכיוונים (כיום EN Menu מוצג רק ב-/en/).
+
+## מסלול קוד (functions.php / SSH — למתכנת, בסשן מפוקח)
+1. **SSR למחשבון** (calculator-ssr-spec.md) — חשיפת 762 הרכבים כ-HTML זוחל + schema.
+2. **/en/ בינלאומי** — lang="en" ל-/en/, hreflang דו-כיווני, מתג שפה.
+3. **Defer JS עם החרגת סקריפטי המחשבון** — להחזיר את שיפור המהירות לדף הבית בלי לשבור מובייל.
+4. **אבטחה:** איפוס סיסמת Master (נחשפה בצילום), הגנת /dev/ (Cloudflare Access), בירור התקנת wp_ משנית.
