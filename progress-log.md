@@ -31,7 +31,7 @@
 ## תיקונים נקודתיים (14 ביוני)
 - **כפתור הירו בדף הבית (post 1193 "מצבר עד הבית"):** הכפתור הכתום "להזמנות חייגו עכשיו!" הצביע ל-wa.me במקום לחיוג. תוקנו 2 ווידג'טים זהים (3088c8e החי + c19c2dd כפיל בעורך) ל-`tel:055-5033335`. אומת חי: href=tel, קישורי tel 6→7, wa.me 3→2. כפתור הוואטסאפ הירוק הצף נשאר וואטסאפ. (Varnish — purge ידני של הבעלים.)
 - **llms.txt:** שודרג (שאלות נפוצות לציטוט, 7 כתובות בלוג אמיתיות, מחשבון/קיבולת). הקובץ בריפו; ההעלאה לשורש האתר הועברה למתכנת (Cloudways ללא File Manager בדפדפן; דרוש SFTP/SSH). כרגע /llms.txt = soft-404 עד שהמתכנת יעלה.
-- **בלוק 2 (GEO):** 2.1 llms.txt (אצל המתכנת) · 2.2 FAQ דף הבית כבר קיים (FAQPage 15 + WebPage) · 2.3 Speakable — **בוצע** (ווידג'ט HTML 0e2bf54 בעמוד 1193, JSON-LD WebPage עם אותו @id https://matzberimil.co.il/ + speakable cssSelector h1 + #geo-summary p; מיזוג, לא כפילות; Rich Results 7 פריטים, 0 שגיאות). נותר: הרחבת sameAs (פקודה נשלחה — אינסטגרם+פייסבוק+יוטיוב+גוגל ביזנס דרך מיזוג @id).
+- **בלוק 2 (GEO):** 2.1 llms.txt (אצל המתכנת) · 2.2 FAQ דף הבית כבר קיים (FAQPage 15 + WebPage) · 2.3 Speakable — בוצע (ווידג'ט 0e2bf54) · sameAs — **בוצע** (ווידג'ט HTML 68687f5, @graph LocalBusiness+Organization עם אותם @id #business/#organization, 4 sameAs באיחוד: instagram.com/matzber.hadereh, facebook.com/Matzberimvip, youtube.com/channel/UCxaxHQVlP_bHltAJHW-2M-w, google.com/maps?cid=8698177213608318867). Rich Results 7 פריטים, 0 שגיאות. **בלוק 2 הושלם.**
 
 ## נותר בתוכנית (master-plan-team.md)
 - בלוק 2: llms.txt משודרג, FAQ אמיתי לדף הבית, Speakable schema.
