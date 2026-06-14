@@ -69,6 +69,11 @@ term meta כנראה מסרס <script> (כמו ביצרנים). אם אפשר FA
 ## index
 לפתוח לאינדקס את העמודים שקיבלו תוכן ייחודי + טבלאות. השאר noindex.
 
+## תבנית 1058 — סופית (14 ביוני) ✅
+- בוילרפלייט גנרי הוסר (f0e0c62). widget term_content מרנדר את המאמר. כפתור חיוג כתום "להזמנות חייגו עכשיו!" (tel:055-5033335) ב-hero.
+- breadcrumb מותאם (במקום [tsf_breadcrumb] שמשך כותרת SEO ארוכה): "דף הבית › מצבר לפי אמפר › מצבר [current_term_name] אמפר". שלב אמצעי מקשר ל-/מצברים-לפי-אמפרים/ (ארכיון אמיתי, 200). שם המונח דרך shortcode (לא SEO title).
+- הכל חל אוטומטית על 49 עמודי הקיבולת.
+
 ## מנגנון הטמעה (מוכח בפיילוט 60, 14 ביוני)
 - שדה JetEngine term meta `term_content` כבר קיים על טקסונומיית capacity (אותו Meta Box של היצרנים).
 - תבנית Elementor 1058: נוסף widget "עורך טקסט" + Dynamic Tag JetEngine Term Field (taxonomy=capacity, meta_field=term_content), אחרי ה-H1. מרנדר פר-מונח (ריק=לא מציג כלום). חובה דרך עורך Elementor הוויזואלי (REST לא מרנדר).
