@@ -65,7 +65,7 @@ slug: מצבר-עד-הבית-בתל-אביב
     <a href="https://matzberimil.co.il/capacity/55-אמפר/">מצבר 55 אמפר</a> |
     <a href="https://matzberimil.co.il/capacity/60-אמפר/">מצבר 60 אמפר</a> |
     <a href="https://matzberimil.co.il/capacity/65-אמפר/">מצבר 65 אמפר</a> |
-    <a href="https://matzberimil.co.il/capacity/74-אמפר/">מצבר 74 אמפר</a>
+    <a href="https://matzberimil.co.il/capacity/72-אמפר/">מצבר 72 אמפר</a>
   </p>
 </div>
 ```
@@ -118,7 +118,7 @@ slug: מצבר-עד-הבית-בראשון-לציון
     <a href="https://matzberimil.co.il/capacity/55-אמפר/">מצבר 55 אמפר</a> |
     <a href="https://matzberimil.co.il/capacity/60-אמפר/">מצבר 60 אמפר</a> |
     <a href="https://matzberimil.co.il/capacity/65-אמפר/">מצבר 65 אמפר</a> |
-    <a href="https://matzberimil.co.il/capacity/74-אמפר/">מצבר 74 אמפר</a>
+    <a href="https://matzberimil.co.il/capacity/72-אמפר/">מצבר 72 אמפר</a>
   </p>
 </div>
 ```
@@ -171,7 +171,7 @@ slug: מצבר-עד-הבית-פתח-תקווה  (שים לב: בלי "ב")
     <a href="https://matzberimil.co.il/capacity/55-אמפר/">מצבר 55 אמפר</a> |
     <a href="https://matzberimil.co.il/capacity/60-אמפר/">מצבר 60 אמפר</a> |
     <a href="https://matzberimil.co.il/capacity/65-אמפר/">מצבר 65 אמפר</a> |
-    <a href="https://matzberimil.co.il/capacity/74-אמפר/">מצבר 74 אמפר</a>
+    <a href="https://matzberimil.co.il/capacity/72-אמפר/">מצבר 72 אמפר</a>
   </p>
 </div>
 ```
@@ -224,7 +224,7 @@ slug: מצבר-עד-הבית-בחולון
     <a href="https://matzberimil.co.il/capacity/55-אמפר/">מצבר 55 אמפר</a> |
     <a href="https://matzberimil.co.il/capacity/60-אמפר/">מצבר 60 אמפר</a> |
     <a href="https://matzberimil.co.il/capacity/65-אמפר/">מצבר 65 אמפר</a> |
-    <a href="https://matzberimil.co.il/capacity/74-אמפר/">מצבר 74 אמפר</a>
+    <a href="https://matzberimil.co.il/capacity/72-אמפר/">מצבר 72 אמפר</a>
   </p>
 </div>
 ```
@@ -277,7 +277,7 @@ slug: מצבר-עד-הבית-בבת-ים
     <a href="https://matzberimil.co.il/capacity/55-אמפר/">מצבר 55 אמפר</a> |
     <a href="https://matzberimil.co.il/capacity/60-אמפר/">מצבר 60 אמפר</a> |
     <a href="https://matzberimil.co.il/capacity/65-אמפר/">מצבר 65 אמפר</a> |
-    <a href="https://matzberimil.co.il/capacity/74-אמפר/">מצבר 74 אמפר</a>
+    <a href="https://matzberimil.co.il/capacity/72-אמפר/">מצבר 72 אמפר</a>
   </p>
 </div>
 ```
@@ -330,7 +330,7 @@ slug: מצבר-עד-הבית-ברמת-גן
     <a href="https://matzberimil.co.il/capacity/55-אמפר/">מצבר 55 אמפר</a> |
     <a href="https://matzberimil.co.il/capacity/60-אמפר/">מצבר 60 אמפר</a> |
     <a href="https://matzberimil.co.il/capacity/65-אמפר/">מצבר 65 אמפר</a> |
-    <a href="https://matzberimil.co.il/capacity/74-אמפר/">מצבר 74 אמפר</a>
+    <a href="https://matzberimil.co.il/capacity/72-אמפר/">מצבר 72 אמפר</a>
   </p>
 </div>
 ```
@@ -383,7 +383,7 @@ slug: מצבר-עד-הבית-בנתניה
     <a href="https://matzberimil.co.il/capacity/55-אמפר/">מצבר 55 אמפר</a> |
     <a href="https://matzberimil.co.il/capacity/60-אמפר/">מצבר 60 אמפר</a> |
     <a href="https://matzberimil.co.il/capacity/65-אמפר/">מצבר 65 אמפר</a> |
-    <a href="https://matzberimil.co.il/capacity/74-אמפר/">מצבר 74 אמפר</a>
+    <a href="https://matzberimil.co.il/capacity/72-אמפר/">מצבר 72 אמפר</a>
   </p>
 </div>
 ```
@@ -436,7 +436,7 @@ slug: מצבר-עד-הבית-ברחובות
     <a href="https://matzberimil.co.il/capacity/55-אמפר/">מצבר 55 אמפר</a> |
     <a href="https://matzberimil.co.il/capacity/60-אמפר/">מצבר 60 אמפר</a> |
     <a href="https://matzberimil.co.il/capacity/65-אמפר/">מצבר 65 אמפר</a> |
-    <a href="https://matzberimil.co.il/capacity/74-אמפר/">מצבר 74 אמפר</a>
+    <a href="https://matzberimil.co.il/capacity/72-אמפר/">מצבר 72 אמפר</a>
   </p>
 </div>
 ```
@@ -489,7 +489,7 @@ slug: מצבר-עד-הבית-באשדוד
     <a href="https://matzberimil.co.il/capacity/55-אמפר/">מצבר 55 אמפר</a> |
     <a href="https://matzberimil.co.il/capacity/60-אמפר/">מצבר 60 אמפר</a> |
     <a href="https://matzberimil.co.il/capacity/65-אמפר/">מצבר 65 אמפר</a> |
-    <a href="https://matzberimil.co.il/capacity/74-אמפר/">מצבר 74 אמפר</a>
+    <a href="https://matzberimil.co.il/capacity/72-אמפר/">מצבר 72 אמפר</a>
   </p>
 </div>
 ```
@@ -542,7 +542,7 @@ slug: מצבר-עד-הבית-במודיעין
     <a href="https://matzberimil.co.il/capacity/55-אמפר/">מצבר 55 אמפר</a> |
     <a href="https://matzberimil.co.il/capacity/60-אמפר/">מצבר 60 אמפר</a> |
     <a href="https://matzberimil.co.il/capacity/65-אמפר/">מצבר 65 אמפר</a> |
-    <a href="https://matzberimil.co.il/capacity/74-אמפר/">מצבר 74 אמפר</a>
+    <a href="https://matzberimil.co.il/capacity/72-אמפר/">מצבר 72 אמפר</a>
   </p>
 </div>
 ```
