@@ -50,3 +50,27 @@ LCP 8.7s → ~2.5-3.5s · render-blocking 1.65s → <0.4s · FCP 4.1s → ~2s ·
 - handle/נתיב סקריפט המחשבון (להחרגה).
 - האם הבעיה גלובלית (תבנית/הדר) או ספציפית לדף הבית.
 - גרסת PHP נוכחית + מצב Redis.
+
+---
+
+## אבחון חי מדויק (14 ביוני, PSI מובייל Moto G / Slow 4G) — דף הבית post 1193
+מובייל 45 · FCP 4.1s · LCP 8.7s · TBT 650ms · CLS 0 · SI 6.8s. TTFB ~0 (מהיר/cache). PHP 8.2.30. **מאחורי Cloudflare כבר.** Redis/Object Cache **לא פעיל**.
+
+**שורש ה-LCP (8.7s):** אלמנט ה-LCP = קונטיינר Elementor (`.elementor-element-1c9a37b`) עם **תמונת רקע CSS** (hero JPEG, 70KB, `WhatsApp-Image-2025-04-29-at-21.34.39.jpeg`). פירוק: load delay **1,290ms** (אין preload/fetchpriority — מתגלה מאוחר) + render delay 990ms. **המשקל לא הבעיה — היעדר preload הוא הבעיה.**
+
+**שורש המשקל (2,434KB) + TBT:** צד-שלישי דומיננטי — **YouTube embed ~1.5MB** (base.js 804KB + 457KB + 202KB) + **GTM ~600KB+** (gtag/js 601KB + עוד). צד-ראשון: לוגו PNG 296KB, lottie.min.js 151KB. + סקריפט GA4 חיצוני מ-callindex.co.il (render-blocking 1,230ms).
+
+**Render-blocking (~1,650ms):** jquery 1,100ms · Elementor post-1193.css (זמן 10,710ms!) · jet-engine frontend.css · עשרות widget-*.css לא מאוחדים · Google Fonts (Montserrat+Rubik+Poppins, **כל המשקלים 100-900+italic**) · GA4 חיצוני.
+
+**פונטים:** Google Fonts חיצוני (לא self-hosted), display=swap (טוב) אבל כל המשקלים. אייקונים (dashicons/eicons/swiper) בלי font-display.
+
+## סדר עדיפויות מעודכן לפי הנתונים החיים (impact אמיתי)
+1. 🥇 **preload + fetchpriority לתמונת ה-hero** (רקע CSS) — מתקן 1,290ms load delay ישירות. `<link rel="preload" as="image" href="...hero.jpeg" fetchpriority="high">` ב-head (WPCode/Elementor custom code). הכי גבוה, סיכון נמוך.
+2. 🥇 **Lazy-load / facade ל-YouTube embed** — חוסך ~1.5MB + TBT ענק. אם יש סרטון בדף הבית: facade (תמונה+קליק) או lazy. הכי גבוה.
+3. 🥈 **דחיית GTM + GA4 (callindex)** — Delay JS / one-click GA exclusion. TBT.
+4. 🥈 **Elementor Improved CSS Loading + Improved Asset Loading** + RUCSS/async ל-post-1193.css ועשרות ה-widget CSS. render-blocking.
+5. 🥈 **צמצום משקלי פונטים** ל-1-2 משקלים + self-host. + font-display לאייקונים.
+6. 🥉 **Defer JS + החרגת מחשבון** (data-nowprocket) + Delay JS — TBT (בדיקת iOS).
+7. **לוגו PNG 296KB → דחיסה/WebP** (גדול מדי ללוגו).
+8. **Redis Object Cache** (Cloudways) — TTFB דינמי (פחות דחוף, TTFB כבר טוב).
+9. **Cloudflare כבר פעיל** — לוודא Brotli ON, Rocket Loader OFF, Auto-Minify OFF.
