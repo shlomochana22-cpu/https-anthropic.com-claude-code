@@ -93,3 +93,8 @@ LCP 8.7s → ~2.5-3.5s · render-blocking 1.65s → <0.4s · FCP 4.1s → ~2s ·
 - 🥇🥇 **TTFB/page-cache** — לברר למה TTFB ~2s למרות WP Rocket. אם ה-page cache לא מקואש (לוגין/הגדרה/Varnish MISS) — תיקון אחד חותך ~1.8s מכל עמוד. הכי גבוה, גלובלי.
 - 🥇 **Conditional loading של Lottie + JetSmartFilters** — לטעון רק היכן שנדרש (Lottie של הלוגו בהדר נטען בכל מקום). חוסך ~150-220KB JS גלובלי. "Improved Asset Loading" של Elementor עוזר חלקית.
 - שאר השלבים (hero preload, YouTube lazy, פונטים, Defer/Delay) — בעינם.
+
+## תיקון אבחון — TTFB (אנונימי, 14 ביוני)
+**הקאש עובד.** אנונימי: cache-control=max-age=0 (לא no-store — ה-no-store היה ארטיפקט סשן מחובר). x-cache=HIT, **TTFB חם ~95-100ms**. ה-~2s הוא **MISS קר** (Varnish מייצר ב-~1.7s; PSI פוגע בעמוד קר). אין התנגשות תוספים, אין חוסם קאש אנונימי. WP Rocket מאציל page-cache ל-Varnish (Cloudways).
+**מנופי TTFB אמיתיים:** (1) **חימום קאש** (WP Rocket Preload Cache — שפחות בקשות יהיו קרות, כולל מובייל). (2) **האצת origin** ל-MISS מהיר: Redis Object Cache + OPcache + הפחתת עומס Elementor/DB. (3) **צמצום תדירות purge** (purge מאפס את כל הקאש — היום ניקינו הרבה). (4) אופציונלי: Cloudflare Cache Rule ל-HTML אנונימי (bypass על cookie של logged-in).
+**הערה:** ה-LCP load-delay (1290ms) ל-hero וה-render-delay (990ms) נפרדים מ-TTFB — preload ל-hero + הפחתת render-blocking CSS נשארים תיקוני LCP מרכזיים גם עם קאש חם.
