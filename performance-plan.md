@@ -74,3 +74,22 @@ LCP 8.7s → ~2.5-3.5s · render-blocking 1.65s → <0.4s · FCP 4.1s → ~2s ·
 7. **לוגו PNG 296KB → דחיסה/WebP** (גדול מדי ללוגו).
 8. **Redis Object Cache** (Cloudways) — TTFB דינמי (פחות דחוף, TTFB כבר טוב).
 9. **Cloudflare כבר פעיל** — לוודא Brotli ON, Rocket Loader OFF, Auto-Minify OFF.
+
+## אבחון חי 2 — עמודים פנימיים (השוואה, 14 ביוני)
+| עמוד | Perf | LCP | TBT | TTFB אמיתי |
+|---|---|---|---|---|
+| דף הבית | 45 | 10.8s | 610ms | ~1.8s |
+| עיר ת"א | 61 | 10.4s | 50ms | ~2.3s |
+| קיבולת 62 | 59 | 9.2s | 230ms | ~1.9s |
+| יצרן טויוטה | 55 | 10.2s | 280ms | ~2.1s |
+
+**מסקנות:**
+- 🔴 **הבעיה גלובלית** (תבנית/הדר), לא דף הבית בלבד. LCP 9-11s בכולם.
+- 🔴 **TTFB ~1.8-2.3s אחיד = page cache לא אפקטיבי!** (אמור ~200ms). ה-"0ms" ב-PSI מנורמל; Navigation Timing האמיתי ~2s. **מנוף ענק שלא זוהה קודם** — חותך ~1.8s מכל עמוד.
+- ערימת JS כבדה משותפת בכל העמודים: elementor common.min.js 158KB · lottie 71KB+151KB · web-cli 45KB · swiper 44KB · react-dom 46KB · JetSmartFilters 42KB — נטענת גם איפה שלא בשימוש.
+- TBT: דף הבית חריג (610ms מול 50-280 בפנימיים) — שכבת JS נוספת (YouTube+GTM+ווידג'טים).
+
+## עדכון עדיפות-על (אחרי דיווח 2)
+- 🥇🥇 **TTFB/page-cache** — לברר למה TTFB ~2s למרות WP Rocket. אם ה-page cache לא מקואש (לוגין/הגדרה/Varnish MISS) — תיקון אחד חותך ~1.8s מכל עמוד. הכי גבוה, גלובלי.
+- 🥇 **Conditional loading של Lottie + JetSmartFilters** — לטעון רק היכן שנדרש (Lottie של הלוגו בהדר נטען בכל מקום). חוסך ~150-220KB JS גלובלי. "Improved Asset Loading" של Elementor עוזר חלקית.
+- שאר השלבים (hero preload, YouTube lazy, פונטים, Defer/Delay) — בעינם.
