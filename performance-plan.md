@@ -98,3 +98,9 @@ LCP 8.7s → ~2.5-3.5s · render-blocking 1.65s → <0.4s · FCP 4.1s → ~2s ·
 **הקאש עובד.** אנונימי: cache-control=max-age=0 (לא no-store — ה-no-store היה ארטיפקט סשן מחובר). x-cache=HIT, **TTFB חם ~95-100ms**. ה-~2s הוא **MISS קר** (Varnish מייצר ב-~1.7s; PSI פוגע בעמוד קר). אין התנגשות תוספים, אין חוסם קאש אנונימי. WP Rocket מאציל page-cache ל-Varnish (Cloudways).
 **מנופי TTFB אמיתיים:** (1) **חימום קאש** (WP Rocket Preload Cache — שפחות בקשות יהיו קרות, כולל מובייל). (2) **האצת origin** ל-MISS מהיר: Redis Object Cache + OPcache + הפחתת עומס Elementor/DB. (3) **צמצום תדירות purge** (purge מאפס את כל הקאש — היום ניקינו הרבה). (4) אופציונלי: Cloudflare Cache Rule ל-HTML אנונימי (bypass על cookie של logged-in).
 **הערה:** ה-LCP load-delay (1290ms) ל-hero וה-render-delay (990ms) נפרדים מ-TTFB — preload ל-hero + הפחתת render-blocking CSS נשארים תיקוני LCP מרכזיים גם עם קאש חם.
+
+## ⚠️ לקח — Object Cache Pro שובר את המחשבון (14 ביוני)
+- Cloudways → Application Settings → WordPress → **Object Cache Pro (Redis): נוסה, שיבר את המחשבון** (בוררי היצרן/דגם ריקים/כפולים). בוטל מיד + purge → המחשבון חזר לעבוד. **לא להפעיל Object Cache Pro.** (Redis עדיין רץ ברמת השרת אך WP לא משתמש בו.)
+- ⚠️ גם "Direct PHP Files Access" — לא להפעיל (עלול לחסום את /dev/api.php של המחשבון).
+- שירותי שרת קיימים שרצים: Apache, Nginx, MySQL, PHP-FPM 8.2, Memcached, Redis, Varnish, Imunify360.
+- מסקנה: ה-origin יישאר על Varnish page-cache בלבד (TTFB חם ~95ms; MISS קר ~1.7s). האצת origin נוספת תידחה (דורשת בדיקת תאימות מחשבון). מתמקדים במנופים שלא נוגעים במחשבון: preload hero, lazy YouTube, Elementor Improved Asset/CSS Loading, Minify, צמצום פונטים, חימום קאש (Preload).
