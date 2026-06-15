@@ -111,3 +111,9 @@ LCP 8.7s → ~2.5-3.5s · render-blocking 1.65s → <0.4s · FCP 4.1s → ~2s ·
 - סיבה סבירה: wp-cron חסום / שירות ה-CPCSS של WP Rocket חסום מאחורי Cloudflare/firewall.
 - async CSS לא מזיק (עיצוב שלם, TBT/FCP קצת השתפרו) — להשאיר פעיל; ייכנס לתוקף כש-CCSS ייווצר.
 - **מסקנה: הרווחים הבטוחים מוצו. המנופים שנותרו דורשים מתכן/שרת:** תיקון CCSS/wp-cron · RUCSS עם safelist · Defer/Delay JS עם החרגת מחשבון + בדיקת iOS · צמצום פונטים (36→3) · WebP ל-hero/לוגו דרך SSH.
+
+## אבחון CCSS/cron (15 ביוני) — ה-CCSS תקין, הבעיה היא cron מבוסס-מבקרים
+- **Critical CSS הושלם 17/17** (אומת ב-WP Rocket: "finished for 17 of 17 page types", 07:24). דף הבית: 79KB critical inline + 37 stylesheets async. ה-"0/17" שראינו = תצוגה ישנה.
+- REST API ✅, loopback ✅, HTTP ✅, wp-cron 200 ✅. אין חסם.
+- 🔴 **הצוואר: Site Health "אירוע מתוזמן מאחר" = `action_scheduler_run_queue`.** wp-cron מבוסס-מבקרים (אין DISABLE_WP_CRON, אין system-cron, Cron Optimizer כבוי) → בתעבורה נמוכה התור (39 preload jobs) מצטבר ורץ באיחור.
+- **התיקון הבטוח: הפעלת Cloudways "Cron Optimizer"** (system cron כל דקה) — ≠ Object Cache (זה לא שובר את המחשבון). מריץ את התור בזמן → preload/CCSS/חימום-קאש עובדים אמין → פחות MISS קר → TTFB טוב יותר לאמיתי+PSI. אופציה: DISABLE_WP_CRON + cron חיצוני (מתכן).
