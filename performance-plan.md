@@ -104,3 +104,10 @@ LCP 8.7s → ~2.5-3.5s · render-blocking 1.65s → <0.4s · FCP 4.1s → ~2s ·
 - ⚠️ גם "Direct PHP Files Access" — לא להפעיל (עלול לחסום את /dev/api.php של המחשבון).
 - שירותי שרת קיימים שרצים: Apache, Nginx, MySQL, PHP-FPM 8.2, Memcached, Redis, Varnish, Imunify360.
 - מסקנה: ה-origin יישאר על Varnish page-cache בלבד (TTFB חם ~95ms; MISS קר ~1.7s). האצת origin נוספת תידחה (דורשת בדיקת תאימות מחשבון). מתמקדים במנופים שלא נוגעים במחשבון: preload hero, lazy YouTube, Elementor Improved Asset/CSS Loading, Minify, צמצום פונטים, חימום קאש (Preload).
+
+## מדידה אחרי async CSS (15 ביוני) — אין שיפור, ה-CCSS תקוע
+- PSI: Perf 50 (רעש), LCP 10.7s, TBT 460ms (שיפור קל), FCP 3.5s. render-blocking ~1,900ms / 34 CSS — **כמעט זהה לבסיס**.
+- שורש: "Load CSS Asynchronously" **לא חל על אנונימי** — כל 37 ה-stylesheets עדיין `rel=stylesheet` חוסם, 0 `data-rocket-async`. **יצירת Critical CSS תקועה "0 of 17"** → WP Rocket משאיר CSS חוסם (כדי לא לשבור עיצוב). הפיצ'ר "מותקן אך מושבת בפועל".
+- סיבה סבירה: wp-cron חסום / שירות ה-CPCSS של WP Rocket חסום מאחורי Cloudflare/firewall.
+- async CSS לא מזיק (עיצוב שלם, TBT/FCP קצת השתפרו) — להשאיר פעיל; ייכנס לתוקף כש-CCSS ייווצר.
+- **מסקנה: הרווחים הבטוחים מוצו. המנופים שנותרו דורשים מתכן/שרת:** תיקון CCSS/wp-cron · RUCSS עם safelist · Defer/Delay JS עם החרגת מחשבון + בדיקת iOS · צמצום פונטים (36→3) · WebP ל-hero/לוגו דרך SSH.
