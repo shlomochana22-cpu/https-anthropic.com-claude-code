@@ -13,6 +13,28 @@
 - Service schema מפנה ל-`@id` של ה-LocalBusiness: `https://matzberimil.co.il/#business`. לא מוסיפים LocalBusiness או Organization (כפילות סייטווייד).
 - כל קישור פנימי נבדק 200 לפני שמירה. slug שבור מתקנים מול הקטלוג האמיתי.
 - עריכת גוף: עמודי 2982 עם Post Content widget = Classic Editor במצב Text/Code בלבד (לא Visual, מוחק scripts).
+
+## טבלת מחירים (זהה בכל 9 הערים, מקור: עמוד תל אביב החי)
+מחירון אחיד, לא משתנה בין ערים. תוקנו 2 טעויות מקור (טויוטב->טויוטה; הוסר ניסן אלטימה מ-60 ס"ס כי במחשבון הוא 65 ס"ס).
+```html
+<div style="margin:24px 0; direction:rtl; overflow-x:auto;">
+  <h3 style="font-size:16px; margin-bottom:12px;">מחירון מצברים לפי קיבולת</h3>
+  <table style="width:100%; border-collapse:collapse; font-size:14px;">
+    <thead><tr style="background:#f2f2f2;">
+      <th style="border:1px solid #ddd; padding:8px; text-align:right;">קיבולת אמפר</th>
+      <th style="border:1px solid #ddd; padding:8px; text-align:right;">עלות מצבר</th>
+      <th style="border:1px solid #ddd; padding:8px; text-align:right;">רכבים שמתאימים</th>
+    </tr></thead>
+    <tbody>
+      <tr><td style="border:1px solid #ddd; padding:8px;">62 אמפר אירופאי</td><td style="border:1px solid #ddd; padding:8px;">החל מ-480 ₪</td><td style="border:1px solid #ddd; padding:8px;">הונדה CRV, טויוטה קורולה, ניסאן קשקאי, סיאט איביזה</td></tr>
+      <tr><td style="border:1px solid #ddd; padding:8px;">60 אמפר סטארט סטופ אירופאי</td><td style="border:1px solid #ddd; padding:8px;">החל מ-749 ₪</td><td style="border:1px solid #ddd; padding:8px;">הונדה HRV, טויוטה אייגו, יונדאי i10</td></tr>
+      <tr><td style="border:1px solid #ddd; padding:8px;">70 אמפר סטארט סטופ אירופאי</td><td style="border:1px solid #ddd; padding:8px;">החל מ-849 ₪</td><td style="border:1px solid #ddd; padding:8px;">אאודי A3, אופל קרוסלנד, ב.מ.וו X1, דאצ'יה דאסטר</td></tr>
+      <tr><td style="border:1px solid #ddd; padding:8px;">95 אמפר סטארט סטופ AGM</td><td style="border:1px solid #ddd; padding:8px;">החל מ-1,100 ₪</td><td style="border:1px solid #ddd; padding:8px;">אאודי A6, ב.מ.וו X6, וולוו S90, לנד רובר דיפנדר</td></tr>
+      <tr><td style="border:1px solid #ddd; padding:8px;">95 אמפר יפני</td><td style="border:1px solid #ddd; padding:8px;">החל מ-749 ₪</td><td style="border:1px solid #ddd; padding:8px;">טויוטה לנד קרוזר, מיצובישי פג'רו, רקסטון KGM</td></tr>
+    </tbody>
+  </table>
+</div>
+```
 - אחרי כל עיר: WP Rocket Clear + Cloudways Purge, ואז Rich Results Test (Service + FAQPage, 0 שגיאות).
 
 ================================================================
