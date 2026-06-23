@@ -279,3 +279,8 @@
 - **לקח מטמון קריטי:** TSF מגיש sitemap ממטמון (`<!-- Sitemap is served from cache -->`). **שמירת מונח (term) לא מנקה את מטמון ה-sitemap — רק שמירת פוסט מנקה אותו.** אחרי Update על פוסט דגם קיים, ה-sitemap התחדש (`generated for this view`).
 - **תוצאה מאומתת:** 30 כתובות /manufacturer/ ב-sitemap, סה"כ 134 (104+30), כתובות מחזירות 200.
 - **נשאר:** הגשת sitemap מחדש ב-GSC (Sitemaps → Submit). capacity ל-sitemap רק אחרי בידול תוכן.
+
+## ?nocache= — הוחלט: לא לתקן (23 ביוני) ✅ סגור
+- **ממצא recon:** ~2,980 כתובות `?nocache=<timestamp>` בדוח "Crawled - currently not indexed". המקור = **תוסף JetEngine** (`JetEngineSettings.ajaxlisting`, מנגנון AJAX listing/filters). WP Rocket *אינו* המקור.
+- **למה לא לגעת:** (1) ה-canonical כבר מצביע לכתובת הנקייה → האינדקס מוגן, גוגל מתייחס אליהן ככפילות. (2) גוגל כבר הפסיק לסרוק בתדירות (סריקה אחרונה של דוגמה: 8.4.2026, לפני ~2.5 חודשים). (3) המקור הוא פונקציונליות ליבה של JetEngine — אסור לשבור. (4) **חסימת `?nocache=` ב-robots.txt עלולה לחסום מ-Googlebot לרנדר תוכן listing שנטען ב-AJAX** — סיכון אמיתי תמורת תועלת שולית.
+- **מסקנה:** הסיכון > התועלת. ה"2,980 דפים" באודיט הוא non-issue (canonical ניטרל). לא בוצע שינוי. אם בעתיד גוגל יתחיל להציג כתובות nocache באינדקס בפועל (לא רק "crawled not indexed") — אז לשקול מחדש.
