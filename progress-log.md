@@ -271,3 +271,11 @@
 - **לקח טכני קריטי:** לחיצת "Update" רגילה ב-TSF לפעמים לא נשמרה (השדה חזר ל-noindex ברענון). פתרון: שמירה דרך שליחת הטופס המקורי + אימות חובה ברענון דף. **אימות על המסך לא מספיק — חייבים reload.**
 - **אימות חי (חלון אנונימי, cache-busting):** 5 כתובות (יונדאי, טויוטה, קיה, BYD, brand/ורטה) — כולן פולטות `<meta name="robots" content="max-snippet:-1,max-image-preview:large,max-video-preview:-1" />` ללא noindex, סטטוס 200. מכסה את כל 3 קבוצות העדכון.
 - **נשאר:** פרג' Cloudways (בעלים); GSC -> Validate Fix על "Excluded by noindex tag" + Request Indexing ל-5 עמודי היצרן המובילים.
+
+## sitemap — הוספת עמודי /manufacturer/ (23 ביוני) ✅
+- **ממצא:** ה-sitemap (TSF מובנה, /sitemap.xml, urlset שטוח 104 כתובות) כלל עמודי דגמים אך *לא* את הטקסונומיות. הסיבה: **ה-sitemap של TSF מחריג ארכיוני טקסונומיה ב-design** (לא קשור ל-noindex). brand/capacity גם חסרים אך capacity לא נכניס עד שיבודל (75% כפילות).
+- **פתרון (דרך א׳ — קוד, בלי תוסף):** snippet ב-functions.php של Hello Elementor Child, עם הפילטר הרשמי `the_seo_framework_sitemap_additional_urls` (priority 11). גרסה **דינמית**: `get_terms('manufacturer', hide_empty=true)` + `get_term_link` — מייצר את ה-URL הנכון לכל מונח דרך WP (אפס סיכון slug שגוי, וכולל יצרנים עתידיים אוטומטית).
+- **ביצוע בטוח:** recon קודם (עורך זמין? child theme? גיבוי functions.php מלא נשמר ב-backups/functions.php.backup-2026-06-23.php). הוספה ב-append בסוף הקובץ (אין ?> בסוף, best practice). WP שמר ללא שגיאת loopback; אתר נשאר חי (דף בית + עמוד יצרן + wp-admin תקינים).
+- **לקח מטמון קריטי:** TSF מגיש sitemap ממטמון (`<!-- Sitemap is served from cache -->`). **שמירת מונח (term) לא מנקה את מטמון ה-sitemap — רק שמירת פוסט מנקה אותו.** אחרי Update על פוסט דגם קיים, ה-sitemap התחדש (`generated for this view`).
+- **תוצאה מאומתת:** 30 כתובות /manufacturer/ ב-sitemap, סה"כ 134 (104+30), כתובות מחזירות 200.
+- **נשאר:** הגשת sitemap מחדש ב-GSC (Sitemaps → Submit). capacity ל-sitemap רק אחרי בידול תוכן.
