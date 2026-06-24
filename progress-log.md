@@ -319,3 +319,10 @@
 - **לקח:** "לא השתנה בגוגל" כמעט תמיד = lag/Google title-rewrite, לא בעיית שמירה. תמיד להשוות admin מול <title> חי לפני שמתקנים.
 - **נקודה לבדיקה:** slugs של start-stop לא אחידים — חלק אנגלית (/capacity/70-start-stop/), 65ss על /capacity/65-אמפר/, וה-slugs העבריים (70/80/95-סטארט-סטופ) מפנים לדף הבית (404). לבדוק קישורים פנימיים שבורים.
 - **המלצה:** (1) להרחיב פילטר sitemap ב-functions.php לכלול 16 capacity מאונדקסים (אות recrawl קבוע + סוגר capacity-sitemap מהאודיט). (2) GSC Request Indexing ל-50,100. 62 אמפר: קרוב ל-60 אך תוכן ייחודי טוב, הגנתי להשאיר.
+
+## sitemap — הרחבה ל-capacity מאונדקסים (24 ביוני) ✅
+- הוסף בלוק שני נפרד (append-only) ב-functions.php על `the_seo_framework_sitemap_additional_urls` (priority 11): מוסיף עמודי capacity רק אם `get_term_meta(id,'term_content')` > 200 תווים → בדיוק 16 המאונדקסים, מדלג על 33 ה-noindex/ריקים. קובץ תיעוד: dev/sitemap-capacity-filter.php.
+- **לקח פריסה:** עורך הקוד (CodeMirror) עם auto-close הוסיף סוגריים מיותרים בסוף ההדבקה → בדיקת PHP של WP חסמה שמירה ("Unmatched '{'"). זו *לא* הגנת loopback אלא syntax-check (הקובץ נשאר שלם). תיקון: מחיקת סוגרי-הזבל בלבד. שמירה שנייה עברה. **בהדבקת קוד לעורך — לשים לב ל-auto-close braces.**
+- **תוצאה מאומתת:** sitemap עבר מ-134 ל-150 כתובות (+16 capacity). noindex (52,12 אמפר) לא נכנסו. אתר נשאר חי.
+- 16 שנכנסו: 40,45,50,55,60,62,65,70,72,80,95,100 + 70/80/95-start-stop + 50-סטארט-סטופ.
+- **נשאר:** הגשת sitemap מחדש ב-GSC + Request Indexing ל-50,100 אמפר (כותרות תקועות על הישן).
