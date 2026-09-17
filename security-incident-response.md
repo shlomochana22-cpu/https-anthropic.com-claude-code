@@ -136,3 +136,34 @@
 ## עדכון 17/09/2026 - בעיית שרת מול Googlebot (ייתכן קשור, ייתכן לא)
 - GSC Crawl stats: Server connectivity אדום מ-5-6/09 (20-30% בקשות סריקה נכשלות), 105 כתובות 5xx (96 עם ?nocache=), sitemap לא נקרא 31/08-17/09.
 - מקור ה-?nocache= לא ידוע - 96 כתובות כאלה הגיעו לגוגל, כלומר משהו באתר מייצר אותן. יחד עם הממצא של cdn.quickdelivr.com/mpackage.js + custom-fields-pro-169/js/bsc-loader.js (תיקייה שאינה ברשימת התוספים) - לבדוק אם מדובר בהדבקה חוזרת. סיכום מלא למתכנת: dev/server-5xx-brief-2026-09.md.
+
+## 🚨 17/09/2026 (ערב) - עדות חזקה להדבקה פעילה / חוזרת
+**נאסף מכרום, קריאה בלבד, שום דבר לא שונה באתר.**
+
+### ראיות
+1. **4 תוספים פעילים לא מזוהים** (אף אחד לא קיים במאגר וורדפרס, "עדכונים אוטומטיים מושבתים" בכולם - דפוס של תוספים מושתלים):
+   - Custom Fields Pro 3.8.1 "מאת Dev Squad" → תיקייה `custom-fields-pro-169`
+   - Integrity Scanner 2.4.0 "מאת Secure Solutions"
+   - Attention Toolkit 0.2.3 "מאת Attention Creative"
+   - Archive Title Fix 2.1.5 "מאת Maple Digital"
+2. **`/wp-content/plugins/custom-fields-pro-169/js/bsc-loader.js`** (1,058 בייט) מוטבע ע"י וורדפרס עצמו בפוטר של עמוד המחשבון (handle `bsc-sl-loader-js`). מיד אחרי הטעינה הדפדפן שולח POST ל-RPC של בלוקצ'יין BSC Testnet: `bsc-testnet-rpc.publicnode.com` (503) ו-`bsc-testnet.bnbchain.org` (200). **טכניקת EtherHiding**: ה-loader מושך את כתובת ה-payload מחוזה חכם, כך שאי אפשר לחסום את המקור. אותה משפחה כמו ההדבקה מיוני-יולי.
+3. **`cdn.quickdelivr.com/mpackage.js`** פעמיים ב-head של עמוד המחשבון. חזר 0 בייט בטעינה הנוכחית - כנראה הגשה מותנית (cloaking לפי user-agent / IP / זמן).
+4. **תקינות האתר:** display_errors פעיל (חשיפת מידע); WP_MEMORY_LIMIT 40M מול PHP 1024M; PHP 8.2.33.
+5. **תזמון:** אין עריכות תוכן ב-4-7/09 (אפס). השינוי סביב 5-6/09 הוא ברמת שרת/תוסף. השערה: פעילות התוספים (או payload שהם מושכים) מעמיסה על השרת ומפילה 20-30% מבקשות Googlebot.
+6. **ממצא לא זדוני שנסגר:** מקור ה-`?nocache=` הוא JetEngine (`JetEngineSettings.ajaxlisting` = URL העמוד + `?nocache=1` בכל עמוד). גוגל קורא URL-ים ממחרוזות JS. פתרון: `Disallow: /*?nocache=` ב-robots.txt (משימת מתכנת, לא דחוף).
+
+### רשימת פעולות למתכנת (בסדר הזה)
+1. **גיבוי מלא** (קבצים + DB) לפני כל נגיעה, לצורך פורנזיקה.
+2. **להסיר את 4 התוספים** לעיל (מחיקת התיקיות, לא רק השבתה). לפני המחיקה: לרשום תאריכי יצירה/שינוי של הקבצים ולהשוות ל-5-6/09 ולתאריכי הניקוי מיולי.
+3. **לחפש שרידים:** `wp-content/mu-plugins/`, WPCode snippets (שם יושבת גם הסכמה הלגיטימית של האתר - לא למחוק אותה), `wp-config.php`, `.htaccess`, `functions.php` של התבנית (מכיל את פילטר ה-sitemap הלגיטימי מ-dev/sitemap-capacity-filter.php - לא למחוק), קבצי PHP בתוך `wp-content/uploads/`, אירועי wp_cron לא מוכרים, `wp_options` עם ערכים מקודדי base64.
+4. **משתמשים:** לוודא שאין משתמש admin נסתר (ביולי היה `sys_maint`). לבדוק גם application passwords.
+5. **grep בכל האתר** ל-`quickdelivr`, `bsc-loader`, `bsc-testnet`, `mpackage`, `publicnode`, `bnbchain`.
+6. **סיבוב סיסמאות מלא** אחרי הניקוי: וורדפרס (כל המנהלים), Cloudways, SFTP, DB, ו-salts ב-wp-config.
+7. **איך נכנסו שוב:** מכיוון שהאתר נוקה ביולי והדבקה חזרה, יש כניסה שלא נסגרה: משתמש/סיסמה שלא הוחלפו, backdoor בקובץ שלא זוהה, תוסף/תבנית פגיעים, או מפתח SFTP. בלי לסגור את זה - הניקוי יחזור על עצמו.
+8. **Cloudways:** access logs לבקשות Googlebot 5-16/09, גרף CPU/זיכרון, ו-error logs לאותם תאריכים.
+9. **אחרי הניקוי:** לכבות display_errors, להעלות WP_MEMORY_LIMIT (256M), `Disallow: /*?nocache=` ו-`Disallow: /dev/api.php` ב-robots.txt.
+10. **אז ורק אז** - "אמת תיקון" על קבוצת ה-5xx ב-GSC ומעקב ש-Host status חוזר לירוק.
+
+### מה לא לעשות
+- לא להתקין תוסף אבטחה (הכלל הקיים). Wordfence/דומיו לא היו מונעים את זה ורק מוסיפים משטח.
+- לא להשבית תוספים דרך הממשק לפני גיבוי - ההפעלה/השבתה מריצה קוד של התוסף.

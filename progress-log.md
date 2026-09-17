@@ -612,3 +612,9 @@
 - **סיכום מוכן למתכנת:** dev/server-5xx-brief-2026-09.md (כולל קישור לממצא quickdelivr / custom-fields-pro-169 מ-17/09 - תבנית דומה לתוספים המזויפים מיולי, לבדוק תאריכי קבצים מול 5-6/09).
 - **llms.txt סונכרן לחי ✅:** מדור "## מצבר לפי יצרן רכב" הוחלף (5,152→6,838 תווים), 10 hubs, "77 דגמים באתר", מדור אזורים שלם. פער הסנכרון נסגר.
 - **פעולת בעלים:** להעביר את הסיכום למתכנת/אחסון בדחיפות.
+
+## 🚨 17/09/2026 ערב - הדבקה פעילה/חוזרת זוהתה (כרום, קריאה בלבד)
+- 4 תוספים פעילים מזויפים (Custom Fields Pro / Integrity Scanner / Attention Toolkit / Archive Title Fix), bsc-loader.js שפונה ל-RPC של BSC Testnet (EtherHiding), cdn.quickdelivr.com/mpackage.js מותנה. פירוט מלא + רשימת פעולות למתכנת ב-security-incident-response.md. ה-5xx מ-5-6/09 הוא כנראה תסמין.
+- מקור ה-?nocache= = JetEngine ajaxlisting (לא זדוני). robots.txt נקי (115 תווים).
+- **החלטה תפעולית:** הקפאת פרסום עמודים חדשים (ניש סיני) עד לניקוי + Host status ירוק. הכנת תוכן ממשיכה בריפו בלבד.
+- **פעולת בעלים מיידית:** להעביר למתכנת את security-incident-response.md (סעיף 17/09 ערב) + dev/server-5xx-brief-2026-09.md. לא ללחוץ "אמת תיקון" ב-GSC.
