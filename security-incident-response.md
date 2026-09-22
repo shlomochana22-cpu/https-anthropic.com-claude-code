@@ -167,3 +167,11 @@
 ### מה לא לעשות
 - לא להתקין תוסף אבטחה (הכלל הקיים). Wordfence/דומיו לא היו מונעים את זה ורק מוסיפים משטח.
 - לא להשבית תוספים דרך הממשק לפני גיבוי - ההפעלה/השבתה מריצה קוד של התוסף.
+
+## 22/09/2026 - אימות: ההדבקה פעילה ברגע זה
+- **תוספים:** Custom Fields Pro, Attention Toolkit, Archive Title Fix - קיימים ופעילים. **Integrity Scanner - הוסר** (לא ידוע ע"י מי; לשאול את המתכנת. אם לא הוא - התוקף מנקה אחריו). 21 תוספים בסך הכל.
+- **מחשבון (/battery-compatibility/):** quickdelivr x2 (head+body, `<script async src="https://cdn.quickdelivr.com/mpackage.js">`), bsc-loader x1, bsc-sl-loader x3. הסקריפט נטען דרך **admin-ajax עם action `bsc_sl_get_script`** (כלומר התוסף רושם AJAX handler שמגיש את הקוד - זה ה-backdoor בפועל). **Network: POST חי ל-bsc-testnet.bnbchain.org.** לא שריד - פעיל.
+- **משתמשים מנהלים:** `matzberimil` (s@matzberimil.co.il) ו-`NY.media.ltd@gmail.com` (0 פוסטים). השני = חברת הקידום של הבעלים (NY, ידוע). עדיין: חשבון מנהל של צד שלישי עם 0 פוסטים = וקטור כניסה אפשרי. לכלול בסיבוב הסיסמאות, ולשקול הורדה ל-Editor.
+- **חלון ה-5xx נסגר ב-18/09 בלי ניקוי** - כלומר השרת נרגע מעצמו והתוקף עדיין בפנים. הבעיה תחזור.
+- **GSC:** אימות תיקון על 5xx התחיל 22/09 (בטעות גם על קבוצת noindex 235 - לא מזיק, ייכשל ולא ישנה דבר).
+- **תוספת לרשימת הפעולות למתכנת:** grep גם ל-`bsc_sl_get_script` ו-`bsc_sl` בכל הקוד (תוספים, תבנית, mu-plugins, wp_options). ולברר מי הסיר את Integrity Scanner.
