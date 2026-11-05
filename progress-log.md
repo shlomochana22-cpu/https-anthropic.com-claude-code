@@ -851,3 +851,4 @@
 - **5/11:** ניתוק כל המכשירים ניתק גם את סשן כרום של המפעיל; הבעלים חיבר מחדש, השיחה אבדה → פקודת המשך עצמאית (אימות סיסמה shlomochana22, passkey matzberim.h, ניתוק מכשירים, סיכום; בלי הסרת אפליקציות).
 - **5/11: סבב אבטחת חשבונות גוגל הושלם** (פרטים ב-security-incident-response.md). פנייה לגוגל 6-0706000041500. פתוח: passkey חדש ל-matzberim.h (בעלים), אישור הבעלים לאירועי 10:25 ו-9:44, אימייל שחזור ל-shlomochana22 (מומלץ להוסיף), המייל מגוגל על ההשעיה, גבי (Attention Toolkit + TXT).
 - **5/11, בעלים:** אישר ששני האירועים (10:25 החלפת סיסמה + שחזור ב-matzberim.h; 9:44 הסרת אימייל שחזור ב-shlomochana22) הם שלו. אין אירוע זר.
+- **5/11:** מיילי "פריסה נכשלה" מ-Vercel (פרויקט nexus-events, Root Directory nexus-app שלא קיים בענף הזה) על כל push שלנו. תיקון מהמאגר: `nexus-app/vercel.json` עם `git.deploymentEnabled: {matzber-hadereh-seo: false}` + README. אם המיילים ממשיכים: Vercel → nexus-events → Settings → Git → Ignored Build Step.
