@@ -218,3 +218,4 @@
 - **ציר זמן 14:** 26/06 "Tsahi" התחבר מארה"ב + ניסיונות sys_maint/wphadm/seobackup; 04/07 Tsahi שוב מ-IP ברשימת IOC; 12/07-13/08 sys_maint התחבר 13 פעמים (גם אחרי ניקוי 28/07); 16/08 Wordfence זיהה 4 תוספים מזויפים נוספים (backup-reminder-c, booking-form-helper, category-order-easy, changelog-notifier) - כולם לא קיימים היום.
 - ניקיונות 15: שאריות DB (_wp_ip_id, _sys_integrity_created), שאריות WP File Manager ותוסף MCP ישן, גיבויי UpdraftPlus יוני-יולי עם לידים הוסרו מהשרת.
 - **מוכן ל"בקשה לבדיקה" ב-GSC** ברגע שהבעלים מחליט על Attention Toolkit.
+- **5/11, הבעלים:** "Tsahi" = המקדם הקודם של האתר, עבד לפעמים מחו"ל (מסביר התחברויות מארה"ב 26/06 ו-04/07). הבעלים ביקש מהמתכנת להסיר גם את החשבון שלו. הערה: ההתחברות של 04/07 הייתה מ-IP שברשימת ה-IOC, ובאותו ערב (26/06) היו ניסיונות sys_maint/wphadm/seobackup - ייתכן שהמחשב של צחי היה נגוע (ClickFix ביולי) או שהסיסמה שלו דלפה. לכן: הסרת החשבון + ודא שאין לו גישת SFTP/Cloudways/Cloudflare/GSC/GBP/GTM (!).
