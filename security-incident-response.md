@@ -202,3 +202,19 @@
 **פתוח אצל המתכנת (מהדוח):** החלפת DB password נוספת (מיידי); בירור admin_email dev@attention.co.il; 2FA לכל המנהלים; Breeze/Varnish; ניטור 2-3 שבועות; WP_DEBUG false; Bing WMT אחרי הסרת הסימון; חוק הגנת הפרטיות (דיווח); /dev/index.html טוען תמונה מכתובת staging; CSP אופציונלי.
 **לא בדוח (לבקש):** robots.txt (nocache, api.php, Allow לסורקי AI); אישור ש-Cloudflare לא חוסם GPTBot/PerplexityBot/ClaudeBot/bingbot; הפניית /review; תוסף קאש אחד (WP Rocket/WP Fastest Cache נמחקו?); WPCode - מי הסיר; WP File Manager נמחק?
 **הבא אצלנו:** אימות אנונימי מקיף מכרום (IOC, נכסים שלנו, מדידה) → "בקשה לבדיקה" ב-GSC → Bing.
+
+## 5/11/2026 - תשובת המתכנת (Manta Web) ל-12 הסעיפים + ממצאים חדשים
+- **Attention Toolkit:** הוסר ב-28/10 והוחזר בהתייעצות עם "אבי" (NY?) כחלק מההקמה המקורית. מעצב מסך התחברות (CSS+JS בלי שליחה החוצה) **אבל כולל מנגנון עדכון משרת חיצוני** (כרגע לא מתחבר) = דלת לקוד עתידי. המלצת המתכנת: להסיר אם לא בשימוש. **ממתין להחלטת בעלים.**
+- admin_email → gabi@manta-web.co.il (הודעות מערכת; איפוסי סיסמה הולכים למייל של כל משתמש).
+- **WPCode:** לא הם הסירו. הותקן 03/12/2025 ע"י matzberimil; עוד היה ב-16/08 (Wordfence); נעלם בין 16/08 ל-23/10, **אין רישום מי הסיר** → כנראה התוקף. הבלוק וה-hreflang עדיין שמורים ב-DB (לא פעילים).
+- **WP File Manager:** המתכנת מחק 28/10. היה בשרת לפחות מ-28/07; החשבון matzberimil (ID 10) פתח אותו לפחות פעם אחת → אם לא הבעלים, מישהו השתמש בחשבון. שאריות DB נמחקו.
+- קאש: Breeze בלבד, מכוון.
+- **סורקי AI: בוצע.** Cloudflare היה Allow; **החסימה הייתה ברמת שרת Cloudways (403 ל-ClaudeBot)** והוסרה דרך התמיכה. מבחוץ: ClaudeBot, Claude-SearchBot, GPTBot, OAI-SearchBot, ChatGPT-User, PerplexityBot, Perplexity-User, Google-Extended, bingbot = 200 על llms.txt ודף הבית.
+- **robots.txt הועלה** לפי הנוסח שלנו. **/review → 301** לקישור הביקורות בגוגל (עם/בלי www). DB password הוחלפה 28/10.
+- נוהל IP: מסך "בקש גישה" → אישור ע"י גבי/NY; 2 IPv4 + טווח IPv6 של הבעלים מאושרים.
+- **2FA: רק גבי. matzberimil ו-NY.media עדיין לא** → פרופיל → Two-Factor Options → Authenticator App + Backup Codes.
+- WP_DEBUG יכובה 18/11. Bing: אנחנו, אחרי הסרת הסימון.
+- **🚨 ממצא חדש 13, וקטור הפריצה הסביר:** בתיקיית /dev היו `api.php.bak` ו-`admin_api.php.bak` (12/06/2026) **נגישים לכולם בלי הרשאה**, עם סיסמת ה-DB בטקסט גלוי וטוקן של `admin_api.php` שאפשר קריאה/שינוי של **כל טבלה ב-DB כולל משתמשים**. ההתחברות הזדונית הראשונה: 26/06, שבועיים אחרי. נמחקו; הסיסמה כבר הוחלפה; ממשק הניהול נכתב מחדש: `/dev/admin.php` (במקום admin.html), דורש התחברות כמנהל (IP+2FA), ללא טוקן, 4 טבלאות בלבד, יומן שינויים. api.php הציבורי תקין.
+- **ציר זמן 14:** 26/06 "Tsahi" התחבר מארה"ב + ניסיונות sys_maint/wphadm/seobackup; 04/07 Tsahi שוב מ-IP ברשימת IOC; 12/07-13/08 sys_maint התחבר 13 פעמים (גם אחרי ניקוי 28/07); 16/08 Wordfence זיהה 4 תוספים מזויפים נוספים (backup-reminder-c, booking-form-helper, category-order-easy, changelog-notifier) - כולם לא קיימים היום.
+- ניקיונות 15: שאריות DB (_wp_ip_id, _sys_integrity_created), שאריות WP File Manager ותוסף MCP ישן, גיבויי UpdraftPlus יוני-יולי עם לידים הוסרו מהשרת.
+- **מוכן ל"בקשה לבדיקה" ב-GSC** ברגע שהבעלים מחליט על Attention Toolkit.
