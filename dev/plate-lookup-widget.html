@@ -1,4 +1,4 @@
-<!-- mb-plate: בדיקת מצבר לפי מספר רכב. ווידג'ט HTML נפרד שמוצב מעל המחשבון (b2279cb) בעמוד 3229. לא נוגע בקוד המחשבון: רק ממלא את #manufacturer/#model/#year ולוחץ #searchBtn. מקור: מאגר הרכב של משרד התחבורה (data.gov.il, ציבורי, בלי פרטי בעלים). להסרה: למחוק את הווידג'ט. גרסה 1.1, 6/11/2026 (תיקונים: הסרת מדינה עם גרשיים, ניקוי תוצאה קודמת, ניסוח). -->
+<!-- mb-plate: בדיקת מצבר לפי מספר רכב. ווידג'ט HTML נפרד שמוצב מעל המחשבון (b2279cb) בעמוד 3229. לא נוגע בקוד המחשבון: רק ממלא את #manufacturer/#model/#year ולוחץ #searchBtn. מקור: מאגר הרכב של משרד התחבורה (data.gov.il, ציבורי, בלי פרטי בעלים). להסרה: למחוק את הווידג'ט. גרסה 1.2, 6/11/2026 (1.1: הסרת מדינה עם גרשיים, ניקוי תוצאה קודמת, ניסוח; 1.2: השלמת שנה אחרי בחירת דגם ידנית דרך jQuery.one). -->
 <style>
 #mb-plate{direction:rtl;text-align:right;border:1px solid #e0e0e0;border-radius:12px;padding:18px 16px;margin:0 0 18px;background:#fafafa;line-height:1.8;font-size:16px}
 #mb-plate h2{margin:0 0 6px;font-size:22px}
@@ -177,7 +177,7 @@ function fillCalculator(rec,plate){
     if(!md){
       show(head+'<div class="mb-plate-warn">היצרן מולא במחשבון. הדגם "'+esc(model)+'" לא זוהה אוטומטית: בחרו אותו מרשימת הדגמים במחשבון, השנה תתמלא לבד, ואז לחצו "חפש".</div>'+cta(car,plate));
       track("unmapped_model",{maker:mfrName,model:model});
-      var me=sel("model");if(me){var once=function(){me.removeEventListener("change",once);waitOptions("year",6000,function(){var yo=matchYear(year);if(yo)setSelect("year",yo.value);});};me.addEventListener("change",once);}
+      var me=sel("model");if(me){var onPick=function(){waitOptions("year",6000,function(){var yo=matchYear(year);if(yo)setSelect("year",yo.value);});};if(window.jQuery&&window.jQuery.fn){window.jQuery(me).one("change",onPick);}else{me.addEventListener("change",onPick,{once:true});}} // Select2/jQuery fire jQuery handlers, not native listeners
       scrollToResult();return;
     }
     setSelect("model",md.value);
