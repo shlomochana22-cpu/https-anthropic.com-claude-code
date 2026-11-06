@@ -1,4 +1,4 @@
-<!-- mb-plate: בדיקת מצבר לפי מספר רכב. ווידג'ט HTML נפרד שמוצב מעל המחשבון (b2279cb) בעמוד 3229. לא נוגע בקוד המחשבון: רק ממלא את #manufacturer/#model/#year ולוחץ #searchBtn. מקור: מאגר הרכב של משרד התחבורה (data.gov.il, ציבורי, בלי פרטי בעלים). להסרה: למחוק את הווידג'ט. גרסה 1, 6/11/2026. -->
+<!-- mb-plate: בדיקת מצבר לפי מספר רכב. ווידג'ט HTML נפרד שמוצב מעל המחשבון (b2279cb) בעמוד 3229. לא נוגע בקוד המחשבון: רק ממלא את #manufacturer/#model/#year ולוחץ #searchBtn. מקור: מאגר הרכב של משרד התחבורה (data.gov.il, ציבורי, בלי פרטי בעלים). להסרה: למחוק את הווידג'ט. גרסה 1.1, 6/11/2026 (תיקונים: הסרת מדינה עם גרשיים, ניקוי תוצאה קודמת, ניסוח). -->
 <style>
 #mb-plate{direction:rtl;text-align:right;border:1px solid #e0e0e0;border-radius:12px;padding:18px 16px;margin:0 0 18px;background:#fafafa;line-height:1.8;font-size:16px}
 #mb-plate h2{margin:0 0 6px;font-size:22px}
@@ -41,11 +41,12 @@ function hebNorm(s){ // Hebrew letters + digits only, no geresh/space/punct
 function latNorm(s){return String(s||"").toUpperCase().replace(/[^A-Z0-9]/g,"");}
 function hebPart(s){return String(s||"").split(" - ")[0];} // "וולוו - VOLVO" -> "וולוו"
 function latPart(s){var m=String(s||"").match(/[A-Za-z][A-Za-z0-9 \-]*|[0-9]+/g);return m?latNorm(m.join("")):"";}
+var COUNTRIES_SORTED=COUNTRIES.slice().sort(function(a,b){return b.length-a.length;}); // longest first: "ד. קוריאה" before "קוריאה"
 function stripCountry(s){
-  s=String(s||"").replace(/\(.*?\)/g,"").trim();
-  for(var i=0;i<COUNTRIES.length;i++){
-    var c=COUNTRIES[i];
-    if(s.slice(-c.length)===c&&s.length>c.length){s=s.slice(0,-c.length).trim();break;}
+  s=String(s||"").replace(/\(.*?\)/g,"").replace(/[\s"'\u05F3\u05F4.]+$/,"").trim(); // drop trailing quotes/dots, e.g. 'פורד ארהב"'
+  for(var i=0;i<COUNTRIES_SORTED.length;i++){
+    var c=COUNTRIES_SORTED[i];
+    if(s.slice(-c.length)===c&&s.length>c.length){s=s.slice(0,-c.length).replace(/[\s"'\u05F3\u05F4.]+$/,"").trim();break;}
   }
   return s;
 }
@@ -168,12 +169,13 @@ function fillCalculator(rec,plate){
     show(head+'<div class="mb-plate-warn">היצרן לא נמצא במחשבון. בחרו יצרן, דגם ושנה ידנית במחשבון שמתחת, או שלחו לנו את פרטי הרכב.</div>'+cta(car,plate));
     track("unmapped_manufacturer",{maker:mfrName});return;
   }
+  var res=sel("result");if(res)res.innerHTML=""; // clear a previous result (the calculator does not clear it on manufacturer change)
   setSelect("manufacturer",mo.value);
   show(head+'<div>ממלאים את המחשבון...</div>');
   waitOptions("model",8000,function(models){
     var md=models?matchModel(model):null;
     if(!md){
-      show(head+'<div class="mb-plate-warn">היצרן והשנה מולאו במחשבון. הדגם "'+esc(model)+'" לא זוהה אוטומטית, בחרו אותו מהרשימה במחשבון ולחצו "חפש".</div>'+cta(car,plate));
+      show(head+'<div class="mb-plate-warn">היצרן מולא במחשבון. הדגם "'+esc(model)+'" לא זוהה אוטומטית: בחרו אותו מרשימת הדגמים במחשבון, השנה תתמלא לבד, ואז לחצו "חפש".</div>'+cta(car,plate));
       track("unmapped_model",{maker:mfrName,model:model});
       var me=sel("model");if(me){var once=function(){me.removeEventListener("change",once);waitOptions("year",6000,function(){var yo=matchYear(year);if(yo)setSelect("year",yo.value);});};me.addEventListener("change",once);}
       scrollToResult();return;
