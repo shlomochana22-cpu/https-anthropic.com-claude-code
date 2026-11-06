@@ -1,5 +1,5 @@
 {
- "_readme": "מפתח: '<שם יצרן בדיוק כפי שמוחזר מ-api.php>|<שם דגם בדיוק כפי שמוחזר מ-api.php>'. ערך: כתובת עמוד הדגם. manufacturers: fallback לעמוד היצרן כשאין עמוד דגם. כל הכתובות אומתו 200 ב-14/10/2026.",
+ "_readme": "מפתח: '<שם יצרן בדיוק כפי שמוחזר מ-api.php>|<שם דגם בדיוק כפי שמוחזר מ-api.php>'. ערך: כתובת עמוד הדגם. manufacturers: fallback לעמוד היצרן כשאין עמוד דגם. כל הכתובות אומתו 200 ב-14/10/2026. 8 מפתחות פורד/אופל + 2 יצרנים נוספו 6/11/2026 (לאמת 200 אחרי פרסום סבבים 1-2).",
  "models": {
   "בי-ווי-די - BYD|אטו 3": "https://matzberimil.co.il/מצבר-ל-byd-אטו-3/",
   "צ'רי|FX": "https://matzberimil.co.il/מצבר-לצרי-fx/",
@@ -114,7 +114,15 @@
   "טויוטה|קורולה": "https://matzberimil.co.il/מצבר-לטויוטה-קורולה/",
   "טויוטה|ראב 4 - RAV4": "https://matzberimil.co.il/מצבר-לטויוטה-ראב4/",
   "טויוטה|יאריס": "https://matzberimil.co.il/מצבר-לטויוטה-יאריס/",
-  "טויוטה|יאריס קרוס": "https://matzberimil.co.il/מצבר-לטויוטה-יאריס/"
+  "טויוטה|יאריס קרוס": "https://matzberimil.co.il/מצבר-לטויוטה-יאריס/",
+  "פורד|פוקוס": "https://matzberimil.co.il/מצבר-לפורד-פוקוס/",
+  "פורד|פיאסטה": "https://matzberimil.co.il/מצבר-לפורד-פיאסטה/",
+  "פורד|קוגה": "https://matzberimil.co.il/מצבר-לפורד-קוגה/",
+  "פורד|מונדאו": "https://matzberimil.co.il/מצבר-לפורד-מונדאו/",
+  "אופל|אסטרה": "https://matzberimil.co.il/מצבר-לאופל-אסטרה/",
+  "אופל|קורסה": "https://matzberimil.co.il/מצבר-לאופל-קורסה/",
+  "אופל|אינסיגניה": "https://matzberimil.co.il/מצבר-לאופל-אינסיגניה/",
+  "אופל|מוקה": "https://matzberimil.co.il/מצבר-לאופל-מוקה/"
  },
  "manufacturers": {
   "קיה": "https://matzberimil.co.il/manufacturer/קיה-kia/",
@@ -134,6 +142,8 @@
   "סיטרואן": "https://matzberimil.co.il/manufacturer/סיטרואן-citroen/",
   "רנו": "https://matzberimil.co.il/manufacturer/רנו-renault/",
   "דאצ'יה": "https://matzberimil.co.il/manufacturer/דאציה-dacia/",
-  "סובארו": "https://matzberimil.co.il/manufacturer/סובארו-subaru/"
+  "סובארו": "https://matzberimil.co.il/manufacturer/סובארו-subaru/",
+  "פורד": "https://matzberimil.co.il/manufacturer/פורד-ford/",
+  "אופל": "https://matzberimil.co.il/manufacturer/אופל-opel/"
  }
 }
