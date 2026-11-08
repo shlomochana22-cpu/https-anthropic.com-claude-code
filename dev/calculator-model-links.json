@@ -1,5 +1,5 @@
 {
- "_readme": "מפתח: '<שם יצרן בדיוק כפי שמוחזר מ-api.php>|<שם דגם בדיוק כפי שמוחזר מ-api.php>'. ערך: כתובת עמוד הדגם. manufacturers: fallback לעמוד היצרן כשאין עמוד דגם. כל הכתובות אומתו 200 ב-14/10/2026. 8 מפתחות פורד/אופל + 2 יצרנים נוספו 6/11/2026 (לאמת 200 אחרי פרסום סבבים 1-2).",
+ "_readme": "מפתח: '<שם יצרן בדיוק כפי שמוחזר מ-api.php>|<שם דגם בדיוק כפי שמוחזר מ-api.php>'. ערך: כתובת עמוד הדגם. manufacturers: fallback לעמוד היצרן כשאין עמוד דגם. כל הכתובות אומתו 200 ב-14/10/2026. 8 מפתחות פורד/אופל + 2 יצרנים נוספו 6/11/2026 (לאמת 200 אחרי פרסום סבבים 1-2). 8 מפתחות מרצדס/אאודי + 2 יצרנים נוספו 8/11/2026.",
  "models": {
   "בי-ווי-די - BYD|אטו 3": "https://matzberimil.co.il/מצבר-ל-byd-אטו-3/",
   "צ'רי|FX": "https://matzberimil.co.il/מצבר-לצרי-fx/",
@@ -122,7 +122,15 @@
   "אופל|אסטרה": "https://matzberimil.co.il/מצבר-לאופל-אסטרה/",
   "אופל|קורסה": "https://matzberimil.co.il/מצבר-לאופל-קורסה/",
   "אופל|אינסיגניה": "https://matzberimil.co.il/מצבר-לאופל-אינסיגניה/",
-  "אופל|מוקה": "https://matzberimil.co.il/מצבר-לאופל-מוקה/"
+  "אופל|מוקה": "https://matzberimil.co.il/מצבר-לאופל-מוקה/",
+  "מרצדס|A-CLASS": "https://matzberimil.co.il/מצבר-למרצדס-a-class/",
+  "מרצדס|B-CLASS": "https://matzberimil.co.il/מצבר-למרצדס-b-class/",
+  "מרצדס|C-CLASS": "https://matzberimil.co.il/מצבר-למרצדס-c-class/",
+  "מרצדס|E-CLASS": "https://matzberimil.co.il/מצבר-למרצדס-e-class/",
+  "אאודי|A3": "https://matzberimil.co.il/מצבר-לאאודי-a3/",
+  "אאודי|A4": "https://matzberimil.co.il/מצבר-לאאודי-a4/",
+  "אאודי|Q3": "https://matzberimil.co.il/מצבר-לאאודי-q3/",
+  "אאודי|Q5": "https://matzberimil.co.il/מצבר-לאאודי-q5/"
  },
  "manufacturers": {
   "קיה": "https://matzberimil.co.il/manufacturer/קיה-kia/",
@@ -144,6 +152,8 @@
   "דאצ'יה": "https://matzberimil.co.il/manufacturer/דאציה-dacia/",
   "סובארו": "https://matzberimil.co.il/manufacturer/סובארו-subaru/",
   "פורד": "https://matzberimil.co.il/manufacturer/פורד-ford/",
-  "אופל": "https://matzberimil.co.il/manufacturer/אופל-opel/"
+  "אופל": "https://matzberimil.co.il/manufacturer/אופל-opel/",
+  "מרצדס": "https://matzberimil.co.il/manufacturer/מרצדס-mercedes/",
+  "אאודי": "https://matzberimil.co.il/manufacturer/אאודי-audi/"
  }
 }
