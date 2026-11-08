@@ -53,6 +53,7 @@ function stripCountry(s){
   while(parts.length>1){var last=parts[parts.length-1].replace(/[."']+$/,"");var cut=false;
     if(last.length>=3){for(var j=0;j<COUNTRIES.length;j++){var cn=COUNTRIES[j].replace(/[\s.]/g,"");if(cn.indexOf(last)===0&&cn!==last){cut=true;break;}}}
     if(cut)parts.pop();else break;}
+  while(parts.length>1&&/^[\u05D0-\u05EA]\.?$/.test(parts[parts.length-1]))parts.pop(); // leftover abbreviation like "ד." from "ד. קוריאה"
   s=parts.join(" ");
   return s;
 }
