@@ -1,4 +1,4 @@
-<!-- mb-plate: בדיקת מצבר לפי מספר רכב. ווידג'ט HTML נפרד שמוצב מעל המחשבון (b2279cb) בעמוד 3229. לא נוגע בקוד המחשבון: רק ממלא את #manufacturer/#model/#year ולוחץ #searchBtn. מקור: מאגר הרכב של משרד התחבורה (data.gov.il, ציבורי, בלי פרטי בעלים). להסרה: למחוק את הווידג'ט. גרסה 1.2, 6/11/2026 (1.1: הסרת מדינה עם גרשיים, ניקוי תוצאה קודמת, ניסוח; 1.2: השלמת שנה אחרי בחירת דגם ידנית דרך jQuery.one). -->
+<!-- mb-plate: בדיקת מצבר לפי מספר רכב. ווידג'ט HTML נפרד שמוצב מעל המחשבון (b2279cb) בעמוד 3229. לא נוגע בקוד המחשבון: רק ממלא את #manufacturer/#model/#year ולוחץ #searchBtn. מקור: מאגר הרכב של משרד התחבורה (data.gov.il, ציבורי, בלי פרטי בעלים). להסרה: למחוק את הווידג'ט. גרסה 1.3, 8/11/2026 (1.1: הסרת מדינה עם גרשיים, ניקוי תוצאה קודמת, ניסוח; 1.2: השלמת שנה אחרי בחירת דגם ידנית דרך jQuery.one; 1.3: טקסט הסבר מורחב, מיפוי דגמי מרצדס C200D→C-CLASS וכו', אאודי ETRON). -->
 <style>
 #mb-plate{direction:rtl;text-align:right;border:1px solid #e0e0e0;border-radius:12px;padding:18px 16px;margin:0 0 18px;background:#fafafa;line-height:1.8;font-size:16px}
 #mb-plate h2{margin:0 0 6px;font-size:22px}
@@ -19,13 +19,13 @@
 </style>
 <div id="mb-plate">
   <h2>בדיקת מצבר לפי מספר רכב</h2>
-  <p class="mb-plate-sub">הקלידו את מספר הרכב, ונמלא עבורכם את המחשבון עם היצרן, הדגם והשנה מרישיון הרכב.</p>
+  <p class="mb-plate-sub">לא בטוחים מה הדגם או השנה? אפשר לברר איזה סוג מצבר מתאים לרכב שלכם גם לפי מספר הרכב בלבד: הקלידו את המספר, ונמלא עבורכם את המחשבון עם היצרן, הדגם והשנה כפי שהם רשומים ברישיון הרכב. התוצאה מציגה את הקיבולת באמפר, סוג המצבר (רגיל, סטארט סטופ, AGM), הקוטב והמחיר.</p>
   <form class="mb-plate-row" id="mb-plate-form" autocomplete="off">
     <input type="text" id="mb-plate-num" inputmode="numeric" pattern="[0-9 -]*" maxlength="10" placeholder="12-345-67" aria-label="מספר רכב">
     <button type="submit" id="mb-plate-btn">בדקו איזה מצבר מתאים</button>
   </form>
   <div class="mb-plate-out" id="mb-plate-out" aria-live="polite"></div>
-  <p class="mb-plate-note">הנתונים מגיעים ממאגר הרכב הציבורי של משרד התחבורה ואינם כוללים פרטים אישיים. לא שומרים את מספר הרכב.</p>
+  <p class="mb-plate-note">איך זה עובד: מספר הרכב נבדק מול מאגר הרכב הציבורי של משרד התחבורה (ללא פרטים אישיים), המחשבון מקבל את היצרן, הדגם והשנה, ומציג את המצבר המתאים. אם הדגם לא מזוהה אוטומטית, בוחרים אותו מהרשימה. לא שומרים את מספר הרכב. אפשר כמובן גם לבחור יצרן, דגם ושנה ידנית במחשבון שלמטה.</p>
 </div>
 <script>
 (function(){
@@ -69,10 +69,11 @@ var MODEL_ALIAS={
  /* Peugeot / Citroen */ "PARTNER":"פרטנר","EXPERT":"אקספרט","BOXER":"בוקסר","RIFTER":"ריפטר","BERLINGO":"ברלינגו","PICASSO":"פיקסאו","CACTUS":"קקטוס","JUMPY":"גאמפי",
  /* Renault / Dacia */ "CLIO":"קליאו","MEGANE":"מגאן","CAPTUR":"קפצור","KADJAR":"קדגאר","KANGOO":"קנגו","FLUENCE":"פלואנס","ZOE":"זואי","ARKANA":"ארקנה","AUSTRAL":"אוסטרל","KOLEOS":"קולאוס","DUSTER":"דאסטר","SANDERO":"סאנדרו","LOGAN":"לוגן","JOGGER":"גוגר","SPRING":"ספרינג",
  /* BYD / MG / Chery */ "ATTO3":"אטו3","ATTO":"אטו3","DOLPHIN":"דולפין","SEAL":"סיל","ZSEV":"ZS","ZS":"ZS","HS":"HS","EHS":"HS","MARVEL":"מארוול","TIGGO4PRO":"טיגו4פרו","TIGGO7PRO":"טיגו7פרו","TIGGO8PRO":"טיגו8פרו","TIGGO4":"טיגו4פרו","TIGGO7":"טיגו7פרו","TIGGO8":"טיגו8פרו","FX":"FX",
+ /* Mercedes / Audi */ "ACLASS":"ACLASS","BCLASS":"BCLASS","CCLASS":"CCLASS","ECLASS":"ECLASS","SCLASS":"SCLASS","GCLASS":"GCLASS","VCLASS":"VCLASS","VITO":"VCLASS","VIANO":"VCLASS","GLA":"GLA200","SPRINTER":"ספרינטר","CITAN":"סיטאן","ETRON":"ETRON","QETRON":"ETRON",
  /* Subaru */ "IMPREZA":"אימפרזה","FORESTER":"פורסטר","OUTBACK":"אאוטבק","XV":"XV","B4":"B4","LEGACY":"B4","CROSSTREK":"קרוסטר","LEVORG":"לבורג","BRZ":"BRZ"
 };
 /* English maker words to strip from the model name (registry sometimes writes "MAZDA 3", "MG ZS") */
-var MAKER_WORDS=["MAZDA","FORD","OPEL","TOYOTA","HYUNDAI","KIA","SKODA","SUZUKI","NISSAN","MITSUBISHI","SEAT","HONDA","PEUGEOT","CITROEN","RENAULT","DACIA","BYD","MG","CHERY","SUBARU","VOLVO","LEXUS","FIAT","CHEVROLET","DAIHATSU","AUDI","MERCEDES","BMW","VW","VOLKSWAGEN"];
+var MAKER_WORDS=["MAZDA","FORD","OPEL","TOYOTA","HYUNDAI","KIA","SKODA","SUZUKI","NISSAN","MITSUBISHI","SEAT","HONDA","PEUGEOT","CITROEN","RENAULT","DACIA","BYD","MG","CHERY","SUBARU","VOLVO","LEXUS","FIAT","CHEVROLET","DAIHATSU","AUDI","MERCEDES","MERCEDESBENZ","BMW","VW","VOLKSWAGEN"];
 
 function sel(id){return document.getElementById(id);}
 function opts(id){var e=sel(id);return e?Array.prototype.slice.call(e.options||[]):[];}
@@ -113,6 +114,7 @@ function matchModel(kinuy){
   var K=latNorm(kinuy);
   for(var i=0;i<MAKER_WORDS.length;i++){var w=MAKER_WORDS[i];if(K.indexOf(w)===0&&K.length>w.length){K=K.slice(w.length);break;}}
   if(!K)return null;
+  var mb=/^(A|B|C|E|S|G)(\d{3})/.exec(K);if(mb&&!/^(GL|CL|EQ)/.test(K))K=mb[1]+"CLASS"; // Mercedes: C200D -> CCLASS, A250E -> ACLASS
   var aliasKey="",aliasVal="";
   for(var k in MODEL_ALIAS){if(K.indexOf(k)===0&&k.length>aliasKey.length){aliasKey=k;aliasVal=MODEL_ALIAS[k];}}
   var digits=/^[0-9]+$/.test(K)?K:"";
