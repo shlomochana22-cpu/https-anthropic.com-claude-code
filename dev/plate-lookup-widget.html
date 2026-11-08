@@ -1,4 +1,4 @@
-<!-- mb-plate: בדיקת מצבר לפי מספר רכב. ווידג'ט HTML נפרד שמוצב מעל המחשבון (b2279cb) בעמוד 3229. לא נוגע בקוד המחשבון: רק ממלא את #manufacturer/#model/#year ולוחץ #searchBtn. מקור: מאגר הרכב של משרד התחבורה (data.gov.il, ציבורי, בלי פרטי בעלים). להסרה: למחוק את הווידג'ט. גרסה 1.3, 8/11/2026 (1.1: הסרת מדינה עם גרשיים, ניקוי תוצאה קודמת, ניסוח; 1.2: השלמת שנה אחרי בחירת דגם ידנית דרך jQuery.one; 1.3: טקסט הסבר מורחב, מיפוי דגמי מרצדס C200D→C-CLASS וכו', אאודי ETRON). -->
+<!-- mb-plate: בדיקת מצבר לפי מספר רכב. ווידג'ט HTML נפרד שמוצב מעל המחשבון (b2279cb) בעמוד 3229. לא נוגע בקוד המחשבון: רק ממלא את #manufacturer/#model/#year ולוחץ #searchBtn. מקור: מאגר הרכב של משרד התחבורה (data.gov.il, ציבורי, בלי פרטי בעלים). להסרה: למחוק את הווידג'ט. גרסה 1.4, 8/11/2026 (1.1: הסרת מדינה עם גרשיים, ניקוי תוצאה קודמת, ניסוח; 1.2: השלמת שנה אחרי בחירת דגם ידנית דרך jQuery.one; 1.3: טקסט הסבר מורחב, מיפוי דגמי מרצדס C200D→C-CLASS וכו', אאודי ETRON; 1.4: הסרת שם מדינה קטוע כמו "גרמנ"). -->
 <style>
 #mb-plate{direction:rtl;text-align:right;border:1px solid #e0e0e0;border-radius:12px;padding:18px 16px;margin:0 0 18px;background:#fafafa;line-height:1.8;font-size:16px}
 #mb-plate h2{margin:0 0 6px;font-size:22px}
@@ -48,6 +48,12 @@ function stripCountry(s){
     var c=COUNTRIES_SORTED[i];
     if(s.slice(-c.length)===c&&s.length>c.length){s=s.slice(0,-c.length).replace(/[\s"'\u05F3\u05F4.]+$/,"").trim();break;}
   }
+  // the registry truncates long names ("מרצדס בנץ גרמנ", "יונדאי ד. קורי"): drop a last word that is a 3+ letter prefix of a known country
+  var parts=s.split(/\s+/);
+  while(parts.length>1){var last=parts[parts.length-1].replace(/[."']+$/,"");var cut=false;
+    if(last.length>=3){for(var j=0;j<COUNTRIES.length;j++){var cn=COUNTRIES[j].replace(/[\s.]/g,"");if(cn.indexOf(last)===0&&cn!==last){cut=true;break;}}}
+    if(cut)parts.pop();else break;}
+  s=parts.join(" ");
   return s;
 }
 /* manufacturer aliases: normalized registry spelling -> normalized calculator spelling */
